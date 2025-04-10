@@ -6,7 +6,7 @@ use App\Enums\Day;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CourseScheduleRequest extends FormRequest
+class StoreCourseScheduleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
