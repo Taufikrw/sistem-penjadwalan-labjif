@@ -17,25 +17,25 @@ class AssistantController extends Controller
 
     public function index()
     {
-        $data = $this->assistantService->getAllAssistants();
+        $data = $this->assistantService->getAssistantsList();
 
         return view('assistant.index', $data);
     }
 
     public function show(string $nim)
     {
-        $assistant = $this->assistantService->getAssistantByNim($nim);
+        $data = $this->assistantService->getAssistantWithCourse($nim);
 
-        if (!$assistant) {
+        if (!$data) {
             return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
         }
 
-        return view('assistant.show', compact('assistant'));
+        return view('assistant.show', $data);
     }
 
     public function courseCreate(string $nim)
     {
-        $assistant = $this->assistantService->getAssistantByNim($nim);
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
 
         if (!$assistant) {
             return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
@@ -46,7 +46,7 @@ class AssistantController extends Controller
 
     public function courseStore(StoreCourseScheduleRequest $request, string $nim)
     {
-        $assistant = $this->assistantService->getAssistantByNim($nim);
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
 
         if (!$assistant) {
             return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);

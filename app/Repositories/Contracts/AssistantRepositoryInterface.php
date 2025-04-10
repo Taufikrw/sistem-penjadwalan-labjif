@@ -4,9 +4,7 @@ namespace App\Repositories\Contracts;
 
 interface AssistantRepositoryInterface
 {
-    public function getAllAssistants();
+    public function getAllAssistants($sortBy = 'nim', $order = 'asc');
     
     public function getAssistantByNim($nim);
-
-    public function storeCourseSchedule(array $data);
 }

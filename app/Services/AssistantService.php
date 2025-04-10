@@ -4,26 +4,48 @@ namespace App\Services;
 
 use App\Models\CourseSchedule;
 use App\Repositories\Contracts\AssistantRepositoryInterface;
+use App\Repositories\Contracts\CourseScheduleRepositoryInterface;
 
 class AssistantService
 {
     protected $assistantRepository;
+    protected $courseScheduleRepository;
 
-    public function __construct(AssistantRepositoryInterface $assistantRepository)
+    public function __construct(AssistantRepositoryInterface $assistantRepository, CourseScheduleRepositoryInterface $courseScheduleRepository)
     {
         $this->assistantRepository = $assistantRepository;
+        $this->courseScheduleRepository = $courseScheduleRepository;
     }
 
-    public function getAllAssistants()
+    public function getAssistantsList()
     {
         $assistants = $this->assistantRepository->getAllAssistants();
 
         return compact('assistants');
     }
 
-    public function getAssistantByNim($nim)
+    public function getAssistantsDetails($nim)
     {
-        return $this->assistantRepository->getAssistantByNim($nim);
+        $assistant = $this->assistantRepository->getAssistantByNim($nim);
+
+        if (!$assistant) {
+            return null;
+        }
+
+        return $assistant;
+    }
+
+    public function getAssistantWithCourse($nim)
+    {
+        $assistant = $this->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return null;
+        }
+
+        $courses = $this->courseScheduleRepository->getCourseScheduleByNim($nim);
+
+        return compact('assistant', 'courses');
     }
 
     public function createCourseSchedule(array $data)
@@ -40,7 +62,7 @@ class AssistantService
         $prodi = $courseEnum->prodi();
         $data['name'] = ($prodi === 'Teknik Informatika' ? 'IF-' : 'SI-') . $data['name'];
         
-        $this->assistantRepository->storeCourseSchedule($data);
+        $this->courseScheduleRepository->storeCourseSchedule($data);
 
         return $data['owner'];
     }

@@ -26,7 +26,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($assistant->courseSchedules as $course)
+                        @forelse($courses as $course)
                             <tr>
                                 <td class="border px-4 py-2">{{ $course->course }} {{ $course->name }}</td>
                                 <td class="border px-4 py-2">{{ $course->day }}</td>
@@ -40,7 +40,11 @@
                                     </form>
                                 </td> --}}
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="3" class="border px-4 py-2 text-center text-gray-500">Belum ada jadwal kuliah.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             @endif
