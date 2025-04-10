@@ -23,7 +23,7 @@ class ScheduleController extends Controller
 
     public function createPracticum()
     {
-        return view('practicum.create');
+        return view('practicum.form');
     }
 
     public function storePracticum(StorePracticumRequest $request)
@@ -46,7 +46,7 @@ class ScheduleController extends Controller
             return response()->view('errors.not-found', ['message' => 'Practicum not found'], 404);
         }
 
-        return view('practicum.create', compact('practicum'));
+        return view('practicum.form', compact('practicum'));
     }
 
     public function updatePracticum(StorePracticumRequest $request, $kode_praktikum)
