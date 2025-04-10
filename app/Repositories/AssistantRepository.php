@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Assistant;
+use App\Models\CourseSchedule;
 use App\Repositories\Contracts\AssistantRepositoryInterface;
 
 class AssistantRepository implements AssistantRepositoryInterface
@@ -15,5 +16,10 @@ class AssistantRepository implements AssistantRepositoryInterface
     public function getAssistantByNim($nim)
     {
         return Assistant::with('user', 'courseSchedules', 'assistantSchedules')->where('nim', $nim)->first();
+    }
+
+    public function storeCourseSchedule(array $data)
+    {
+        return CourseSchedule::create($data);
     }
 }

@@ -28,14 +28,19 @@ class AssistantService
 
     public function createCourseSchedule(array $data)
     {
-        CourseSchedule::create([
-            'name' => $data['name'],
-            'course' => $data['course'],
-            'day' => $data['day'],
-            'start_time' => $data['start_time'],
-            'end_time' => $data['end_time'],
-            'owner' => $data['owner']
-        ]);
+        $course = $data['course'];
+        $courseEnum = null;
+        foreach (\App\Enums\Course::cases() as $enumCase) {
+            if ($enumCase->value === $course) {
+                $courseEnum = $enumCase;
+                break;
+            }
+        }
+        
+        $prodi = $courseEnum->prodi();
+        $data['name'] = ($prodi === 'Teknik Informatika' ? 'IF-' : 'SI-') . $data['name'];
+        
+        $this->assistantRepository->storeCourseSchedule($data);
 
         return $data['owner'];
     }
