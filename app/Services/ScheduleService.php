@@ -2,15 +2,19 @@
 
 namespace App\Services;
 
+use App\Models\Room;
 use App\Repositories\Contracts\PracticumRepositoryInterface;
+use App\Repositories\Contracts\RoomRepositoryInterface;
 
 class ScheduleService
 {
     protected $practicumRepository;
+    protected $roomRepository;
 
-    public function __construct(PracticumRepositoryInterface $practicumRepository)
+    public function __construct(PracticumRepositoryInterface $practicumRepository, RoomRepositoryInterface $roomRepository)
     {
         $this->practicumRepository = $practicumRepository;
+        $this->roomRepository = $roomRepository;
     }
 
     public function getPracticumList()
@@ -61,5 +65,43 @@ class ScheduleService
     public function deletePracticum($kode_praktikum)
     {
         $this->practicumRepository->deletePracticum($kode_praktikum);
+    }
+
+    public function getRoomList()
+    {
+        $rooms = $this->roomRepository->getAllRooms();
+
+        return compact('rooms');
+    }
+
+    public function getRoomDetails($id)
+    {
+        $room = $this->roomRepository->getRoomById($id);
+
+        if (empty($room)) {
+            return null;
+        }
+
+        return $room;
+    }
+
+    public function isRoomExists($id)
+    {
+        return $this->roomRepository->getRoomById($id) !== null;
+    }
+
+    public function createRoom(array $data)
+    {
+        $this->roomRepository->storeRoom($data);
+    }
+
+    public function updateRoom($id, array $data)
+    {
+        $this->roomRepository->updateRoom($id, $data);
+    }
+
+    public function deleteRoom($id)
+    {
+        $this->roomRepository->deleteRoom($id);
     }
 }

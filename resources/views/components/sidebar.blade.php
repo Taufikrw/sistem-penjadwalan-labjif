@@ -4,6 +4,7 @@
         <li class="mb-2"><a href="{{ route('dashboard') }}" class="hover:text-gray-300">Dashboard</a></li>
         <li class="mb-2"><a href="{{ route('assistant.index') }}" class="hover:text-gray-300">Assistant</a></li>
         <li class="mb-2"><a href="{{ route('practicum.index') }}" class="hover:text-gray-300">Praktikum</a></li>
+        <li class="mb-2"><a href="{{ route('room.index') }}" class="hover:text-gray-300">Ruang Praktikum</a></li>
         <li class="mb-2"><a href="#" class="hover:text-gray-300">Jadwal Praktikum</a></li>
         <li class="mb-2">
             <form action="{{ route('logout') }}" method="POST" class="inline">
