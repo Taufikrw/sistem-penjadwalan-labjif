@@ -5,16 +5,22 @@ namespace App\Services;
 use App\Models\Room;
 use App\Repositories\Contracts\PracticumRepositoryInterface;
 use App\Repositories\Contracts\RoomRepositoryInterface;
+use App\Repositories\Contracts\ScheduleRepositoryInterface;
 
 class ScheduleService
 {
     protected $practicumRepository;
     protected $roomRepository;
+    protected $scheduleRepository;
 
-    public function __construct(PracticumRepositoryInterface $practicumRepository, RoomRepositoryInterface $roomRepository)
-    {
+    public function __construct(
+        PracticumRepositoryInterface $practicumRepository,
+        RoomRepositoryInterface $roomRepository,
+        ScheduleRepositoryInterface $scheduleRepository
+    ) {
         $this->practicumRepository = $practicumRepository;
         $this->roomRepository = $roomRepository;
+        $this->scheduleRepository = $scheduleRepository;
     }
 
     public function getPracticumList()
@@ -103,5 +109,51 @@ class ScheduleService
     public function deleteRoom($id)
     {
         $this->roomRepository->deleteRoom($id);
+    }
+
+    public function getScheduleList()
+    {
+        $schedules = $this->scheduleRepository->getAllSchedules();
+
+        return compact('schedules');
+    }
+
+    public function getScheduleDetails($id)
+    {
+        $schedule = $this->scheduleRepository->getScheduleById($id);
+
+        if (empty($schedule)) {
+            return null;
+        }
+
+        return $schedule;
+    }
+
+    public function isScheduleExists($id)
+    {
+        return $this->scheduleRepository->getScheduleById($id) !== null;
+    }
+
+    public function getScheduleCreatePage()
+    {
+        $practicums = $this->practicumRepository->getAllPracticums();
+        $rooms = $this->roomRepository->getAllRooms();
+
+        return compact('practicums', 'rooms');
+    }
+
+    public function storeSchedule(array $data)
+    {
+        $this->scheduleRepository->createSchedule($data);
+    }
+
+    public function updateSchedule($id, array $data)
+    {
+        $this->scheduleRepository->updateSchedule($id, $data);
+    }
+
+    public function deleteSchedule($id)
+    {
+        $this->scheduleRepository->deleteSchedule($id);
     }
 }

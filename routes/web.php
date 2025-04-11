@@ -46,4 +46,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('room/{id}', [ScheduleController::class, 'editRoom'])->name('room.edit');
     Route::put('room/{id}', [ScheduleController::class, 'updateRoom'])->name('room.update');
     Route::delete('room/{id}', [ScheduleController::class, 'destroyRoom'])->name('room.delete');
+
+    Route::get('schedule', [ScheduleController::class, 'index'])->name('schedule.index');
+    Route::get('schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');
+    Route::post('schedule/create', [ScheduleController::class, 'store'])->name('schedule.store');
+
+    Route::get('schedule/{id}', [ScheduleController::class, 'edit'])->name('schedule.edit');
+    Route::put('schedule/{id}', [ScheduleController::class, 'update'])->name('schedule.update');
+    Route::delete('schedule/{id}', [ScheduleController::class, 'destroy'])->name('schedule.delete');
 });
