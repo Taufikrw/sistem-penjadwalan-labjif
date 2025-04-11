@@ -48,6 +48,17 @@ class AssistantService
         return compact('assistant', 'courses');
     }
 
+    public function getCourseDetails($id)
+    {
+        $course = $this->courseScheduleRepository->getCourseScheduleById($id);
+
+        if (!$course) {
+            return null;
+        }
+
+        return $course;
+    }
+
     public function createCourseSchedule(array $data)
     {
         $course = $data['course'];
@@ -65,5 +76,21 @@ class AssistantService
         $this->courseScheduleRepository->storeCourseSchedule($data);
 
         return $data['owner'];
+    }
+
+    public function updateCourseSchedule(array $data, string $id)
+    {
+        $courseSchedule = CourseSchedule::where('id', $id)->first();
+
+        if (!$courseSchedule) {
+            return null;
+        }
+
+        $this->courseScheduleRepository->updateCourseSchedule($id, $data);
+    }
+
+    public function deleteCourseSchedule(string $id)
+    {
+        $this->courseScheduleRepository->deleteCourseSchedule($id);
     }
 }

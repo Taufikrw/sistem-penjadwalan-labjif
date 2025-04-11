@@ -36,4 +36,28 @@ class CourseScheduleRepository implements CourseScheduleRepositoryInterface
     {
         return CourseSchedule::create($data);
     }
+
+    public function updateCourseSchedule($id, array $data)
+    {
+        $courseSchedule = $this->getCourseScheduleById($id);
+
+        if ($courseSchedule) {
+            $courseSchedule->update($data);
+            return $courseSchedule;
+        }
+
+        return null;
+    }
+
+    public function deleteCourseSchedule($id)
+    {
+        $courseSchedule = $this->getCourseScheduleById($id);
+
+        if ($courseSchedule) {
+            $courseSchedule->delete();
+            return true;
+        }
+
+        return false;
+    }
 }

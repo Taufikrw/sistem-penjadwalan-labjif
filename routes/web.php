@@ -23,8 +23,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('assistant/{nim}', [AssistantController::class, 'show'])->name('assistant.show');
 
-    Route::get('course/{nim}', [AssistantController::class, 'courseCreate'])->name('course.create');
-    Route::post('course/{nim}', [AssistantController::class, 'courseStore'])->name('course.store');
+    Route::get('course/{nim}/create', [AssistantController::class, 'courseCreate'])->name('course.create');
+    Route::post('course/{nim}/create', [AssistantController::class, 'courseStore'])->name('course.store');
+
+    Route::get('course/{nim}/{id}', [AssistantController::class, 'courseEdit'])->name('course.edit');
+    Route::put('course/{nim}/{id}', [AssistantController::class, 'courseUpdate'])->name('course.update');
+    Route::delete('course/{nim}/{id}', [AssistantController::class, 'courseDestroy'])->name('course.delete');
 
     Route::get('practicum', [ScheduleController::class, 'listPracticums'])->name('practicum.index');
 

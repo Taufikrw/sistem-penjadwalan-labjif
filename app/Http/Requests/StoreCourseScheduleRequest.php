@@ -24,7 +24,7 @@ class StoreCourseScheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:1',
+            'name' => 'required|string|max:4',
             'course' => 'required|string|max:255',
             'day' => ['required', 'string', Rule::enum(Day::class)],
             'start_time' => 'required|date_format:H:i',
