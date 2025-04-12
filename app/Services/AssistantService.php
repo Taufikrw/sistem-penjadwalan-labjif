@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\CourseSchedule;
 use App\Repositories\Contracts\AssistantRepositoryInterface;
 use App\Repositories\Contracts\CourseScheduleRepositoryInterface;
+use Illuminate\Support\Facades\Hash;
 
 class AssistantService
 {
@@ -92,5 +93,12 @@ class AssistantService
     public function deleteCourseSchedule(string $id)
     {
         $this->courseScheduleRepository->deleteCourseSchedule($id);
+    }
+
+    public function createAssistant(array $data)
+    {
+        $data['password'] = Hash::make($data['password']);
+        
+        $this->assistantRepository->storeAssistant($data);
     }
 }

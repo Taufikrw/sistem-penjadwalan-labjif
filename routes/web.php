@@ -20,6 +20,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [FrontController::class, 'dashboard'])->name('dashboard');
 
     Route::get('assistant', [AssistantController::class, 'index'])->name('assistant.index');
+    Route::get('assistant/create', [AssistantController::class, 'create'])->name('assistant.create');
+    Route::post('assistant/create', [AssistantController::class, 'store'])->name('assistant.store');
 
     Route::get('assistant/{nim}', [AssistantController::class, 'show'])->name('assistant.show');
 

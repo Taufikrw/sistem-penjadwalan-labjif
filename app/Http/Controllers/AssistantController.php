@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAssistantRequest;
 use App\Http\Requests\StoreCourseScheduleRequest;
 use App\Services\AssistantService;
-use Illuminate\Http\Request;
 
 class AssistantController extends Controller
 {
@@ -31,6 +31,23 @@ class AssistantController extends Controller
         }
 
         return view('assistant.show', $data);
+    }
+
+    public function create()
+    {
+        return view('assistant.form');
+    }
+
+    public function store(StoreAssistantRequest $request)
+    {
+        $validated = $request->validated();
+
+        try {
+            $this->assistantService->createAssistant($validated);
+            return redirect()->route('assistant.index')->with('success', 'Assistant created successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to create assistant: ' . $e->getMessage());
+        }
     }
 
     public function courseCreate(string $nim)
