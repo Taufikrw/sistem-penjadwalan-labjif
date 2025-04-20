@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Models\Assistant;
+use App\Models\AssistantSchedule;
 use App\Models\Schedule;
 use App\Repositories\Contracts\ScheduleRepositoryInterface;
 
@@ -54,5 +56,40 @@ class ScheduleRepository implements ScheduleRepositoryInterface
         }
 
         return false;
+    }
+
+    public function getAssistantByScheduleId($scheduleId)
+    {
+        return AssistantSchedule::with('assistant')->where('schedule_id', $scheduleId)->get();
+    }
+
+    public function setAssistantSchedule($scheduleId, $nim)
+    {
+        $schedule = $this->getScheduleById($scheduleId);
+        $assistant = Assistant::where('nim', $nim)->first();
+
+        if (!$schedule || !$assistant) {
+            return false;
+        }
+
+        return AssistantSchedule::create([
+            'schedule_id' => $scheduleId,
+            'nim' => $nim,
+        ]);
+    }
+
+    public function updateAssistantSchedule($id, $nim)
+    {
+        $assistantSchedule = AssistantSchedule::where('id', $id)->first();
+        $assistant = Assistant::where('nim', $nim)->first();
+
+        if (!$assistantSchedule || !$assistant) {
+            return false;
+        }
+
+        return $assistantSchedule->update([
+            'schedule_id' => $assistantSchedule->schedule_id,
+            'nim' => $nim,
+        ]);
     }
 }

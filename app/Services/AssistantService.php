@@ -5,17 +5,24 @@ namespace App\Services;
 use App\Models\CourseSchedule;
 use App\Repositories\Contracts\AssistantRepositoryInterface;
 use App\Repositories\Contracts\CourseScheduleRepositoryInterface;
+use App\Repositories\Contracts\ScheduleRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 
 class AssistantService
 {
     protected $assistantRepository;
     protected $courseScheduleRepository;
+    protected $scheduleRepository;
 
-    public function __construct(AssistantRepositoryInterface $assistantRepository, CourseScheduleRepositoryInterface $courseScheduleRepository)
+    public function __construct(
+        AssistantRepositoryInterface $assistantRepository, 
+        CourseScheduleRepositoryInterface $courseScheduleRepository,
+        ScheduleRepositoryInterface $scheduleRepository
+    )
     {
         $this->assistantRepository = $assistantRepository;
         $this->courseScheduleRepository = $courseScheduleRepository;
+        $this->scheduleRepository = $scheduleRepository;
     }
 
     public function getAssistantsList()
@@ -100,5 +107,44 @@ class AssistantService
         $data['password'] = Hash::make($data['password']);
         
         $this->assistantRepository->storeAssistant($data);
+    }
+
+    public function getSetAssistantPage(string $id)
+    {
+        $schedule = $this->scheduleRepository->getScheduleById($id);
+
+        $assistants = $this->assistantRepository->getAllAssistants();
+
+        $assistantSchedules = $this->scheduleRepository->getAssistantByScheduleId($id);
+
+        return compact('schedule', 'assistants', 'assistantSchedules');
+    }
+
+    public function setAssistantToSchedule(array $data, string $id)
+    {
+        $schedule = $this->scheduleRepository->getScheduleById($id);
+
+        if (!$schedule) {
+            return null;
+        }
+
+        foreach ($data['assistants'] as $assistant) {
+            $this->scheduleRepository->setAssistantSchedule($id, $assistant['nim']);
+        }
+    }
+
+    public function updateAssistantToSchedule(array $data, string $id)
+    {
+        $schedule = $this->scheduleRepository->getScheduleById($id);
+
+        if (!$schedule) {
+            return null;
+        }
+
+        $exist = array_column($data['exists'], 'id');
+
+        foreach ($data['assistants'] as $assistant) {
+            $this->scheduleRepository->updateAssistantSchedule($exist, $assistant['nim']);
+        }
     }
 }

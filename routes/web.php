@@ -56,4 +56,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('schedule/{id}', [ScheduleController::class, 'edit'])->name('schedule.edit');
     Route::put('schedule/{id}', [ScheduleController::class, 'update'])->name('schedule.update');
     Route::delete('schedule/{id}', [ScheduleController::class, 'destroy'])->name('schedule.delete');
+
+    Route::get('schedule/{id}/set-assistant', [AssistantController::class, 'setAssistant'])->name('schedule.set-assistant');
+    Route::post('schedule/{id}/set-assistant', [AssistantController::class, 'storeSetAssistant'])->name('schedule.store-assistant');
+    Route::get('schedule/{id}/edit-assistant', [AssistantController::class, 'editAssistant'])->name('schedule.edit-assistant');
+    Route::put('schedule/{id}/edit-assistant', [AssistantController::class, 'updateAssistant'])->name('schedule.update-assistant');
 });

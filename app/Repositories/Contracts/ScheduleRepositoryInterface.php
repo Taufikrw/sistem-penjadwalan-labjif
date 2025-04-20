@@ -13,4 +13,10 @@ interface ScheduleRepositoryInterface
     public function updateSchedule($id, array $data);
 
     public function deleteSchedule($id);
+
+    public function getAssistantByScheduleId($scheduleId);
+
+    public function setAssistantSchedule($scheduleId, $nim);
+
+    public function updateAssistantSchedule($scheduleId, $nim);
 }

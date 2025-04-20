@@ -3,16 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAssistantRequest;
+use App\Http\Requests\StoreAssistantScheduleRequest;
 use App\Http\Requests\StoreCourseScheduleRequest;
+use App\Http\Requests\UpdateAssistantScheduleRequest;
 use App\Services\AssistantService;
+use App\Services\ScheduleService;
 
 class AssistantController extends Controller
 {
     protected $assistantService;
+    protected $scheduleService;
 
-    public function __construct(AssistantService $assistantService)
-    {
+    public function __construct(
+        AssistantService $assistantService,
+        ScheduleService $scheduleService
+    ) {
         $this->assistantService = $assistantService;
+        $this->scheduleService = $scheduleService;
     }
 
     public function index()
@@ -141,6 +148,60 @@ class AssistantController extends Controller
             return redirect()->route('assistant.show', $nim)->with('success', 'Course schedule deleted successfully');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to delete course schedule: ' . $e->getMessage());
+        }
+    }
+
+    public function setAssistant(string $id)
+    {
+        if (!$this->scheduleService->isScheduleExists($id)) {
+            return response()->view('errors.not-found', ['message' => 'Schedule not found'], 404);
+        }
+
+        $data = $this->assistantService->getSetAssistantPage($id);
+
+        return view('schedule.set-assistant', $data);
+    }
+    
+    public function storeSetAssistant(StoreAssistantScheduleRequest $request, string $id)
+    {
+        $validated = $request->validated();
+        
+        if (!$this->scheduleService->isScheduleExists($id)) {
+            return response()->view('errors.not-found', ['message' => 'Schedule not found'], 404);
+        }
+
+        try {
+            $this->assistantService->setAssistantToSchedule($validated, $id);
+            return redirect()->route('schedule.index')->with('success', 'Assistant set successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to set assistant: ' . $e->getMessage());
+        }
+    }
+
+    public function editAssistant(string $id)
+    {
+        if (!$this->scheduleService->isScheduleExists($id)) {
+            return response()->view('errors.not-found', ['message' => 'Schedule not found'], 404);
+        }
+
+        $data = $this->assistantService->getSetAssistantPage($id);
+
+        return view('schedule.set-assistant', $data);
+    }
+
+    public function updateAssistant(UpdateAssistantScheduleRequest $request, string $id)
+    {
+        $validated = $request->validated();
+
+        if (!$this->scheduleService->isScheduleExists($id)) {
+            return response()->view('errors.not-found', ['message' => 'Schedule not found'], 404);
+        }
+
+        try {
+            $this->assistantService->updateAssistantToSchedule($validated, $id);
+            return redirect()->route('schedule.index')->with('success', 'Assistant updated successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update assistant: ' . $e->getMessage());
         }
     }
 }
