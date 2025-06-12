@@ -92,4 +92,13 @@ class ScheduleRepository implements ScheduleRepositoryInterface
             'nim' => $nim,
         ]);
     }
+
+    public function getEmptyAssistantSchedules()
+    {
+        return Schedule::with('practicum', 'room')
+            ->whereNotIn('id', function ($query) {
+                $query->select('schedule_id')->from('assistant_schedules');
+            })
+            ->get();
+    }
 }

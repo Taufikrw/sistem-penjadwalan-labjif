@@ -19,4 +19,6 @@ interface ScheduleRepositoryInterface
     public function setAssistantSchedule($scheduleId, $nim);
 
     public function updateAssistantSchedule($scheduleId, $nim);
+
+    public function getEmptyAssistantSchedules();
 }
