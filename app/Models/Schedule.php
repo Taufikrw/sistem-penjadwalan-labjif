@@ -32,9 +32,9 @@ class Schedule extends Model
         return $this->belongsTo(Practicum::class, 'kode_praktikum', 'kode_praktikum');
     }
 
-    public function room()
+    public function laboratorium()
     {
-        return $this->belongsTo(Room::class, 'room_id', 'id');
+        return $this->belongsTo(Laboratorium::class, 'room_id', 'id');
     }
 
     public function assistantSchedules()

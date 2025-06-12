@@ -7,16 +7,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Room extends Model
+class Laboratorium extends Model
 {
     use HasUuids, HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
+        'location',
+        'capacity'
     ];
 
     public function schedules()
     {
-        return $this->hasMany(Schedule::class, 'room_id', 'id');
+        return $this->hasMany(Schedule::class, 'laboratorium_id', 'id');
     }
 }
