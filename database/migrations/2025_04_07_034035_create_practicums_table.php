@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('kode_praktikum')->primary();
             $table->string('name');
             $table->string('for_prodi');
-            $table->string('semester');
+            $table->integer('semester');
 
             $table->softDeletes();
             $table->timestamps();

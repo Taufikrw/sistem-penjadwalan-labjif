@@ -18,7 +18,7 @@ class Practicum extends Model
         'kode_praktikum',
         'name',
         'for_prodi',
-        'is_odd',
+        'semester',
     ];
 
     public function schedules()

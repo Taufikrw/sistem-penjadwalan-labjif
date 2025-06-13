@@ -25,7 +25,7 @@ class StorePracticumRequest extends FormRequest
             'kode_praktikum' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'for_prodi' => 'required|string|in:Informatika,Sistem Informasi',
-            'is_odd' => 'required|boolean',
+            'semester' => 'required|integer|between:1,8',
         ];
     }
 }
