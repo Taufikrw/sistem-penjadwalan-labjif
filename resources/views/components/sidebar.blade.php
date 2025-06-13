@@ -7,7 +7,7 @@
             </li>
             <li class="mb-1">
                 <a href="{{ route('assistant.index') }}"
-                    class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs(['assistant.index', 'assistant.create', 'assistant.edit']) ? 'bg-primary-20' : '' }}">Assistant</a>
+                    class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs(['assistant.index', 'assistant.create', 'assistant.edit', 'assistant.showCourse', 'course.create', 'course.edit']) ? 'bg-primary-20' : '' }}">Asisten</a>
             </li>
             <li class="mb-1">
                 <a href="{{ route('practicum.index') }}"
@@ -15,8 +15,7 @@
             </li>
             <li class="mb-1">
                 <a href="{{ route('room.index') }}"
-                    class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs('room.index') ? 'bg-primary-20' : '' }}">Ruang
-                    Praktikum</a>
+                    class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs('room.index') ? 'bg-primary-20' : '' }}">Laboratorium</a>
             </li>
             <li class="mb-1">
                 <a href="{{ route('schedule.index') }}"

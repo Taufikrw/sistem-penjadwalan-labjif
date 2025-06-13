@@ -126,7 +126,7 @@ class AssistantController extends Controller
 
         try {
             $course_owner = $this->assistantService->createCourseSchedule($validated);
-            return redirect()->route('assistant.show', $course_owner)->with('success', 'Course schedule created successfully');
+            return redirect()->route('assistant.showCourse', $course_owner)->with('success', 'Jadwal perkuliahan berhasil dibuat');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to create course schedule: ' . $e->getMessage());
         }
@@ -168,7 +168,7 @@ class AssistantController extends Controller
 
         try {
             $this->assistantService->updateCourseSchedule($validated, $id);
-            return redirect()->route('assistant.show', $nim)->with('success', 'Course schedule updated successfully');
+            return redirect()->route('assistant.showCourse', $nim)->with('success', 'Jadwal perkuliahan berhasil diubah');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to update course schedule: ' . $e->getMessage());
         }
@@ -190,7 +190,7 @@ class AssistantController extends Controller
 
         try {
             $this->assistantService->deleteCourseSchedule($id);
-            return redirect()->route('assistant.show', $nim)->with('success', 'Course schedule deleted successfully');
+            return redirect()->route('assistant.showCourse', $nim)->with('success', 'Jadwal perkuliahan berhasil dihapus');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to delete course schedule: ' . $e->getMessage());
         }

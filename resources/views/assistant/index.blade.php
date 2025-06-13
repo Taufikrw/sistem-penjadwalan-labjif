@@ -9,14 +9,15 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col">
             <x-topbar />
+            
+            @if (session('success'))
+                <div class="bg-green-500 border border-green-700 text-white px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">Success!</strong>
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                </div>
+            @endif
 
             <div class="p-10 flex-1">
-                @if (session('success'))
-                    <div class="bg-green-500 text-white p-4 rounded mb-4">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6">
                     <h1 class="text-3xl font-bold">Daftar Asisten</h1>
                     <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
@@ -94,7 +95,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $item->angkatan }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $item->tahun_masuk }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="{{ route('assistant.show', $item->nim) }}"
+                                        <a href="{{ route('assistant.showCourse', $item->nim) }}"
                                             class="text-tertiary-60 hover:text-tertiary flex items-center gap-1">
                                             <x-heroicon-o-eye class="w-5 h-5"/>
                                             Detail

@@ -7,54 +7,89 @@
         <x-sidebar />
 
         <!-- Main Content -->
-        <div class="w-3/4 p-6">
-            <h1 class="text-red-500 text-lg mb-4">{{ $assistant->name }}</h1>
+        <div class="flex-1 flex flex-col">
+            <x-topbar />
 
-            @if(session('success'))
-                <div class="bg-green-500 text-white p-4 rounded mb-4">
-                    {{ session('success') }}
+            @if (session('success'))
+                <div class="bg-green-500 text-white px-4 py-3 relative" role="alert">
+                    <strong class="font-bold">Success!</strong>
+                    <span class="block sm:inline">{{ session('success') }}</span>
                 </div>
             @endif
 
-            <a href="{{ route('course.create', $assistant->nim) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Tambah Jadwal Kuliah
-            </a>
+            <div class="h-40 flex flex-col items-center justify-center gap-2">
+                <h1 class="text-2xl font-bold">{{ $assistant->name }}</h1>
+                <p class="text-xl">{{ $assistant->nim }} | {{ $assistant->prodi }} | {{ $assistant->angkatan }}</p>
+            </div>
 
-            @if($assistant->courseSchedules->isEmpty())
-                <p class="text-gray-500 mt-4">Belum ada jadwal kuliah.</p>
-            @else
-                <table class="table-auto w-full mt-4">
-                    <thead>
-                        <tr>
-                            <th class="px-4 py-2">Mata Kuliah</th>
-                            <th class="px-4 py-2">Hari</th>
-                            <th class="px-4 py-2">Jam</th>
-                            <th class="px-4 py-2">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($courses as $course)
+            <div class="px-10 pb-10 flex-1">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                    <h1 class="text-3xl font-bold">Daftar Perkuliahan</h1>
+                    <div
+                        class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
+                        <a href="{{ route('course.create', $assistant->nim) }}"
+                            class="bg-secondary font-bold py-2 px-4 rounded border-1 border-tertiary hover:bg-secondary-70">
+                            <p class="text-tertiary text-sm">Tambah</p>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-table-header">
                             <tr>
-                                <td class="border px-4 py-2">{{ $course->course }} {{ $course->name }}</td>
-                                <td class="border px-4 py-2">{{ $course->day }}</td>
-                                <td class="border px-4 py-2">{{ $course->start_time->format('h:i A') }} - {{ $course->end_time->format('h:i A') }}</td>
-                                <td class="border px-4 py-2">
-                                    <a href="{{ route('course.edit', [$assistant->nim, $course->id]) }}" class="text-blue-500 hover:underline">Edit</a>
-                                    <form action="{{ route('course.delete', [$assistant->nim, $course->id]) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-500 hover:underline" onclick="return confirm('Yakin ingin menghapus jadwal ini?')">Hapus</button>
-                                    </form>
-                                </td>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
+                                    Nama Mata Kuliah
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
+                                    Kelas
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
+                                    Jadwal Kuliah
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
+                                    Aksi
+                                </th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="border px-4 py-2 text-center text-gray-500">Belum ada jadwal kuliah.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            @endif
+                        </thead>
+                        <tbody class="divide-y-2 divide-table-header border-b-2 border-table-header">
+                            @forelse ($courses as $item)
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->course }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->name }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->day }}
+                                        {{ $item->start_time->format('h:i A') }} - {{ $item->end_time->format('h:i A') }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
+                                        <a href="{{ route('course.edit', [$assistant->nim, $item->id]) }}">
+                                            <x-heroicon-o-pencil-square
+                                                class="w-5 h-5 text-extended-1 hover:text-extended-light" />
+                                        </a>
+                                        <form action="{{ route('course.delete', [$assistant->nim, $item->id]) }}"
+                                            method="POST" class="flex">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                onclick="return confirm('Yakin ingin menghapus asisten ini?')"><x-heroicon-o-trash
+                                                    class="w-5 h-5 text-error hover:text-error-darked" /></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="px-6 py-4 text-center text-neutral-50">
+                                        Tidak ada data asisten.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
