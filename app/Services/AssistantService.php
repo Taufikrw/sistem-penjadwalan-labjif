@@ -104,9 +104,52 @@ class AssistantService
 
     public function createAssistant(array $data)
     {
-        $data['password'] = Hash::make($data['password']);
+        $existing = $this->assistantRepository->getAssistantByNimIncludeTrashedWithUser($data['nim']);
+        $userexisting = $this->assistantRepository->getUserByNimIncludeTrashed($data['nim']);
+
+        if ($existing) {
+            if ($existing->trashed()) {
+                $existing->restore();
+                $userexisting->restore();
+
+                $this->assistantRepository->updateAssistant($data['nim'], $data);
+            } else {
+                throw new \Exception('Assistant with this NIM already exists.');
+            }
+        } else {
+            $data['password'] = Hash::make($data['password']);
+            
+            $this->assistantRepository->storeAssistant($data);
+        }
         
-        $this->assistantRepository->storeAssistant($data);
+    }
+
+    public function updateAssistant(array $data, string $nim)
+    {
+        $assistant = $this->assistantRepository->getAssistantByNim($nim);
+
+        if (!$assistant) {
+            return null;
+        }
+
+        if (isset($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        $this->assistantRepository->updateAssistant($nim, $data);
+    }
+
+    public function deleteAssistant(string $nim)
+    {
+        $assistant = $this->assistantRepository->getAssistantByNim($nim);
+
+        if (!$assistant) {
+            return null;
+        }
+
+        $this->assistantRepository->deleteAssistant($nim);
     }
 
     public function getSetAssistantPage(string $id)

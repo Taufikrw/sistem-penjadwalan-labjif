@@ -5,12 +5,12 @@ namespace App\Providers;
 use App\Repositories\AssistantRepository;
 use App\Repositories\Contracts\AssistantRepositoryInterface;
 use App\Repositories\Contracts\CourseScheduleRepositoryInterface;
+use App\Repositories\Contracts\LaboratoriumRepositoryInterface;
 use App\Repositories\Contracts\PracticumRepositoryInterface;
-use App\Repositories\Contracts\RoomRepositoryInterface;
 use App\Repositories\Contracts\ScheduleRepositoryInterface;
 use App\Repositories\CourseScheduleRepository;
+use App\Repositories\LaboratoriumRepository;
 use App\Repositories\PracticumRepository;
-use App\Repositories\RoomRepository;
 use App\Repositories\ScheduleRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(PracticumRepositoryInterface::class, PracticumRepository::class);
         $this->app->singleton(ScheduleRepositoryInterface::class, ScheduleRepository::class);
         $this->app->singleton(CourseScheduleRepositoryInterface::class, CourseScheduleRepository::class);
-        $this->app->singleton(RoomRepositoryInterface::class, RoomRepository::class);
+        $this->app->singleton(LaboratoriumRepositoryInterface::class, LaboratoriumRepository::class);
     }
 
     /**

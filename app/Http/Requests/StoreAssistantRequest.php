@@ -23,8 +23,8 @@ class StoreAssistantRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'nim' => 'required|string|max:255|unique:assistants',
-            'prodi' => 'required|string|in:Sistem Informasi, Informatika',
+            'nim' => 'required|string|max:255',
+            'prodi' => 'required|string|in:Informatika,Sistem Informasi',
             'angkatan' => 'required|integer|min:2000|max:' . date('Y'),
             'tahun_masuk' => 'required|integer|min:2000|max:' . date('Y'),
             'password' => 'required|string|min:8|confirmed',

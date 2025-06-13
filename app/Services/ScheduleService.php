@@ -3,23 +3,23 @@
 namespace App\Services;
 
 use App\Models\Room;
+use App\Repositories\Contracts\LaboratoriumRepositoryInterface;
 use App\Repositories\Contracts\PracticumRepositoryInterface;
-use App\Repositories\Contracts\RoomRepositoryInterface;
 use App\Repositories\Contracts\ScheduleRepositoryInterface;
 
 class ScheduleService
 {
     protected $practicumRepository;
-    protected $roomRepository;
+    protected $laboratoriumRepository;
     protected $scheduleRepository;
 
     public function __construct(
         PracticumRepositoryInterface $practicumRepository,
-        RoomRepositoryInterface $roomRepository,
+        LaboratoriumRepositoryInterface $laboratoriumRepository,
         ScheduleRepositoryInterface $scheduleRepository
     ) {
         $this->practicumRepository = $practicumRepository;
-        $this->roomRepository = $roomRepository;
+        $this->laboratoriumRepository = $laboratoriumRepository;
         $this->scheduleRepository = $scheduleRepository;
     }
 
@@ -75,14 +75,14 @@ class ScheduleService
 
     public function getRoomList()
     {
-        $rooms = $this->roomRepository->getAllRooms();
+        $rooms = $this->laboratoriumRepository->getAllLaboratoriums();
 
         return compact('rooms');
     }
 
     public function getRoomDetails($id)
     {
-        $room = $this->roomRepository->getRoomById($id);
+        $room = $this->laboratoriumRepository->getLaboratoriumById($id);
 
         if (empty($room)) {
             return null;
@@ -93,22 +93,22 @@ class ScheduleService
 
     public function isRoomExists($id)
     {
-        return $this->roomRepository->getRoomById($id) !== null;
+        return $this->laboratoriumRepository->getLaboratoriumById($id) !== null;
     }
 
     public function createRoom(array $data)
     {
-        $this->roomRepository->storeRoom($data);
+        $this->laboratoriumRepository->storeLab($data);
     }
 
     public function updateRoom($id, array $data)
     {
-        $this->roomRepository->updateRoom($id, $data);
+        $this->laboratoriumRepository->updateLab($id, $data);
     }
 
     public function deleteRoom($id)
     {
-        $this->roomRepository->deleteRoom($id);
+        $this->laboratoriumRepository->deleteLab($id);
     }
 
     public function getScheduleList()
@@ -137,7 +137,7 @@ class ScheduleService
     public function getScheduleCreatePage()
     {
         $practicums = $this->practicumRepository->getAllPracticums();
-        $rooms = $this->roomRepository->getAllRooms();
+        $rooms = $this->laboratoriumRepository->getAllLaboratoriums();
 
         return compact('practicums', 'rooms');
     }

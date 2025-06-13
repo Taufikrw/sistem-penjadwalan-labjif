@@ -57,6 +57,51 @@ class AssistantController extends Controller
         }
     }
 
+    public function edit(string $nim)
+    {
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+        }
+
+        return view('assistant.form', compact('assistant'));
+    }
+
+    public function update(StoreAssistantRequest $request, string $nim)
+    {
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+        }
+
+        $validated = $request->validated();
+
+        try {
+            $this->assistantService->updateAssistant($validated, $nim);
+            return redirect()->route('assistant.index', $nim)->with('success', 'Assistant updated successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update assistant: ' . $e->getMessage());
+        }
+    }
+
+    public function destroy(string $nim)
+    {
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+        }
+
+        try {
+            $this->assistantService->deleteAssistant($nim);
+            return redirect()->route('assistant.index')->with('success', 'Assistant deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to delete assistant: ' . $e->getMessage());
+        }
+    }
+
     public function courseCreate(string $nim)
     {
         $assistant = $this->assistantService->getAssistantsDetails($nim);

@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -7,6 +8,59 @@
 @source '../views';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Poppins', sans-serif;
+
+    --color-primary: #142143;
+    --color-primary-90: #DBE1FF;
+    --color-primary-80: #B9C5F0;
+    --color-primary-70: #9EAAD4;
+    --color-primary-60: #8390B8;
+    --color-primary-50: #6A769D;
+    --color-primary-40: #515D83;
+    --color-primary-30: #39466A;
+    --color-primary-20: #232F52;
+    --color-primary-10: #0C1A3C;
+
+    --color-secondary: #FFAF00;
+    --color-secondary-90: #FFDDB0; 
+    --color-secondary-80: #FFBA45;
+    --color-secondary-70: #E59D00;
+    --color-secondary-60: #C28400;
+    --color-secondary-50: #A16D00;
+    --color-secondary-40: #805600;
+    --color-secondary-30: #614000;
+    --color-secondary-20: #442C00;
+    --color-secondary-10: #281800;
+    
+    --color-tertiary: #1A5D94;
+    --color-tertiary-98: #F8F9FF;
+    --color-tertiary-90: #D0E4FF;
+    --color-tertiary-80: #9DCAFF;
+    --color-tertiary-70: #78AFEB;
+    --color-tertiary-60: #5C95CF;
+    --color-tertiary-50: #407BB3;
+    --color-tertiary-40: #216199;
+    --color-tertiary-30: #00497B;
+    --color-tertiary-20: #003257;
+    --color-tertiary-10: #001D35;
+    
+    --color-neutral: #E4E4E4;
+    --color-neutral-90: #E5E2E1;
+    --color-neutral-80: #C9C6C5;
+    --color-neutral-70: #ADAAAA;
+    --color-neutral-60: #929090;
+    --color-neutral-50: #787776;
+    --color-neutral-40: #5F5E5E;
+    --color-neutral-30: #484646;
+    --color-neutral-20: #313030;
+    --color-neutral-10: #1C1B1B;
+
+    --color-error: #DE3730;
+    --color-error-darker: #BA1A1A;
+    --color-error-darked: #93000A;
+
+    --color-extended-1: #429EBD;
+    --color-extended-light: #0A6780;
+
+    --color-table-header: #B9EAFF;
 }
