@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Laboratorium extends Model
 {
     use HasUuids, HasFactory, SoftDeletes;
+    
+    protected $table = 'laboratoriums';
 
     protected $fillable = [
         'name',

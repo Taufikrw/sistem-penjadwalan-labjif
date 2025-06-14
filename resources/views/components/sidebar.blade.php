@@ -11,11 +11,11 @@
             </li>
             <li class="mb-1">
                 <a href="{{ route('practicum.index') }}"
-                    class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs('practicum.index') ? 'bg-primary-20' : '' }}">Praktikum</a>
+                    class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs(['practicum.index', 'practicum.create', 'practicum.edit']) ? 'bg-primary-20' : '' }}">Praktikum</a>
             </li>
             <li class="mb-1">
-                <a href="{{ route('room.index') }}"
-                    class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs('room.index') ? 'bg-primary-20' : '' }}">Laboratorium</a>
+                <a href="{{ route('lab.index') }}"
+                    class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs(['lab.index', 'lab.create', 'lab.edit']) ? 'bg-primary-20' : '' }}">Laboratorium</a>
             </li>
             <li class="mb-1">
                 <a href="{{ route('schedule.index') }}"

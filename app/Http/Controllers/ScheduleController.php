@@ -75,42 +75,42 @@ class ScheduleController extends Controller
         return redirect()->route('practicum.index')->with('success', 'Practicum deleted successfully.');
     }
 
-    public function listRooms()
+    public function listLaboratoriums()
     {
-        $data = $this->scheduleService->getRoomList();
+        $data = $this->scheduleService->getLaboratoriumList();
 
-        return view('room.index', $data);
+        return view('lab.index', $data);
     }
 
-    public function createRoom()
+    public function createLab()
     {
-        return view('room.form');
+        return view('lab.form');
     }
 
-    public function storeRoom(StoreRoomRequest $request)
+    public function storeLab(StoreRoomRequest $request)
     {
         $validated = $request->validated();
 
         try {
-            $this->scheduleService->createRoom($validated);
-            return redirect()->route('room.index')->with('success', 'Room created successfully.');
+            $this->scheduleService->createLab($validated);
+            return redirect()->route('lab.index')->with('success', 'Laboratorium created successfully.');
         } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Failed to create room: ' . $e->getMessage()]);
+            return redirect()->back()->withErrors(['error' => 'Failed to create lab: ' . $e->getMessage()]);
         }
     }
 
-    public function editRoom($id)
+    public function editLab($id)
     {
-        $room = $this->scheduleService->getRoomDetails($id);
+        $laboratorium = $this->scheduleService->getLabDetails($id);
 
-        if (!$room) {
+        if (!$laboratorium) {
             return response()->view('errors.not-found', ['message' => 'Room not found'], 404);
         }
 
-        return view('room.form', compact('room'));
+        return view('lab.form', compact('laboratorium'));
     }
 
-    public function updateRoom(StoreRoomRequest $request, $id)
+    public function updateLab(StoreRoomRequest $request, $id)
     {
         if (!$this->scheduleService->isRoomExists($id)) {
             return response()->view('errors.not-found', ['message' => 'Room not found'], 404);
@@ -118,20 +118,20 @@ class ScheduleController extends Controller
 
         $validated = $request->validated();
 
-        $this->scheduleService->updateRoom($id, $validated);
+        $this->scheduleService->updateLab($id, $validated);
 
-        return redirect()->route('room.index')->with('success', 'Room updated successfully.');
+        return redirect()->route('lab.index')->with('success', 'Room updated successfully.');
     }
 
-    public function destroyRoom($id)
+    public function destroyLab($id)
     {
         if (!$this->scheduleService->isRoomExists($id)) {
             return response()->view('errors.not-found', ['message' => 'Room not found'], 404);
         }
 
-        $this->scheduleService->deleteRoom($id);
+        $this->scheduleService->deleteLab($id);
 
-        return redirect()->route('room.index')->with('success', 'Room deleted successfully.');
+        return redirect()->route('lab.index')->with('success', 'Room deleted successfully.');
     }
 
     public function index()

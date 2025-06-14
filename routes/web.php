@@ -44,13 +44,13 @@ Route::middleware(['auth'])->group(function () {
     Route::put('practicum/{kode_praktikum}', [ScheduleController::class, 'updatePracticum'])->name('practicum.update');
     Route::delete('practicum/{kode_praktikum}', [ScheduleController::class, 'destroyPracticum'])->name('practicum.delete');
 
-    Route::get('room', [ScheduleController::class, 'listRooms'])->name('room.index');
-    Route::get('room/create', [ScheduleController::class, 'createRoom'])->name('room.create');
-    Route::post('room/create', [ScheduleController::class, 'storeRoom'])->name('room.store');
+    Route::get('lab', [ScheduleController::class, 'listLaboratoriums'])->name('lab.index');
+    Route::get('lab/create', [ScheduleController::class, 'createLab'])->name('lab.create');
+    Route::post('lab/create', [ScheduleController::class, 'storeLab'])->name('lab.store');
     
-    Route::get('room/{id}', [ScheduleController::class, 'editRoom'])->name('room.edit');
-    Route::put('room/{id}', [ScheduleController::class, 'updateRoom'])->name('room.update');
-    Route::delete('room/{id}', [ScheduleController::class, 'destroyRoom'])->name('room.delete');
+    Route::get('lab/{id}', [ScheduleController::class, 'editLab'])->name('lab.edit');
+    Route::put('lab/{id}', [ScheduleController::class, 'updateLab'])->name('lab.update');
+    Route::delete('lab/{id}', [ScheduleController::class, 'destroyLab'])->name('lab.delete');
 
     Route::get('schedule', [ScheduleController::class, 'index'])->name('schedule.index');
     Route::get('schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');

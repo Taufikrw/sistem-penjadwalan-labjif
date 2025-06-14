@@ -73,22 +73,22 @@ class ScheduleService
         $this->practicumRepository->deletePracticum($kode_praktikum);
     }
 
-    public function getRoomList()
+    public function getLaboratoriumList()
     {
-        $rooms = $this->laboratoriumRepository->getAllLaboratoriums();
+        $labs = $this->laboratoriumRepository->getAllLaboratoriums();
 
-        return compact('rooms');
+        return compact('labs');
     }
 
-    public function getRoomDetails($id)
+    public function getLabDetails($id)
     {
-        $room = $this->laboratoriumRepository->getLaboratoriumById($id);
+        $lab = $this->laboratoriumRepository->getLaboratoriumById($id);
 
-        if (empty($room)) {
+        if (empty($lab)) {
             return null;
         }
 
-        return $room;
+        return $lab;
     }
 
     public function isRoomExists($id)
@@ -96,17 +96,17 @@ class ScheduleService
         return $this->laboratoriumRepository->getLaboratoriumById($id) !== null;
     }
 
-    public function createRoom(array $data)
+    public function createLab(array $data)
     {
         $this->laboratoriumRepository->storeLab($data);
     }
 
-    public function updateRoom($id, array $data)
+    public function updateLab($id, array $data)
     {
         $this->laboratoriumRepository->updateLab($id, $data);
     }
 
-    public function deleteRoom($id)
+    public function deleteLab($id)
     {
         $this->laboratoriumRepository->deleteLab($id);
     }
