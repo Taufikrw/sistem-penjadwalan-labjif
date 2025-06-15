@@ -15,7 +15,9 @@ class Schedule extends Model
     protected $fillable = [
         'name',
         'kode_praktikum',
-        'room_id',
+        'laboratorium_id',
+        'dosen',
+        'tahun_ajar',
         'day',
         'start_time',
         'end_time',
@@ -34,7 +36,7 @@ class Schedule extends Model
 
     public function laboratorium()
     {
-        return $this->belongsTo(Laboratorium::class, 'room_id', 'id');
+        return $this->belongsTo(Laboratorium::class, 'laboratorium_id', 'id');
     }
 
     public function assistantSchedules()

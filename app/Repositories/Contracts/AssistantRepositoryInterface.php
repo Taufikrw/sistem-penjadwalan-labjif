@@ -17,4 +17,6 @@ interface AssistantRepositoryInterface
     public function updateAssistant($nim, array $data);
 
     public function deleteAssistant($nim);
+
+    public function getAssistantAvailableSchedules($schedule_id);
 }

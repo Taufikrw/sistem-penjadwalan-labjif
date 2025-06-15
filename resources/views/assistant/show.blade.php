@@ -82,7 +82,7 @@
                             @empty
                                 <tr>
                                     <td colspan="8" class="px-6 py-4 text-center text-neutral-50">
-                                        Tidak ada data asisten.
+                                        Tidak ada data jadwal kuliah.
                                     </td>
                                 </tr>
                             @endforelse

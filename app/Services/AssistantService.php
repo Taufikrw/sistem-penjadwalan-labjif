@@ -156,11 +156,16 @@ class AssistantService
     {
         $schedule = $this->scheduleRepository->getScheduleById($id);
 
-        $assistants = $this->assistantRepository->getAllAssistants();
+        $assistants = $this->assistantRepository->getAssistantAvailableSchedules($id);
 
-        $assistantSchedules = $this->scheduleRepository->getAssistantByScheduleId($id);
+        $assistantInSchedule = $this->scheduleRepository->getAssistantByScheduleId($id);
 
-        return compact('schedule', 'assistants', 'assistantSchedules');
+        $selectedAssistants = [];
+        foreach ($assistantInSchedule as $assistant) {
+            $selectedAssistants[] = $this->assistantRepository->getAssistantByNim($assistant->nim);
+        }
+
+        return compact('schedule', 'assistants', 'selectedAssistants');
     }
 
     public function setAssistantToSchedule(array $data, string $id)
@@ -171,8 +176,8 @@ class AssistantService
             return null;
         }
 
-        foreach ($data['assistants'] as $assistant) {
-            $this->scheduleRepository->setAssistantSchedule($id, $assistant['nim']);
+        foreach ($data['assistants'] as $nim) {
+            $this->scheduleRepository->setAssistantSchedule($id, $nim);
         }
     }
 
@@ -184,10 +189,12 @@ class AssistantService
             return null;
         }
 
-        $exist = array_column($data['exists'], 'id');
+        // Delete all existing assistants for the schedule
+        $this->scheduleRepository->deleteAssistantsByScheduleId($id);
 
-        foreach ($data['assistants'] as $assistant) {
-            $this->scheduleRepository->updateAssistantSchedule($exist, $assistant['nim']);
+        // Add new assistants to the schedule
+        foreach ($data['assistants'] as $nim) {
+            $this->scheduleRepository->setAssistantSchedule($id, $nim);
         }
     }
 }

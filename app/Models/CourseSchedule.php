@@ -20,6 +20,7 @@ class CourseSchedule extends Model
         'start_time',
         'end_time',
         'owner',
+        'is_final'
     ];
 
     protected $casts = [

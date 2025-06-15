@@ -22,16 +22,8 @@ class StoreAssistantScheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'assistants.0.nim' => 'required|exists:assistants,nim',
-            'assistants.1.nim' => [
-                'required',
-                'exists:assistants,nim',
-                function ($attribute, $value, $fail) {
-                    if ($value === request('assistants')[0]['nim']) {
-                        $fail('The NIM in assistant 2 must not be the same as assistant 1.');
-                    }
-                },
-            ],
+            'assistants' => 'required|array|min:1|max:2',
+            'assistants.*' => 'required|exists:assistants,nim'
         ];
     }
 }

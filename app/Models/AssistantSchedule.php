@@ -23,6 +23,6 @@ class AssistantSchedule extends Model
 
     public function schedule()
     {
-        return $this->belongsTo(CourseSchedule::class, 'schedule_id', 'id');
+        return $this->belongsTo(Schedule::class, 'schedule_id', 'id');
     }
 }

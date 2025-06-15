@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAssistantRequest;
 use App\Http\Requests\StoreAssistantScheduleRequest;
 use App\Http\Requests\StoreCourseScheduleRequest;
-use App\Http\Requests\UpdateAssistantScheduleRequest;
 use App\Services\AssistantService;
 use App\Services\ScheduleService;
 
@@ -234,7 +233,7 @@ class AssistantController extends Controller
         return view('schedule.set-assistant', $data);
     }
 
-    public function updateAssistant(UpdateAssistantScheduleRequest $request, string $id)
+    public function updateAssistant(StoreAssistantScheduleRequest $request, string $id)
     {
         $validated = $request->validated();
 

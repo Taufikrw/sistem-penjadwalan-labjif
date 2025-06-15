@@ -36,6 +36,8 @@ enum Course: string
     case METODE_SURVEY_DAN_PENGOLAHAN_DATA = 'Metode Survey dan Pengolahan Data';
     case INTERAKSI_MANUSIA_DAN_COMPUTER = 'Interaksi Manusia dan Computer';
     case KAPITA_SELEKTA = 'Kapita Selekta';
+    case MANAJEMEN_INVESTASI_TI = 'Manajemen Investasi TI';
+    case E_BUSSINESS = 'E-Business';
 
     public function prodi(): string
     {
@@ -72,6 +74,8 @@ enum Course: string
             self::METODE_SURVEY_DAN_PENGOLAHAN_DATA => 'Sistem Informasi',
             self::INTERAKSI_MANUSIA_DAN_COMPUTER => 'Sistem Informasi',
             self::KAPITA_SELEKTA => 'Sistem Informasi',
+            self::MANAJEMEN_INVESTASI_TI => 'Sistem Informasi',
+            self::E_BUSSINESS => 'Sistem Informasi',
         };
     }
 }

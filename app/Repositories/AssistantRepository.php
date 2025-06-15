@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Assistant;
+use App\Models\Schedule;
 use App\Models\User;
 use App\Repositories\Contracts\AssistantRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
@@ -37,7 +38,7 @@ class AssistantRepository implements AssistantRepositoryInterface
         if ($existing) {
             throw new \Exception('Assistant with this NIM already exists.');
         }
-        
+
         $user = User::create([
             'username' => $data['nim'],
             'password' => Hash::make($data['password']),
@@ -101,5 +102,39 @@ class AssistantRepository implements AssistantRepositoryInterface
         $user->delete();
 
         return true;
+    }
+
+    public function getAssistantAvailableSchedules($schedule_id)
+    {
+        $schedule = Schedule::with('assistantSchedules')->where('id', $schedule_id)->first();
+        $assistant = $this->getAllAssistants();
+        if (!$schedule) {
+            return [];
+        }
+
+        $day = $schedule->day;
+        $start = $schedule->start_time;
+        $end = $schedule->end_time;
+        $forProdi = $schedule->practicum->for_prodi;
+
+        return $assistant->filter(function ($assistant) use ($day, $start, $end, $forProdi) {
+            if ($assistant->prodi !== $forProdi) {
+                return false;
+            }
+
+            foreach ($assistant->courseSchedules as $courseSchedule) {
+                if (
+                    $courseSchedule->day === $day &&
+                    (
+                        ($courseSchedule->start_time <= $start && $courseSchedule->end_time > $start) ||
+                        ($courseSchedule->start_time < $end && $courseSchedule->end_time >= $end) ||
+                        ($courseSchedule->start_time >= $start && $courseSchedule->end_time <= $end)
+                    )
+                ) {
+                    return false;
+                }
+            }
+            return true;
+        })->values();
     }
 }

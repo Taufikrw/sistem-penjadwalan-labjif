@@ -137,9 +137,9 @@ class ScheduleService
     public function getScheduleCreatePage()
     {
         $practicums = $this->practicumRepository->getAllPracticums();
-        $rooms = $this->laboratoriumRepository->getAllLaboratoriums();
+        $labs = $this->laboratoriumRepository->getAllLaboratoriums();
 
-        return compact('practicums', 'rooms');
+        return compact('practicums', 'labs');
     }
 
     public function storeSchedule(array $data)

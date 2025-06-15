@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Day;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreScheduleRequest extends FormRequest
 {
@@ -24,8 +26,10 @@ class StoreScheduleRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'kode_praktikum' => 'required|string|max:255|exists:practicums,kode_praktikum',
-            'room_id' => 'required|uuid|exists:rooms,id',
-            'day' => 'required|string|in:Monday,Tuesday,Wednesday,Thursday,Friday',
+            'laboratorium_id' => 'required|uuid|exists:laboratoriums,id',
+            'dosen' => 'required|string|max:255',
+            'tahun_ajar' => 'required|integer|digits:4',
+            'day' => ['required', 'string', Rule::enum(Day::class)],
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
         ];

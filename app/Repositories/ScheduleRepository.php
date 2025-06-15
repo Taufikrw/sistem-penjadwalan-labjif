@@ -11,7 +11,7 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 {
     public function getAllSchedules($sortBy = ['day', 'start_time'], $order = 'asc')
     {
-        $query = Schedule::with(['practicum', 'room', 'assistantSchedules']);
+        $query = Schedule::with(['practicum', 'laboratorium', 'assistantSchedules']);
 
         foreach ((array) $sortBy as $column) {
             if ($column === 'day') {
@@ -26,7 +26,7 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 
     public function getScheduleById($id)
     {
-        return Schedule::with(['practicum', 'room', 'assistantSchedules'])->where('id', $id)->first();
+        return Schedule::with(['practicum', 'laboratorium', 'assistantSchedules'])->where('id', $id)->first();
     }
 
     public function createSchedule(array $data)
@@ -100,5 +100,10 @@ class ScheduleRepository implements ScheduleRepositoryInterface
                 $query->select('schedule_id')->from('assistant_schedules');
             })
             ->get();
+    }
+
+    public function deleteAssistantsByScheduleId($scheduleId)
+    {
+        return AssistantSchedule::where('schedule_id', $scheduleId)->forceDelete();
     }
 }
