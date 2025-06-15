@@ -45,8 +45,8 @@
                         @method('PUT')
                     @endif
 
-                    <div class="grid grid-cols-6 gap-4">
-                        <div class="col-span-3">
+                    <div class="grid grid-cols-4 gap-4">
+                        <div class="col-span-2">
                             <label for="course" class="block text-gray-700 text-sm font-bold mb-2">Course</label>
                             <select name="course" id="course"
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -64,7 +64,7 @@
                             @enderror
                         </div>
 
-                        <div class="col-span-3">
+                        <div class="col-span-2">
                             <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name</label>
                             <div class="flex items-center">
                                 @if (!isset($courseItem))
@@ -84,7 +84,19 @@
                             @enderror
                         </div>
 
-                        <div class="col-span-2">
+                        <div>
+                            <label for="tahun_ajar" class="block text-gray-700 text-sm font-bold mb-2">Tahun Ajaran:</label>
+                            <input type="number" min="2021" name="tahun_ajar" id="tahun_ajar"
+                                value="{{ old('tahun_ajar', isset($courseItem) ? $courseItem->tahun_ajar : now()->year) }}"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('tahun_ajar') border-red-500 @enderror"
+                                placeholder="Masukkan tahun ajar"
+                                required>
+                            @error('tahun_ajar')
+                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
                             <label for="day" class="block text-gray-700 text-sm font-bold mb-2">Day</label>
                             <select name="day" id="day"
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -101,7 +113,7 @@
                             @enderror
                         </div>
 
-                        <div class="col-span-2">
+                        <div>
                             <label for="start_time" class="block text-gray-700 text-sm font-bold mb-2">Started Time</label>
                             <input type="time" name="start_time" id="start_time"
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -112,7 +124,7 @@
                             @enderror
                         </div>
 
-                        <div class="col-span-2">
+                        <div>
                             <label for="end_time" class="block text-gray-700 text-sm font-bold mb-2">End Time</label>
                             <input type="time" name="end_time" id="end_time"
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

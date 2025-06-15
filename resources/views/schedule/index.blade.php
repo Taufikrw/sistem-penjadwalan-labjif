@@ -23,6 +23,10 @@
                     @if (Auth::user()->role === 'admin')
                         <div
                             class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
+                            <a href="#"
+                                class="bg-secondary font-bold py-2 px-4 rounded border-1 border-tertiary hover:bg-secondary-70">
+                                <p class="text-tertiary text-sm">Generate</p>
+                            </a>
                             <a href="{{ route('schedule.create') }}"
                                 class="bg-secondary font-bold py-2 px-4 rounded border-1 border-tertiary hover:bg-secondary-70">
                                 <p class="text-tertiary text-sm">Tambah</p>

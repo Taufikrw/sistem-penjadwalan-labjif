@@ -26,6 +26,7 @@ class StoreCourseScheduleRequest extends FormRequest
         return [
             'name' => 'required|string|max:4',
             'course' => 'required|string|max:255',
+            'tahun_ajar' => 'required|integer|digits:4',
             'day' => ['required', 'string', Rule::enum(Day::class)],
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',

@@ -116,14 +116,16 @@ class AssistantRepository implements AssistantRepositoryInterface
         $start = $schedule->start_time;
         $end = $schedule->end_time;
         $forProdi = $schedule->practicum->for_prodi;
+        $academicYear = $schedule->tahun_ajar;
 
-        return $assistant->filter(function ($assistant) use ($day, $start, $end, $forProdi) {
+        return $assistant->filter(function ($assistant) use ($day, $start, $end, $forProdi, $academicYear) {
             if ($assistant->prodi !== $forProdi) {
                 return false;
             }
 
             foreach ($assistant->courseSchedules as $courseSchedule) {
                 if (
+                    $courseSchedule->tahun_ajar === $academicYear &&
                     $courseSchedule->day === $day &&
                     (
                         ($courseSchedule->start_time <= $start && $courseSchedule->end_time > $start) ||

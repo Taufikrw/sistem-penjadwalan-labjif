@@ -19,7 +19,9 @@ class CourseScheduleRepository implements CourseScheduleRepositoryInterface
 
     public function getCourseScheduleByNim($nim, $sortBy = ['day', 'start_time'], $order = 'asc')
     {
-        $query = CourseSchedule::with('assistant')->where('owner', $nim);
+        $currentYear = date('Y');
+        $query = CourseSchedule::with('assistant')->where('owner', $nim)
+            ->where('tahun_ajar', $currentYear);
 
         foreach ((array) $sortBy as $column) {
             if ($column === 'day') {

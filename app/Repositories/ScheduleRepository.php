@@ -33,7 +33,9 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 
     public function getSchedulesByNim($nim)
     {
+        $currentYear = date('Y');
         return Schedule::with(['practicum', 'laboratorium', 'assistantSchedules'])
+            ->where('tahun_ajar', $currentYear)
             ->whereHas('assistantSchedules', function ($query) use ($nim) {
                 $query->where('nim', $nim);
             })->get();
