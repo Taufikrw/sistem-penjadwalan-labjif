@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Assistant')
+@section('title', 'Dashboard')
 
 @section('content')
     <div class="flex">
@@ -23,16 +23,7 @@
             </div>
 
             <div class="px-10 pb-10 flex-1">
-                <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-                    <h1 class="text-3xl font-bold">Daftar Praktikum</h1>
-                    <div
-                        class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
-                        <a href="{{ route('course.create', $assistant->nim) }}"
-                            class="bg-secondary font-bold py-2 px-4 rounded border-1 border-tertiary hover:bg-secondary-70">
-                            <p class="text-tertiary text-sm">Tambah</p>
-                        </a>
-                    </div>
-                </div>
+                <h1 class="text-3xl font-bold mb-6">Jadwal Praktikum Saya</h1>
 
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -102,5 +93,4 @@
                 </div>
             </div>
         </div>
-    </div>
-@endsection
+    @endsection

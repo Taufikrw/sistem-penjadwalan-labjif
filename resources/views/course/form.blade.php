@@ -27,7 +27,18 @@
                 </h1>
 
                 <form
-                    action="{{ isset($courseItem) ? route('course.update', [$assistant->nim, $courseItem->id]) : route('course.store', $assistant->nim) }}"
+                    action="
+                    @if (Auth::user()->role === 'admin') @isset($courseItem)
+                            {{ route('course.update', [$assistant->nim, $courseItem->id]) }}
+                        @else
+                            {{ route('course.store', $assistant->nim) }}
+                        @endisset
+                    @else
+                        @isset($courseItem)
+                            {{ route('course-schedule.update', $courseItem->id) }}
+                        @else
+                            {{ route('course-schedule.store') }}
+                             @endisset @endif"
                     method="POST">
                     @csrf
                     @if (isset($courseItem))

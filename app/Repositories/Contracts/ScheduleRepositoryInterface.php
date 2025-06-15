@@ -27,4 +27,6 @@ interface ScheduleRepositoryInterface
     public function deleteAssistantsByScheduleId($scheduleId);
 
     public function getScheduleByDay($day);
+
+    public function getHistoryByNim($nim);
 }

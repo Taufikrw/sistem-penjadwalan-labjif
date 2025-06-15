@@ -17,7 +17,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/', [FrontController::class, 'dashboard'])->name('home');
 
-    Route::get('/dashboard', [FrontController::class, 'dashboard'])->name('dashboard');
+    Route::get('/admin/dashboard', [FrontController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [FrontController::class, 'dashboardAssistant'])->name('dashboard.assistant');
 
     Route::get('assistant', [AssistantController::class, 'index'])->name('assistant.index');
     Route::get('assistant/create', [AssistantController::class, 'create'])->name('assistant.create');
@@ -65,4 +66,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('schedule/set-assistant/{id}', [AssistantController::class, 'storeSetAssistant'])->name('schedule.store-assistant');
     Route::get('schedule/edit-assistant/{id}', [AssistantController::class, 'editAssistant'])->name('schedule.edit-assistant');
     Route::put('schedule/edit-assistant/{id}', [AssistantController::class, 'updateAssistant'])->name('schedule.update-assistant');
+
+    Route::get('course-schedule', [AssistantController::class, 'courseSchedules'])->name('course.index');
+    Route::get('course-schedule/create', [AssistantController::class, 'createCourseSchedule'])->name('course-schedule.create');
+    Route::post('course-schedule/create', [AssistantController::class, 'storeCourseSchedule'])->name('course-schedule.store');
+
+    Route::get('course-schedule/{id}', [AssistantController::class, 'editCourseSchedule'])->name('course-schedule.edit');
+    Route::put('course-schedule/{id}', [AssistantController::class, 'updateCourseSchedule'])->name('course-schedule.update');
+    Route::delete('course-schedule/{id}', [AssistantController::class, 'destroyCourseSchedule'])->name('course-schedule.delete');
+
+    Route::get('history', [AssistantController::class, 'history'])->name('history.index');
 });

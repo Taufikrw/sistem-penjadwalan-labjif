@@ -97,9 +97,9 @@
                         </div>
 
                         <div class="col-span-3">
-                            <label for="tahun_ajar" class="block text-gray-700 text-sm font-bold mb-2">Tahun Ajar:</label>
+                            <label for="tahun_ajar" class="block text-gray-700 text-sm font-bold mb-2">Tahun Ajaran:</label>
                             <input type="number" min="2021" name="tahun_ajar" id="tahun_ajar"
-                                value="{{ old('tahun_ajar', isset($schedule) ? $schedule->tahun_ajar : '') }}"
+                                value="{{ old('tahun_ajar', isset($schedule) ? $schedule->tahun_ajar : now()->year) }}"
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('tahun_ajar') border-red-500 @enderror"
                                 placeholder="Masukkan tahun ajar"
                                 required>

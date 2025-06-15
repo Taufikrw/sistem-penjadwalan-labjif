@@ -130,8 +130,6 @@ class AssistantService
                 throw new \Exception('Assistant with this NIM already exists.');
             }
         } else {
-            $data['password'] = Hash::make($data['password']);
-            
             $this->assistantRepository->storeAssistant($data);
         }
         
@@ -143,12 +141,6 @@ class AssistantService
 
         if (!$assistant) {
             return null;
-        }
-
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        } else {
-            unset($data['password']);
         }
 
         $this->assistantRepository->updateAssistant($nim, $data);
@@ -209,5 +201,18 @@ class AssistantService
         foreach ($data['assistants'] as $nim) {
             $this->scheduleRepository->setAssistantSchedule($id, $nim);
         }
+    }
+
+    public function getAssistantHistory(string $nim)
+    {
+        $assistant = $this->assistantRepository->getAssistantByNim($nim);
+
+        if (!$assistant) {
+            return null;
+        }
+
+        $histories = $this->scheduleRepository->getHistoryByNim($nim);
+
+        return compact('assistant', 'histories');
     }
 }

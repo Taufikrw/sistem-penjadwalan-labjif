@@ -7,6 +7,7 @@ use App\Http\Requests\StoreAssistantScheduleRequest;
 use App\Http\Requests\StoreCourseScheduleRequest;
 use App\Services\AssistantService;
 use App\Services\ScheduleService;
+use Illuminate\Support\Facades\Auth;
 
 class AssistantController extends Controller
 {
@@ -258,5 +259,128 @@ class AssistantController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to update assistant: ' . $e->getMessage());
         }
+    }
+
+    public function courseSchedules()
+    {
+        $nim = Auth::user()->username;
+        $data = $this->assistantService->getAssistantWithCourse($nim);
+
+        if (!$data) {
+            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+        }
+
+        return view('assistant.show', $data);
+    }
+
+    public function createCourseSchedule()
+    {
+        $nim = Auth::user()->username;
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+        }
+
+        return view('course.form', compact('assistant'));
+    }
+
+    public function storeCourseSchedule(StoreCourseScheduleRequest $request)
+    {
+        $nim = Auth::user()->username;
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+        }
+
+        $validated = $request->validated();
+        $validated['owner'] = $nim;
+
+        try {
+            $this->assistantService->createCourseSchedule($validated);
+            return redirect()->route('course.index')->with('success', 'Jadwal perkuliahan berhasil dibuat');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to create course schedule: ' . $e->getMessage());
+        }
+    }
+
+    public function editCourseSchedule(string $id)
+    {
+        $nim = Auth::user()->username;
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+        }
+
+        $courseItem = $this->assistantService->getCourseDetails($id);
+
+        if (!$courseItem) {
+            return response()->view('errors.not-found', ['message' => 'Course schedule not found'], 404);
+        }
+
+        return view('course.form', compact('assistant', 'courseItem'));
+    }
+
+    public function updateCourseSchedule(StoreCourseScheduleRequest $request, string $id)
+    {
+        $nim = Auth::user()->username;
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+        }
+
+        $courseItem = $this->assistantService->getCourseDetails($id);
+
+        if (!$courseItem) {
+            return response()->view('errors.not-found', ['message' => 'Course schedule not found'], 404);
+        }
+
+        $validated = $request->validated();
+        $validated['owner'] = $nim;
+
+        try {
+            $this->assistantService->updateCourseSchedule($validated, $id);
+            return redirect()->route('course.index')->with('success', 'Jadwal perkuliahan berhasil diubah');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update course schedule: ' . $e->getMessage());
+        }
+    }
+
+    public function destroyCourseSchedule(string $id)
+    {
+        $nim = Auth::user()->username;
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+        }
+
+        $courseItem = $this->assistantService->getCourseDetails($id);
+
+        if (!$courseItem) {
+            return response()->view('errors.not-found', ['message' => 'Course schedule not found'], 404);
+        }
+
+        try {
+            $this->assistantService->deleteCourseSchedule($id);
+            return redirect()->route('course.index')->with('success', 'Jadwal perkuliahan berhasil dihapus');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to delete course schedule: ' . $e->getMessage());
+        }
+    }
+
+    public function history()
+    {
+        $nim = Auth::user()->username;
+        $data = $this->assistantService->getAssistantHistory($nim);
+
+        if (!$data) {
+            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+        }
+
+        return view('assistant.history', $data);
     }
 }

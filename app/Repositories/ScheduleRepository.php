@@ -11,11 +11,13 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 {
     public function getAllSchedules($sortBy = ['day', 'start_time'], $order = 'asc')
     {
-        $query = Schedule::with(['practicum', 'laboratorium', 'assistantSchedules']);
+        $currentYear = date('Y');
+        $query = Schedule::with(['practicum', 'laboratorium', 'assistantSchedules'])
+            ->where('tahun_ajar', $currentYear);
 
         foreach ((array) $sortBy as $column) {
             if ($column === 'day') {
-                $query->orderByRaw("CASE day WHEN 'Monday' THEN 1 WHEN 'Tuesday' THEN 2 WHEN 'Wednesday' THEN 3 WHEN 'Thursday' THEN 4 WHEN 'Friday' THEN 5 WHEN 'Saturday' THEN 6 WHEN 'Sunday' THEN 7 ELSE 8 END " . ($order === 'desc' ? 'DESC' : 'ASC'));
+                $query->orderByRaw("CASE day WHEN 'Senin' THEN 1 WHEN 'Selasa' THEN 2 WHEN 'Rabu' THEN 3 WHEN 'Kamis' THEN 4 WHEN 'Jumat' THEN 5 WHEN 'Sabtu' THEN 6 WHEN 'Minggu' THEN 7 ELSE 8 END " . ($order === 'desc' ? 'DESC' : 'ASC'));
             } else {
                 $query->orderBy($column, $order);
             }
@@ -119,6 +121,16 @@ class ScheduleRepository implements ScheduleRepositoryInterface
     {
         return Schedule::with(['practicum', 'laboratorium', 'assistantSchedules'])
             ->where('day', $day)
+            ->get();
+    }
+
+    public function getHistoryByNim($nim)
+    {
+        return Schedule::selectRaw("DISTINCT practicums.name, CASE WHEN practicums.semester % 2 = 1 THEN CONCAT(tahun_ajar, '/', (tahun_ajar::int + 1)) ELSE CONCAT((tahun_ajar::int - 1), '/', tahun_ajar) END as tahun_ajar")
+            ->join('practicums', 'practicums.kode_praktikum', '=', 'schedules.kode_praktikum')
+            ->whereHas('assistantSchedules', function ($query) use ($nim) {
+                $query->where('nim', $nim);
+            })
             ->get();
     }
 }

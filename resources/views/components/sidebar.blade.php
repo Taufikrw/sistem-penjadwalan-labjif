@@ -21,13 +21,13 @@
             @endif
             @if (Auth::user()->role === 'assistant')
                 <li class="mb-1">
-                    <a href="#" class="block py-3 px-4 hover:bg-primary-20 rounded-xl">Dashboard</a>
+                    <a href="{{ route('dashboard.assistant') }}" class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs('dashboard.assistant') ? 'bg-primary-20' : '' }}">Dashboard</a>
                 </li>
                 <li class="mb-1">
-                    <a href="#" class="block py-3 px-4 hover:bg-primary-20 rounded-xl">Riwayat</a>
+                    <a href="{{ route('history.index') }}" class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs('history.index') ? 'bg-primary-20' : '' }}">Riwayat</a>
                 </li>
                 <li class="mb-1">
-                    <a href="#" class="block py-3 px-4 hover:bg-primary-20 rounded-xl">Jadwal Perkuliahan</a>
+                    <a href="{{ route('course.index') }}" class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs(['course.index', 'course-schedule.create', 'course-schedule.edit']) ? 'bg-primary-20' : '' }}">Jadwal Perkuliahan</a>
                 </li>
             @endif
             <li class="mb-1">

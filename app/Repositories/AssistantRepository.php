@@ -41,7 +41,7 @@ class AssistantRepository implements AssistantRepositoryInterface
 
         $user = User::create([
             'username' => $data['nim'],
-            'password' => Hash::make($data['password']),
+            'password' => bcrypt($data['password']),
         ]);
 
         $assistant = Assistant::create([
@@ -82,7 +82,7 @@ class AssistantRepository implements AssistantRepositoryInterface
 
         if (isset($data['password'])) {
             if ($assistant->user) {
-                $assistant->user->update(['password' => Hash::make($data['password'])]);
+                $assistant->user->update(['password' => bcrypt($data['password'])]);
             }
         }
 

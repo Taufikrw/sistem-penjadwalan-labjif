@@ -17,17 +17,19 @@
                 </div>
             @endif
 
-            <div class="h-40 flex flex-col items-center justify-center gap-2">
-                <h1 class="text-2xl font-bold">{{ $assistant->name }}</h1>
-                <p class="text-xl">{{ $assistant->nim }} | {{ $assistant->prodi }} | {{ $assistant->angkatan }}</p>
-            </div>
+            @if (Auth::user()->role === 'admin')
+                <div class="h-40 flex flex-col items-center justify-center gap-2">
+                    <h1 class="text-2xl font-bold">{{ $assistant->name }}</h1>
+                    <p class="text-xl">{{ $assistant->nim }} | {{ $assistant->prodi }} | {{ $assistant->angkatan }}</p>
+                </div>
+            @endif
 
-            <div class="px-10 pb-10 flex-1">
+            <div class="px-10 pb-10 {{ Auth::user()->role === 'admin' ? '' : 'pt-10' }} flex-1">
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6">
                     <h1 class="text-3xl font-bold">Daftar Perkuliahan</h1>
                     <div
                         class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
-                        <a href="{{ route('course.create', $assistant->nim) }}"
+                        <a href="{{ Auth::user()->role === 'admin' ? route('course.create', $assistant->nim) : route('course-schedule.create') }}"
                             class="bg-secondary font-bold py-2 px-4 rounded border-1 border-tertiary hover:bg-secondary-70">
                             <p class="text-tertiary text-sm">Tambah</p>
                         </a>
@@ -65,11 +67,11 @@
                                         {{ $item->start_time->format('h:i A') }} - {{ $item->end_time->format('h:i A') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
-                                        <a href="{{ route('course.edit', [$assistant->nim, $item->id]) }}">
+                                        <a href="{{ Auth::user()->role === 'admin' ? route('course.edit', [$assistant->nim, $item->id]) : route('course-schedule.edit', $item->id) }}">
                                             <x-heroicon-o-pencil-square
                                                 class="w-5 h-5 text-extended-1 hover:text-extended-light" />
                                         </a>
-                                        <form action="{{ route('course.delete', [$assistant->nim, $item->id]) }}"
+                                        <form action="{{ Auth::user()->role === 'admin' ? route('course.delete', [$assistant->nim, $item->id]) : route('course-schedule.delete', $item->id) }}"
                                             method="POST" class="flex">
                                             @csrf
                                             @method('DELETE')
