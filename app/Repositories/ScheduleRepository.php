@@ -106,4 +106,11 @@ class ScheduleRepository implements ScheduleRepositoryInterface
     {
         return AssistantSchedule::where('schedule_id', $scheduleId)->forceDelete();
     }
+
+    public function getScheduleByDay($day)
+    {
+        return Schedule::with(['practicum', 'laboratorium', 'assistantSchedules'])
+            ->where('day', $day)
+            ->get();
+    }
 }

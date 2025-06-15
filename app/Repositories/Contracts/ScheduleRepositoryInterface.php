@@ -23,4 +23,6 @@ interface ScheduleRepositoryInterface
     public function getEmptyAssistantSchedules();
 
     public function deleteAssistantsByScheduleId($scheduleId);
+
+    public function getScheduleByDay($day);
 }

@@ -2,14 +2,25 @@
 
 namespace App\Services;
 
+use App\Repositories\Contracts\ScheduleRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 
 class FrontService
 {
+    protected $scheduleRepository;
+
+    public function __construct(
+        ScheduleRepositoryInterface $scheduleRepository
+    ) {
+        $this->scheduleRepository = $scheduleRepository;
+    }
+
     public function getDashboardData()
     {
-        $user = Auth::check() ? Auth::user() : null;
+        $dayName = now()->locale('id')->translatedFormat('l');
         
-        return compact('user');
+        $schedules = $this->scheduleRepository->getScheduleByDay($dayName);
+
+        return compact('schedules');
     }
 }
