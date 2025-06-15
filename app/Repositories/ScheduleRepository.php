@@ -29,6 +29,14 @@ class ScheduleRepository implements ScheduleRepositoryInterface
         return Schedule::with(['practicum', 'laboratorium', 'assistantSchedules'])->where('id', $id)->first();
     }
 
+    public function getSchedulesByNim($nim)
+    {
+        return Schedule::with(['practicum', 'laboratorium', 'assistantSchedules'])
+            ->whereHas('assistantSchedules', function ($query) use ($nim) {
+                $query->where('nim', $nim);
+            })->get();
+    }
+
     public function createSchedule(array $data)
     {
         return Schedule::create($data);

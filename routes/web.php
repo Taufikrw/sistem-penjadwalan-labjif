@@ -23,7 +23,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('assistant/create', [AssistantController::class, 'create'])->name('assistant.create');
     Route::post('assistant/create', [AssistantController::class, 'store'])->name('assistant.store');
 
-    Route::get('assistant/{nim}', [AssistantController::class, 'show'])->name('assistant.showCourse');
+    Route::get('assistant/{nim}/detail-course', [AssistantController::class, 'show'])->name('assistant.showCourse');
+    Route::get('assistant/{nim}/detail-schedule', [AssistantController::class, 'showSchedule'])->name('assistant.showSchedule');
     Route::get('assistant/{nim}/edit', [AssistantController::class, 'edit'])->name('assistant.edit');
     Route::put('assistant/{nim}/edit', [AssistantController::class, 'update'])->name('assistant.update');
     Route::delete('assistant/{nim}', [AssistantController::class, 'destroy'])->name('assistant.delete');

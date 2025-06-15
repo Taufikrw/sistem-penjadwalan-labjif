@@ -102,7 +102,7 @@
                                         </a>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="#"
+                                        <a href="{{ route('assistant.showSchedule', $item->nim) }}"
                                             class="text-tertiary-60 hover:text-tertiary flex items-center gap-1">
                                             <x-heroicon-o-eye class="w-5 h-5"/>
                                             Detail

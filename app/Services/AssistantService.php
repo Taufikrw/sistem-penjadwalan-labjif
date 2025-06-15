@@ -56,6 +56,19 @@ class AssistantService
         return compact('assistant', 'courses');
     }
 
+    public function getAssistantWithSchedule($nim)
+    {
+        $assistant = $this->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return null;
+        }
+
+        $schedules = $this->scheduleRepository->getSchedulesByNim($nim);
+
+        return compact('assistant', 'schedules');
+    }
+
     public function getCourseDetails($id)
     {
         $course = $this->courseScheduleRepository->getCourseScheduleById($id);

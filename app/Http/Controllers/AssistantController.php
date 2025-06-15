@@ -39,6 +39,17 @@ class AssistantController extends Controller
         return view('assistant.show', $data);
     }
 
+    public function showSchedule(string $nim)
+    {
+        $data = $this->assistantService->getAssistantWithSchedule($nim);
+
+        if (!$data) {
+            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+        }
+
+        return view('assistant.show-schedule', $data);
+    }
+
     public function create()
     {
         return view('assistant.form');

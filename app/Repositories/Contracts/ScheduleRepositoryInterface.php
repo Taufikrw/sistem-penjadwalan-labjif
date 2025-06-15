@@ -8,6 +8,8 @@ interface ScheduleRepositoryInterface
 
     public function getScheduleById($id);
 
+    public function getSchedulesByNim($nim);
+
     public function createSchedule(array $data);
 
     public function updateSchedule($id, array $data);
