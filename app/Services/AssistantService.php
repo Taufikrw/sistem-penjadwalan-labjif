@@ -66,7 +66,9 @@ class AssistantService
 
         $schedules = $this->scheduleRepository->getSchedulesByNim($nim);
 
-        return compact('assistant', 'schedules');
+        $histories = $this->scheduleRepository->getHistoryByNim($nim);
+
+        return compact('assistant', 'schedules', 'histories');
     }
 
     public function getCourseDetails($id)
