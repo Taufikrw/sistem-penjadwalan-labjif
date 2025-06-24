@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('practicum', [ScheduleController::class, 'listPracticums'])->name('practicum.index');
 
+    Route::get('get-practicum-data', [ScheduleController::class, 'getPracticumData'])->name('practicum.data');
     Route::get('practicum/create', [ScheduleController::class, 'createPracticum'])->name('practicum.create');
     Route::post('practicum/create', [ScheduleController::class, 'storePracticum'])->name('practicum.store');
 

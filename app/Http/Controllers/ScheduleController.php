@@ -15,17 +15,32 @@ class ScheduleController extends Controller
     {
         $this->scheduleService = $scheduleService;
     }
-    
+
     public function listPracticums()
     {
-        $data = $this->scheduleService->getPracticumList();
+        return view('practicum.index');
+    }
 
-        return view('practicum.index', $data);
+    public function getPracticumData()
+    {
+        try {
+            $data = $this->scheduleService->getPracticumList();
+            return response()->json([
+                'status' => 'success',
+                'data' => $data,
+                'message' => 'Practicum data retrieved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve practicum data: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function createPracticum()
     {
-        return view('practicum.form');
+        return view('practicum.form')->render();
     }
 
     public function storePracticum(StorePracticumRequest $request)
@@ -34,9 +49,15 @@ class ScheduleController extends Controller
 
         try {
             $this->scheduleService->storePracticum($validated);
-            return redirect()->route('practicum.index')->with('success', 'Practicum created successfully.');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Practicum created successfully.',
+            ]);
         } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Failed to create practicum: ' . $e->getMessage()]);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to create practicum: ' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -48,7 +69,7 @@ class ScheduleController extends Controller
             return response()->view('errors.not-found', ['message' => 'Practicum not found'], 404);
         }
 
-        return view('practicum.form', compact('practicum'));
+        return view('practicum.form', compact('practicum'))->render();
     }
 
     public function updatePracticum(StorePracticumRequest $request, $kode_praktikum)
@@ -56,12 +77,21 @@ class ScheduleController extends Controller
         if (!$this->scheduleService->isPracticumExists($kode_praktikum)) {
             return response()->view('errors.not-found', ['message' => 'Practicum not found'], 404);
         }
-        
+
         $validated = $request->validated();
 
-        $this->scheduleService->updatePracticum($kode_praktikum, $validated);
-
-        return redirect()->route('practicum.index')->with('success', 'Practicum updated successfully.');
+        try {
+            $this->scheduleService->updatePracticum($kode_praktikum, $validated);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Practicum updated successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to update practicum: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function destroyPracticum($kode_praktikum)
@@ -72,7 +102,10 @@ class ScheduleController extends Controller
 
         $this->scheduleService->deletePracticum($kode_praktikum);
 
-        return redirect()->route('practicum.index')->with('success', 'Practicum deleted successfully.');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Practicum deleted successfully.',
+        ]);
     }
 
     public function listLaboratoriums()

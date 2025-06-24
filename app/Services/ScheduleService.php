@@ -25,9 +25,7 @@ class ScheduleService
 
     public function getPracticumList()
     {
-        $practicums = $this->practicumRepository->getAllPracticums();
-
-        return compact('practicums');
+        return $this->practicumRepository->getAllPracticums();
     }
 
     public function getPracticumDetails($kode_praktikum)
