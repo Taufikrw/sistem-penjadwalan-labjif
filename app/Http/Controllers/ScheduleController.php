@@ -6,6 +6,7 @@ use App\Http\Requests\StorePracticumRequest;
 use App\Http\Requests\StoreRoomRequest;
 use App\Http\Requests\StoreScheduleRequest;
 use App\Services\ScheduleService;
+use Illuminate\Http\Request;
 
 class ScheduleController extends Controller
 {
@@ -21,10 +22,13 @@ class ScheduleController extends Controller
         return view('practicum.index');
     }
 
-    public function getPracticumData()
+    public function getPracticumData(Request $request)
     {
+        $sortBy = $request->get('sort_by', 'kode_praktikum');
+        $sortOrder = $request->get('sort_order', 'asc');
+
         try {
-            $data = $this->scheduleService->getPracticumList();
+            $data = $this->scheduleService->getPracticumList($sortBy, $sortOrder);
             return response()->json([
                 'status' => 'success',
                 'data' => $data,

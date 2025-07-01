@@ -25,34 +25,50 @@
                     <div
                         class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
                         <button id="btn-create-practicum"
-                            class="bg-secondary font-bold py-2 px-4 rounded border-1 border-tertiary hover:bg-secondary-70">
+                            class="bg-secondary font-bold py-2 px-4 rounded border-1 border-tertiary hover:bg-secondary-70 cursor-pointer">
                             <p class="text-tertiary text-sm">Tambah</p>
                         </button>
                     </div>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200 table-fixed">
                         <thead class="bg-table-header">
                             <tr>
                                 <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Kode Praktikum
+                                    class="sortable pl-6 py-3 text-left text-sm font-medium text-black tracking-wider cursor-pointer w-1/8"
+                                    data-sort="kode_praktikum">
+                                    <span class="flex justify-between items-center w-full">
+                                        <span>Kode Praktikum</span>
+                                        <span class="sort-indicator"></span>
+                                    </span>
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Nama
+                                    class="sortable pl-6 py-3 text-left text-sm font-medium text-black tracking-wider cursor-pointer w-1/2"
+                                    data-sort="name">
+                                    <span class="flex justify-between items-center w-full">
+                                        <span>Nama</span>
+                                        <span class="sort-indicator"></span>
+                                    </span>
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Program Studi
+                                    class="sortable pl-6 py-3 text-left text-sm font-medium text-black tracking-wider cursor-pointer w-2/16"
+                                    data-sort="for_prodi">
+                                    <span class="flex justify-between items-center w-full">
+                                        <span>Program Studi</span>
+                                        <span class="sort-indicator"></span>
+                                    </span>
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Semester
+                                    class="sortable pl-6 py-3 text-left text-sm font-medium text-black tracking-wider cursor-pointer w-1/16"
+                                    data-sort="semester">
+                                    <span class="flex justify-between items-center w-full">
+                                        <span>Semester</span>
+                                        <span class="sort-indicator"></span>
+                                    </span>
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
+                                    class="pl-6 py-3 text-left text-sm font-medium text-black tracking-wider w-1/16">
                                     Aksi
                                 </th>
                             </tr>
@@ -61,13 +77,16 @@
                             <tr>
                                 <td colspan="8" class="px-6 py-4 text-center text-neutral-50">
                                     <div class="flex justify-center items-center gap-4">
-                                        <div class="border-gray-300 h-8 w-8 animate-spin rounded-full border-5 border-t-secondary"></div>
+                                        <div
+                                            class="border-gray-300 h-8 w-8 animate-spin rounded-full border-5 border-t-secondary">
+                                        </div>
                                         Loading...
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                    <div id="pagination"></div>
                 </div>
             </div>
         </div>
@@ -81,9 +100,17 @@
 @push('scripts')
     <script type="module">
         $(document).ready(function() {
-            function loadAllPracticum() {
+            let currentSortBy = 'kode_praktikum';
+            let currentSortOrder = 'asc';
+            let currentPage = 1;
+
+            function loadAllPracticum(sortBy = currentSortBy, sortOrder = currentSortOrder, page = 1) {
+                currentSortBy = sortBy;
+                currentSortOrder = sortOrder;
+                currentPage = page;
                 $.ajax({
-                    url: '{{ route('practicum.data') }}',
+                    url: '{{ route('practicum.data') }}' + '?sort_by=' + sortBy + '&sort_order=' +
+                        sortOrder + '&page=' + page,
                     type: 'GET',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -101,22 +128,22 @@
                         );
                     },
                     success: function(response) {
-                        $('#data-list').empty(); // Kosongkan tabel sebelum menambahkan data baru
-                        if (response.data.length > 0) {
-                            $.each(response.data, function(index, item) {
+                        $('#data-list').empty();
+                        if (response.data.data.length > 0) {
+                            $.each(response.data.data, function(index, item) {
                                 let row = `
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">${item.kode_praktikum}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">${item.name}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">${item.for_prodi}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">${item.semester}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
-                                            <button data-id="${item.kode_praktikum}" class="btn-edit"><x-heroicon-o-pencil-square class="w-5 h-5 text-extended-1 hover:text-extended-light"/></button>
-                                            <button data-id="${item.kode_praktikum}" class="btn-delete"><x-heroicon-o-trash class="w-5 h-5 text-error hover:text-error-darked"/></button>
+                                        <td class="pl-6 py-4 whitespace-nowrap">${item.kode_praktikum}</td>
+                                        <td class="pl-6 py-4 whitespace-nowrap">${item.name}</td>
+                                        <td class="pl-6 py-4 whitespace-nowrap">${item.for_prodi}</td>
+                                        <td class="pl-6 py-4 whitespace-nowrap">${item.semester}</td>
+                                        <td class="pl-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
+                                            <button data-id="${item.kode_praktikum}" class="btn-edit"><x-heroicon-o-pencil-square class="w-5 h-5 text-extended-1 hover:text-extended-light cursor-pointer"/></button>
+                                            <button data-id="${item.kode_praktikum}" class="btn-delete"><x-heroicon-o-trash class="w-5 h-5 text-error hover:text-error-darked cursor-pointer"/></button>
                                         </td>
                                     </tr>
                                 `;
-                                $('#data-list').prepend(row); // Tambahkan ke awal
+                                $('#data-list').append(row);
                             });
                         } else {
                             $('#data-list').html(
@@ -127,6 +154,8 @@
                                 </tr>`
                             );
                         }
+
+                        renderPagination(response.data);
                     },
                     error: function(xhr, status, error) {
                         $('#data-list').html(
@@ -135,6 +164,46 @@
                     }
                 });
             }
+
+            function renderPagination(response) {
+                let paginationHtml = '<div class="flex justify-end mt-6">';
+                if (response.last_page > 1) {
+                    for (let i = 1; i <= response.last_page; i++) {
+                        paginationHtml +=
+                            `<button class="pagination-btn px-3 py-1 mx-1 rounded cursor-pointer ${i === response.current_page ? 'bg-secondary text-white hover:bg-secondary-70' : 'bg-gray-200 hover:bg-gray-300'}" data-page="${i}">${i}</button>`;
+                    }
+                }
+                paginationHtml += '</div>';
+                $('#pagination').html(paginationHtml);
+            }
+
+            $(document).on('click', '.sortable', function() {
+                let sortBy = $(this).data('sort');
+                let sortOrder = 'asc';
+
+                // Toggle sort order jika kolom yang sama diklik
+                if (currentSortBy === sortBy) {
+                    sortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+                }
+
+                // Panggil ulang AJAX dengan parameter baru
+                loadAllPracticum(sortBy, sortOrder);
+
+                // Update indikator sort
+                $('.sort-indicator').html('');
+                if (sortOrder === 'asc') {
+                    $(this).find('.sort-indicator').html(
+                        `<x-heroicon-o-arrow-up class="w-4 h-4 text-black"/>`);
+                } else {
+                    $(this).find('.sort-indicator').html(
+                        `<x-heroicon-o-arrow-down class="w-4 h-4 text-black"/>`);
+                }
+            });
+
+            $(document).on('click', '.pagination-btn', function() {
+                let page = $(this).data('page');
+                loadAllPracticum(currentSortBy, currentSortOrder, page);
+            });
 
             function openModal() {
                 $('#modal').removeClass('hidden');
@@ -207,7 +276,6 @@
                             timer: 2000
                         }).then(() => {
                             window.location.reload();
-                            console.log(response.message);
                         });
                     },
                     error: function(xhr, status, error) {

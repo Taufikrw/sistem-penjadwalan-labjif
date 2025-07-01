@@ -7,9 +7,15 @@ use App\Repositories\Contracts\PracticumRepositoryInterface;
 
 class PracticumRepository implements PracticumRepositoryInterface
 {
-    public function getAllPracticums($sortBy = 'kode_praktikum', $sortOrder = 'asc')
+    public function getAllPracticums($sortBy = 'kode_praktikum', $sortOrder = 'asc', $perpage = null)
     {
-        return Practicum::with('schedules')->orderBy($sortBy, $sortOrder)->get();
+        $query = Practicum::with('schedules')->orderBy($sortBy, $sortOrder);
+
+        if ($perpage) {
+            return $query->paginate($perpage);
+        }
+
+        return $query->get();
     }
     
     public function getPracticumByKode($kode_praktikum)

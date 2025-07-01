@@ -23,9 +23,9 @@ class ScheduleService
         $this->scheduleRepository = $scheduleRepository;
     }
 
-    public function getPracticumList()
+    public function getPracticumList($sortBy, $sortOrder)
     {
-        return $this->practicumRepository->getAllPracticums();
+        return $this->practicumRepository->getAllPracticums($sortBy, $sortOrder, 8);
     }
 
     public function getPracticumDetails($kode_praktikum)
