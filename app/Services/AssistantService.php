@@ -32,6 +32,11 @@ class AssistantService
         return compact('assistants');
     }
 
+    public function getAssistantsData($sortBy, $sortOrder)
+    {
+        return $this->assistantRepository->getAllAssistants($sortBy, $sortOrder, 8);
+    }
+
     public function getAssistantsDetails($nim)
     {
         $assistant = $this->assistantRepository->getAssistantByNim($nim);

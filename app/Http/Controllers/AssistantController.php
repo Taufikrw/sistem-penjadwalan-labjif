@@ -36,7 +36,7 @@ class AssistantController extends Controller
         $sortOrder = $request->get('sort_order', 'asc');
 
         try {
-            $data = $this->assistantService->getAssistantsList($sortBy, $sortOrder);
+            $data = $this->assistantService->getAssistantsData($sortBy, $sortOrder);
 
             return response()->json([
                 'status' => 'success',

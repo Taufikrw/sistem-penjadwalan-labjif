@@ -114,9 +114,27 @@ class ScheduleController extends Controller
 
     public function listLaboratoriums()
     {
-        $data = $this->scheduleService->getLaboratoriumList();
+        return view('lab.index');
+    }
 
-        return view('lab.index', $data);
+    public function getLaboratoriumData(Request $request)
+    {
+        $sortBy = $request->get('sort_by', 'id');
+        $sortOrder = $request->get('sort_order', 'asc');
+
+        try {
+            $data = $this->scheduleService->getLaboratoriumData($sortBy, $sortOrder);
+            return response()->json([
+                'status' => 'success',
+                'data' => $data,
+                'message' => 'Laboratorium data retrieved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve laboratorium data: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function createLab()

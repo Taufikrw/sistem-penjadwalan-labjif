@@ -7,9 +7,15 @@ use App\Repositories\Contracts\LaboratoriumRepositoryInterface;
 
 class LaboratoriumRepository implements LaboratoriumRepositoryInterface
 {
-    public function getAllLaboratoriums($sortBy = 'name', $order = 'asc')
+    public function getAllLaboratoriums($sortBy = 'name', $order = 'asc', $perPage = null)
     {
-        return Laboratorium::with('schedules')->orderBy($sortBy, $order)->get();
+        $query = Laboratorium::with('schedules')->orderBy($sortBy, $order);
+
+        if ($perPage) {
+            return $query->paginate($perPage);
+        }
+
+        return $query->get();
     }
 
     public function getLaboratoriumById($id)

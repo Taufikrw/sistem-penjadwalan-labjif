@@ -32,7 +32,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [FrontController::class, 'dashboard'])->name('dashboard.admin');
 
     Route::get('assistants', [AssistantController::class, 'index'])->name('assistant.index');
-    Route::get('assistants/get-data', [AssistantController::class, 'getData'])->name('assistant.data');
     
     Route::get('assistants/create', [AssistantController::class, 'create'])->name('assistant.create');
     Route::post('assistants/create', [AssistantController::class, 'store'])->name('assistant.store');
@@ -51,8 +50,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('course/{nim}/{id}', [AssistantController::class, 'courseDestroy'])->name('course.delete');
 
     Route::get('practicum', [ScheduleController::class, 'listPracticums'])->name('practicum.index');
-
-    Route::get('get-practicum-data', [ScheduleController::class, 'getPracticumData'])->name('practicum.data');
     Route::get('practicum/create', [ScheduleController::class, 'createPracticum'])->name('practicum.create');
     Route::post('practicum/create', [ScheduleController::class, 'storePracticum'])->name('practicum.store');
 
@@ -79,6 +76,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('schedule/set-assistant/{id}', [AssistantController::class, 'storeSetAssistant'])->name('schedule.store-assistant');
     Route::get('schedule/edit-assistant/{id}', [AssistantController::class, 'editAssistant'])->name('schedule.edit-assistant');
     Route::put('schedule/edit-assistant/{id}', [AssistantController::class, 'updateAssistant'])->name('schedule.update-assistant');
+
+    Route::prefix('api')->group(function () {
+        Route::get('get-assistant-data', [AssistantController::class, 'getData'])->name('api.assistant.data');
+        Route::get('get-practicum-data', [ScheduleController::class, 'getPracticumData'])->name('api.practicum.data');
+        Route::get('get-laboratorium-data', [ScheduleController::class, 'getLaboratoriumData'])->name('api.laboratorium.data');
+    });
 });
 
 Route::middleware(['auth', 'role:assistant'])->group(function () {

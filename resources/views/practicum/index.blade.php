@@ -109,7 +109,7 @@
                 currentSortOrder = sortOrder;
                 currentPage = page;
                 $.ajax({
-                    url: '{{ route('practicum.data') }}' + '?sort_by=' + sortBy + '&sort_order=' +
+                    url: '{{ route('api.practicum.data') }}' + '?sort_by=' + sortBy + '&sort_order=' +
                         sortOrder + '&page=' + page,
                     type: 'GET',
                     headers: {

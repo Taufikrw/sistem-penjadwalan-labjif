@@ -12,6 +12,8 @@ use App\Repositories\CourseScheduleRepository;
 use App\Repositories\LaboratoriumRepository;
 use App\Repositories\PracticumRepository;
 use App\Repositories\ScheduleRepository;
+use App\View\Components\DataTable;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -33,6 +35,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Blade::component('data-table', DataTable::class);
     }
 }

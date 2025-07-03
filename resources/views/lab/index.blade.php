@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Room List')
+@section('title', 'Laboratoriums')
 
 @section('content')
     <div class="flex">
@@ -28,59 +28,13 @@
                     </div>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-table-header">
-                            <tr>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Nama
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Lokasi
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Kapasitas
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Aksi
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y-2 divide-table-header border-b-2 border-table-header">
-                            @forelse ($labs as $item)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->location }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->capacity }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
-                                        <a href="{{ route('lab.edit', $item->id) }}">
-                                            <x-heroicon-o-pencil-square
-                                                class="w-5 h-5 text-extended-1 hover:text-extended-light" />
-                                        </a>
-                                        <form action="{{ route('lab.delete', $item->id) }}" method="POST"
-                                            class="flex">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                onclick="return confirm('Yakin ingin menghapus laboratorium ini?')"><x-heroicon-o-trash
-                                                    class="w-5 h-5 text-error hover:text-error-darked" /></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="8" class="px-6 py-4 text-center text-neutral-50">
-                                        Tidak ada data asisten.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                <x-data-table url="{{ route('api.laboratorium.data') }}" :columns="[
+                    ['label' => 'Nama', 'field' => 'name'],
+                    ['label' => 'Lokasi', 'field' => 'location'],
+                    ['label' => 'Kapasitas', 'field' => 'capacity'],
+                ]" :has-actions="true"
+                    table-id="practicum-table" />
             </div>
         </div>
-    @endsection
+    </div>
+@endsection
