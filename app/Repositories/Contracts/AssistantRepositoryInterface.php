@@ -4,7 +4,7 @@ namespace App\Repositories\Contracts;
 
 interface AssistantRepositoryInterface
 {
-    public function getAllAssistants($sortBy = 'nim', $order = 'asc');
+    public function getAllAssistants($sortBy = 'nim', $order = 'asc', $perPage = null);
     
     public function getAssistantByNim($nim);
 

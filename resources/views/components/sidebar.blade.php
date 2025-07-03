@@ -3,7 +3,7 @@
         <ul>
             @if (Auth::user()->role === 'admin')
                 <li class="mb-1">
-                    <a href="{{ route('dashboard') }}"
+                    <a href="{{ route('dashboard.admin') }}"
                         class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs('dashboard') ? 'bg-primary-20' : '' }}">Dashboard</a>
                 </li>
                 <li class="mb-1">

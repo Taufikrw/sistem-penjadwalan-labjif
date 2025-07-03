@@ -25,9 +25,9 @@ class AssistantService
         $this->scheduleRepository = $scheduleRepository;
     }
 
-    public function getAssistantsList()
+    public function getAssistantsList($sortBy, $sortOrder)
     {
-        $assistants = $this->assistantRepository->getAllAssistants();
+        $assistants = $this->assistantRepository->getAllAssistants($sortBy, $sortOrder, 8);
 
         return compact('assistants');
     }

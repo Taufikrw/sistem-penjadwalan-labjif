@@ -10,11 +10,16 @@ use Illuminate\Support\Facades\Hash;
 
 class AssistantRepository implements AssistantRepositoryInterface
 {
-    public function getAllAssistants($sortBy = 'nim', $order = 'asc')
+    public function getAllAssistants($sortBy = 'nim', $order = 'asc', $perPage = null)
     {
-        return Assistant::with('user', 'courseSchedules', 'assistantSchedules')
-            ->orderBy($sortBy, $order)
-            ->get();
+        $query = Assistant::with('user', 'courseSchedules', 'assistantSchedules')->orderBy($sortBy, $order);
+
+
+        if ($perPage) {
+            return $query->paginate($perPage);
+        }
+
+        return $query->get();
     }
 
     public function getAssistantByNim($nim)

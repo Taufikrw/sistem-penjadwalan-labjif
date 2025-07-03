@@ -7,6 +7,7 @@ use App\Http\Requests\StoreAssistantScheduleRequest;
 use App\Http\Requests\StoreCourseScheduleRequest;
 use App\Services\AssistantService;
 use App\Services\ScheduleService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AssistantController extends Controller
@@ -23,10 +24,31 @@ class AssistantController extends Controller
     }
 
     public function index()
-    {
-        $data = $this->assistantService->getAssistantsList();
-
+    {   
+        $data = $this->assistantService->getAssistantsList('nim', 'asc');
+        
         return view('assistant.index', $data);
+    }
+
+    public function getData(Request $request)
+    {
+        $sortBy = $request->get('sort_by', 'nim');
+        $sortOrder = $request->get('sort_order', 'asc');
+
+        try {
+            $data = $this->assistantService->getAssistantsList($sortBy, $sortOrder);
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $data,
+                'message' => 'Practicum data retrieved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve practicum data: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function show(string $nim)
