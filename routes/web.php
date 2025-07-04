@@ -13,7 +13,10 @@ Route::middleware(['guest'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', [FrontController::class, 'dashboard'])->name('home');
+    Route::get('/dashboard', [FrontController::class, 'dashboard'])->name('dashboard');
+});
+
+Route::middleware(['auth', 'role:admin,assistant'])->group(function () {
     Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
     
     Route::get('schedule', [ScheduleController::class, 'index'])->name('schedule.index');
@@ -29,8 +32,6 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', [FrontController::class, 'dashboard'])->name('dashboard.admin');
-
     Route::get('assistants', [AssistantController::class, 'index'])->name('assistant.index');
     
     Route::get('assistants/create', [AssistantController::class, 'create'])->name('assistant.create');
@@ -85,7 +86,5 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:assistant'])->group(function () {
-    Route::get('/dashboard', [FrontController::class, 'dashboardAssistant'])->name('dashboard.assistant');
-
     Route::get('history', [AssistantController::class, 'history'])->name('history.index');
 });

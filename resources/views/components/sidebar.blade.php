@@ -1,11 +1,10 @@
 <div class="w-[320px] bg-primary text-white h-screen">
     <nav class="mt-10 px-6">
         <ul>
+            <li class="mb-1">
+                <a href="{{ route('dashboard') }}" class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs('dashboard') ? 'bg-primary-20' : '' }}">Dashboard</a>
+            </li>
             @if (Auth::user()->role === 'admin')
-                <li class="mb-1">
-                    <a href="{{ route('dashboard.admin') }}"
-                        class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs('dashboard') ? 'bg-primary-20' : '' }}">Dashboard</a>
-                </li>
                 <li class="mb-1">
                     <a href="{{ route('assistant.index') }}"
                         class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs(['assistant.index', 'assistant.create', 'assistant.edit', 'assistant.showCourse', 'assistant.showSchedule', 'course.create', 'course.edit']) ? 'bg-primary-20' : '' }}">Asisten</a>
@@ -20,15 +19,12 @@
                 </li>
             @endif
             @if (Auth::user()->role === 'assistant')
-                <li class="mb-1">
-                    <a href="{{ route('dashboard.assistant') }}" class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs('dashboard.assistant') ? 'bg-primary-20' : '' }}">Dashboard</a>
-                </li>
-                <li class="mb-1">
-                    <a href="{{ route('history.index') }}" class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs('history.index') ? 'bg-primary-20' : '' }}">Riwayat</a>
-                </li>
-                <li class="mb-1">
-                    <a href="{{ route('course.index') }}" class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs(['course.index', 'course-schedule.create', 'course-schedule.edit']) ? 'bg-primary-20' : '' }}">Jadwal Perkuliahan</a>
-                </li>
+            <li class="mb-1">
+                <a href="{{ route('history.index') }}" class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs('history.index') ? 'bg-primary-20' : '' }}">Riwayat</a>
+            </li>
+            <li class="mb-1">
+                <a href="{{ route('course.index') }}" class="block py-3 px-4 hover:bg-primary-20 rounded-xl {{ Request::routeIs(['course.index', 'course-schedule.create', 'course-schedule.edit']) ? 'bg-primary-20' : '' }}">Jadwal Perkuliahan</a>
+            </li>
             @endif
             <li class="mb-1">
                 <a href="{{ route('schedule.index') }}"

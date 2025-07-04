@@ -14,22 +14,21 @@ class FrontController extends Controller
     {
         $this->frontService = $frontService;
     }
-    
+
     public function dashboard()
     {
-        $data = $this->frontService->getDashboardData();
+        if (Auth::user()->role === 'assistant') {
+            $data = $this->frontService->getDashboardAssistantData(Auth::user()->username);
 
-        return view('dashboard', $data);
-    }
+            if (!$data) {
+                return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+            }
 
-    public function dashboardAssistant()
-    {
-        $data = $this->frontService->getDashboardAssistantData(Auth::user()->username);
+            return view('dashboard-assistant', $data);
+        } elseif (Auth::user()->role === 'admin') {
+            $data = $this->frontService->getDashboardData();
 
-        if (!$data) {
-            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+            return view('dashboard', $data);
         }
-
-        return view('dashboard-assistant', $data);
     }
 }
