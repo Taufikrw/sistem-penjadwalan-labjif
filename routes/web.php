@@ -13,6 +13,7 @@ Route::middleware(['guest'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/', [FrontController::class, 'dashboard'])->name('home');
     Route::get('/dashboard', [FrontController::class, 'dashboard'])->name('dashboard');
 });
 

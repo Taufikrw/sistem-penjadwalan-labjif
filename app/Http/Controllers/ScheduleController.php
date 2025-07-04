@@ -148,9 +148,15 @@ class ScheduleController extends Controller
 
         try {
             $this->scheduleService->createLab($validated);
-            return redirect()->route('lab.index')->with('success', 'Laboratorium created successfully.');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Laboratorium created successfully.',
+            ]);
         } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Failed to create lab: ' . $e->getMessage()]);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to create laboratorium: ' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -173,9 +179,18 @@ class ScheduleController extends Controller
 
         $validated = $request->validated();
 
-        $this->scheduleService->updateLab($id, $validated);
-
-        return redirect()->route('lab.index')->with('success', 'Room updated successfully.');
+        try {
+            $this->scheduleService->updateLab($id, $validated);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Laboratorium updated successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to update laboratorium: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function destroyLab($id)

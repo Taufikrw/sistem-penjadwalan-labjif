@@ -21,10 +21,10 @@
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6">
                     <h1 class="text-3xl font-bold">Daftar Laboratorium</h1>
                     <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
-                        <a href="{{ route('lab.create') }}"
-                            class="bg-secondary font-bold py-2 px-4 rounded border-1 border-tertiary hover:bg-secondary-70">
+                        <button id="btn-create-lab" onclick="showDynamicModal()"
+                            class="bg-secondary font-bold py-2 px-4 rounded border-1 border-tertiary hover:bg-secondary-70 cursor-pointer">
                             <p class="text-tertiary text-sm">Tambah</p>
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -34,6 +34,9 @@
                     ['label' => 'Kapasitas', 'field' => 'capacity'],
                 ]" :has-actions="true"
                     table-id="practicum-table" />
+
+                <x-form-modal modal-id="laboratoriumModal" title="Formulir Laboratorium Baru"
+                    ajax-url="{{ route('lab.create') }}" form-id="lab-form" />
             </div>
         </div>
     </div>
