@@ -9,18 +9,22 @@ use Illuminate\View\Component;
 class DataTable extends Component
 {
     public $url;
+    public $actionUrl;
     public $columns;
     public $hasActions;
     public $tableId;
+    public $primary;
     /**
      * Create a new component instance.
      */
-    public function __construct(string $url, array $columns, bool $hasActions = false, string $tableId = 'data-table')
+    public function __construct(string $url, string $actionUrl, array $columns, bool $hasActions = false, string $tableId = 'data-table', string $primary = 'id')
     {
         $this->url = $url;
+        $this->actionUrl = $actionUrl;
         $this->columns = $columns;
         $this->hasActions = $hasActions;
         $this->tableId = $tableId;
+        $this->primary = $primary;
     }
 
     /**

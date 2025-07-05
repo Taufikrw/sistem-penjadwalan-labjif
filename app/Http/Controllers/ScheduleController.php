@@ -101,7 +101,7 @@ class ScheduleController extends Controller
     public function destroyPracticum($kode_praktikum)
     {
         if (!$this->scheduleService->isPracticumExists($kode_praktikum)) {
-            return response()->view('errors.not-found', ['message' => 'Practicum not found'], 404);
+            return abort(404, 'Practicum not found');
         }
 
         $this->scheduleService->deletePracticum($kode_praktikum);
@@ -196,12 +196,15 @@ class ScheduleController extends Controller
     public function destroyLab($id)
     {
         if (!$this->scheduleService->isRoomExists($id)) {
-            return response()->view('errors.not-found', ['message' => 'Room not found'], 404);
+            return abort(404, 'Laboratorium not found');
         }
 
         $this->scheduleService->deleteLab($id);
 
-        return redirect()->route('lab.index')->with('success', 'Room deleted successfully.');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Laboratorium deleted successfully.',
+        ]);
     }
 
     public function index()
