@@ -30,7 +30,7 @@ class AssistantController extends Controller
         return view('assistant.index', $data);
     }
 
-    public function getData(Request $request)
+    public function assistantData(Request $request)
     {
         $sortBy = $request->get('sort_by', 'nim');
         $sortOrder = $request->get('sort_order', 'asc');
@@ -51,6 +51,31 @@ class AssistantController extends Controller
         }
     }
 
+    public function assistantDetails(string $nim)
+    {
+        try {
+            $data = $this->assistantService->getAssistantDetail($nim);
+
+            if (!$data) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Assistant not found',
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $data,
+                'message' => 'Assistant data retrieved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve assistant data: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function show(string $nim)
     {
         $data = $this->assistantService->getAssistantWithCourse($nim);
@@ -60,6 +85,34 @@ class AssistantController extends Controller
         }
 
         return view('assistant.show', $data);
+    }
+
+    public function courseSchedulesData(Request $request, string $nim)
+    {
+        $sortBy = $request->get('sort_by', 'day');
+        $sortOrder = $request->get('sort_order', 'asc');
+
+        try {
+            $data = $this->scheduleService->getCourseSchedules($nim, $sortBy, $sortOrder);
+
+            if (!$data) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Assistant not found',
+                ], 404);
+            }
+    
+            return response()->json([
+                'status' => 'success',
+                'data' => $data,
+                'message' => 'Course schedules retrieved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve course schedules: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function showSchedule(string $nim)

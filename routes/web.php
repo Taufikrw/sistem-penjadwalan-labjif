@@ -80,9 +80,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('schedule/edit-assistant/{id}', [AssistantController::class, 'updateAssistant'])->name('schedule.update-assistant');
 
     Route::prefix('api')->group(function () {
-        Route::get('get-assistant-data', [AssistantController::class, 'getData'])->name('api.assistant.data');
-        Route::get('get-practicum-data', [ScheduleController::class, 'getPracticumData'])->name('api.practicum.data');
-        Route::get('get-laboratorium-data', [ScheduleController::class, 'getLaboratoriumData'])->name('api.laboratorium.data');
+        Route::get('get-today-schedules', [ScheduleController::class, 'todaySchedule'])->name('api.today-schedules');
+        Route::get('get-assistant-data', [AssistantController::class, 'assistantData'])->name('api.assistant.data');
+        Route::get('get-assistant-data/{nim}', [AssistantController::class, 'assistantDetails'])->name('api.assistant.data.nim');
+        Route::get('get-practicum-data', [ScheduleController::class, 'practicumData'])->name('api.practicum.data');
+        Route::get('get-laboratorium-data', [ScheduleController::class, 'laboratoriumData'])->name('api.laboratorium.data');
+        Route::get('get-course-schedules/{nim}', [AssistantController::class, 'courseSchedulesData'])->name('api.course-schedules');
     });
 });
 

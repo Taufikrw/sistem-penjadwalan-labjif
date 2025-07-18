@@ -22,7 +22,7 @@ class ScheduleController extends Controller
         return view('practicum.index');
     }
 
-    public function getPracticumData(Request $request)
+    public function practicumData(Request $request)
     {
         $sortBy = $request->get('sort_by', 'kode_praktikum');
         $sortOrder = $request->get('sort_order', 'asc');
@@ -117,7 +117,7 @@ class ScheduleController extends Controller
         return view('lab.index');
     }
 
-    public function getLaboratoriumData(Request $request)
+    public function laboratoriumData(Request $request)
     {
         $sortBy = $request->get('sort_by', 'id');
         $sortOrder = $request->get('sort_order', 'asc');
@@ -268,5 +268,22 @@ class ScheduleController extends Controller
         $this->scheduleService->deleteSchedule($id);
 
         return redirect()->route('schedule.index')->with('success', 'Schedule deleted successfully.');
+    }
+
+    public function todaySchedule()
+    {
+        try {
+            $schedules = $this->scheduleService->getTodaySchedules();
+            return response()->json([
+                'status' => 'success',
+                'data' => $schedules,
+                'message' => 'Schedules retrieved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve schedules: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

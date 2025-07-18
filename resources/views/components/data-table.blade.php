@@ -70,8 +70,19 @@
                                 rowsHtml +=
                                     '<tr>';
                                 columns.forEach(function(column) {
-                                    rowsHtml +=
-                                        `<td class="pl-6 py-4 whitespace-nowrap">${item[column.field]}</td>`;
+                                    if (column.field === 'assistant_names') {
+                                        let assistants = item[column.field];
+                                        if (typeof assistants === 'string') {
+                                            assistants = assistants.split(',').map(s => s.trim());
+                                        }
+                                        let assistantsList = assistants.length > 0
+                                            ? `<ul class="list-disc pl-4">${assistants.map(a => `<li>${a}</li>`).join('')}</ul>`
+                                            : 'tidak ada asisten';
+                                        rowsHtml += `<td class="pl-6 py-4 whitespace-nowrap">${assistantsList}</td>`;
+                                    } else {
+                                        rowsHtml +=
+                                            `<td class="pl-6 py-4 whitespace-nowrap">${item[column.field]}</td>`;
+                                    }
                                 });
                                 if (hasActions) {
                                     if (primary === 'nim') {

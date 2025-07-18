@@ -29,6 +29,8 @@ class Schedule extends Model
         'end_time' => 'datetime:H:i',
     ];
 
+    protected $appends = ['assistant_names', 'laboratorium_name', 'practicum_name'];
+
     public function practicum()
     {
         return $this->belongsTo(Practicum::class, 'kode_praktikum', 'kode_praktikum');
@@ -42,5 +44,26 @@ class Schedule extends Model
     public function assistantSchedules()
     {
         return $this->hasMany(AssistantSchedule::class, 'schedule_id', 'id');
+    }
+
+    public function getAssistantNamesAttribute()
+    {
+        if ($this->assistantSchedules->isEmpty()) {
+            return 'Tidak ada asisten';
+        }
+
+        return $this->assistantSchedules->map(function ($assistantSchedule) {
+            return $assistantSchedule->assistant->name ?? 'Asisten tidak ditemukan';
+        })->implode(', ');
+    }
+
+    public function getLaboratoriumNameAttribute()
+    {
+        return $this->laboratorium ? $this->laboratorium->name : 'Laboratorium tidak ditemukan';
+    }
+
+    public function getPracticumNameAttribute()
+    {
+        return $this->practicum ? $this->practicum->name . $this->name : 'Praktikum tidak ditemukan';
     }
 }

@@ -159,4 +159,16 @@ class ScheduleService
     {
         $this->scheduleRepository->deleteSchedule($id);
     }
+
+    public function getTodaySchedules()
+    {
+        $dayName = now()->locale('id')->translatedFormat('l');
+
+        return $this->scheduleRepository->getScheduleByDay($dayName, 8);
+    }
+
+    public function getCourseSchedules($nim, $sortBy, $sortOrder)
+    {
+        return $this->scheduleRepository->getCourseSchedulesByNim($nim, $sortBy, $sortOrder, 8);
+    }
 }

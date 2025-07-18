@@ -29,4 +29,6 @@ interface ScheduleRepositoryInterface
     public function getScheduleByDay($day);
 
     public function getHistoryByNim($nim);
+
+    public function getCourseSchedulesByNim($nim, $sortBy = 'day', $order = 'asc', $perPage = null);
 }

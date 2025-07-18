@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Assistant;
 use App\Models\AssistantSchedule;
+use App\Models\CourseSchedule;
 use App\Models\Schedule;
 use App\Repositories\Contracts\ScheduleRepositoryInterface;
 
@@ -119,11 +120,17 @@ class ScheduleRepository implements ScheduleRepositoryInterface
         return AssistantSchedule::where('schedule_id', $scheduleId)->forceDelete();
     }
 
-    public function getScheduleByDay($day)
+    public function getScheduleByDay($day, $perPage = null)
     {
-        return Schedule::with(['practicum', 'laboratorium', 'assistantSchedules'])
-            ->where('day', $day)
-            ->get();
+        $day = "Senin";
+        $query = Schedule::with(['practicum', 'laboratorium', 'assistantSchedules'])
+            ->where('day', $day);
+
+        if ($perPage) {
+            return $query->paginate($perPage);
+        }
+
+        return $query->get();
     }
 
     public function getHistoryByNim($nim)
@@ -134,5 +141,24 @@ class ScheduleRepository implements ScheduleRepositoryInterface
                 $query->where('nim', $nim);
             })
             ->get();
+    }
+
+    public function getCourseSchedulesByNim($nim, $sortBy = 'day', $order = 'asc', $perPage = null)
+    {
+        $query = CourseSchedule::where('owner', $nim);
+
+        foreach ((array) $sortBy as $column) {
+            if ($column === 'day') {
+                $query->orderByRaw("CASE day WHEN 'Senin' THEN 1 WHEN 'Selasa' THEN 2 WHEN 'Rabu' THEN 3 WHEN 'Kamis' THEN 4 WHEN 'Jumat' THEN 5 WHEN 'Sabtu' THEN 6 WHEN 'Minggu' THEN 7 ELSE 8 END " . ($order === 'desc' ? 'DESC' : 'ASC'));
+            } else {
+                $query->orderBy($column, $order);
+            }
+        }
+
+        if ($perPage) {
+            return $query->paginate($perPage);
+        }
+
+        return $query->get();
     }
 }

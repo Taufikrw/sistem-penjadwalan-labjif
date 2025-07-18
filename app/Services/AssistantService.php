@@ -48,6 +48,11 @@ class AssistantService
         return $assistant;
     }
 
+    public function getAssistantDetail($nim)
+    {
+        return $this->assistantRepository->getAssistantByNim($nim);
+    }
+
     public function getAssistantWithCourse($nim)
     {
         $assistant = $this->getAssistantsDetails($nim);
