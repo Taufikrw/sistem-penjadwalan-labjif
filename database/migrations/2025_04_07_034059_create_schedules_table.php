@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->string('kode_praktikum');
+            $table->string('name', 20);
+            $table->string('kode_praktikum', 20);
             $table->uuid('laboratorium_id');
-            $table->string('dosen');
-            $table->string('tahun_ajar');
-            $table->string('day');
+            $table->string('dosen', 50);
+            $table->string('tahun_ajar', 4);
+            $table->string('day', 10);
             $table->time('start_time');
             $table->time('end_time');
 

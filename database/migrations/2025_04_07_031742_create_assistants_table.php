@@ -12,12 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('assistants', function (Blueprint $table) {
-            $table->string('nim')->unique()->primary();
-            $table->string('name');
-            $table->string('prodi');
+            $table->string('nim', 10)->unique()->primary();
+            $table->string('name', 20);
+            $table->string('prodi', 20);
             $table->year('angkatan');
             $table->year('tahun_masuk');
             $table->uuid('user_id');
+            $table->string('foto')->nullable();
+            $table->string('nomor_telp', 15)->nullable();
+            $table->string('status', 10)->default('aktif');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->softDeletes();

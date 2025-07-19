@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('practicums', function (Blueprint $table) {
-            $table->string('kode_praktikum')->primary();
-            $table->string('name');
-            $table->string('for_prodi');
+            $table->string('kode_praktikum', 20)->unique()->primary();
+            $table->string('name', 20);
+            $table->string('for_prodi', 20);
             $table->integer('semester');
 
             $table->softDeletes();

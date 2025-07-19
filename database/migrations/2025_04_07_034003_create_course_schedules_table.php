@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('course_schedules', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->string('course');
-            $table->string('day');
+            $table->string('name', 20);
+            $table->string('course', 50);
+            $table->string('day', 10);
             $table->time('start_time');
             $table->time('end_time');
-            $table->string('owner');
-            $table->string('tahun_ajar');
+            $table->string('owner', 10);
+            $table->string('tahun_ajar', 4);
             $table->boolean('is_final')->default(false);
             
             $table->foreign('owner')->references('nim')->on('assistants')->onDelete('cascade');

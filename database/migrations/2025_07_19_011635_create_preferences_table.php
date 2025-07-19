@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assistant_schedules', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('schedule_id');
+        Schema::create('preferences', function (Blueprint $table) {
+            $table->uuid()->primary();
             $table->string('nim', 10);
+            $table->string('kode_praktikum', 20);
 
-            $table->foreign('schedule_id')->references('id')->on('schedules')->onDelete('cascade');
             $table->foreign('nim')->references('nim')->on('assistants')->onDelete('cascade');
-            $table->softDeletes();
+            $table->foreign('kode_praktikum')->references('kode_praktikum')->on('practicums')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assistant_schedules');
+        Schema::dropIfExists('preferences');
     }
 };
