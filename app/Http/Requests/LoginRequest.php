@@ -35,7 +35,7 @@ class LoginRequest extends FormRequest
 
         if (!Auth::attempt($credentials)) {
             throw ValidationException::withMessages([
-                'password' => 'The provided credentials do not match our records.',
+                'validation' => 'Password dan username tidak sesuai.',
             ]);
         }
 

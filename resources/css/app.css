@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -8,7 +8,16 @@
 @source '../views';
 
 @theme {
-    --font-sans: 'Poppins', sans-serif;
+    --font-sans: 'Nunito', sans-serif;
+
+    --color-key-primary: #1B277C;
+    --color-key-secondary: #3056FB;
+    --color-key-tertiary: #819AFF;
+    --color-key-neutral: #FCFCFC;
+    --color-key-neutral-variant: #F8FCFF;
+
+    --color-extended-1-value: #FFA41C;
+    --color-extended-1-seed: #FFA41C;
 
     --color-primary: #142143;
     --color-primary-90: #DBE1FF;

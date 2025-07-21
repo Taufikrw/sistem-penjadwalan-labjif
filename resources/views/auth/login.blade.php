@@ -1,50 +1,52 @@
-@extends('layouts.app')
+<x-layouts.guest>
+    <div class="w-1/2 bg-white flex items-center justify-center px-32 rounded-l-3xl flex-col relative">
+        <img src="{{ asset('assets/images/Logo.svg') }}" alt="logo lab jif" class="absolute top-14 right-14">
+        <h2 class="text-5xl text-key-primary font-extrabold text-left w-full @error('validation') mb-6 @enderror mb-12">
+            Login</h2>
 
-@section('title', 'Login')
+        @error('validation')
+            <span
+                class="bg-[#FFEDEA] border border-[#FFB4AB] h-14 w-full flex justify-center items-center text-md gap-3 rounded mb-6">
+                {{ $message }}
+                <x-heroicon-s-x-mark class="w-5 h-5 text-red-500" />
+            </span>
+        @enderror
 
-@section('content')
-    <div class="flex min-h-screen">
-        <div class="w-7xl h-screen pl-20 bg-[#1B277C]">
-            <div class="bg-[#0B1870] h-screen justify-center items-center flex flex-col shadow-xl/25">
-                <h2 class="text-5xl text-white font-extrabold text-left w-full px-28 mb-12">Login</h2>
+        <form method="POST" action="{{ route('login.store') }}" class="w-full">
+            @csrf
 
-                <form method="POST" action="{{ route('login.store') }}" class="w-full px-28">
-                    @csrf
-
-                    <div class="mb-4">
-                        <input id="username" type="text"
-                            class="block w-full py-3 border-b border-[#C8C6C6] placeholder-[#C8C6C6] focus:outline-none focus:border-white text-white bg-transparent @error('username') border-red-500 @enderror"
-                            name="username" value="{{ old('username') }}" required autocomplete="username"
-                            placeholder="Username">
-                        @error('username')
-                            <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="mb-12">
-                        <input id="password" type="password"
-                            class="block w-full py-3 border-b border-[#C8C6C6] placeholder-[#C8C6C6] focus:outline-none focus:border-white text-white bg-transparent @error('password') border-red-500 @enderror"
-                            name="password" required autocomplete="current-password" placeholder="Password">
-                        @error('password')
-                            <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <button type="submit"
-                            class="w-full bg-[#FFAF10] hover:bg-[#ED982E] text-white font-bold py-2 px-4 rounded-4xl focus:outline-none cursor-pointer">
-                            Login
-                        </button>
-                    </div>
-                </form>
+            <div class="mb-4">
+                <x-input-label for="username" class="mb-2" value="Username" />
+                <x-text-input name="username" id="username" class="w-full" :value="old('username')" placeholder="Username"
+                    required />
+                @error('username')
+                    <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                @enderror
             </div>
-        </div>
-        <div class="w-full h-screen pr-20 bg-[#4868FF]">
-            <div class="bg-[#4868FF] h-screen justify-center items-center flex flex-col shadow-[10px_0px_10px_0px_rgba(0,0,0,0.1)]">
-                <h2 class="text-5xl text-white font-extrabold mb-3 text-center">Asisten Laboratorium</h2>
-                <h2 class="text-5xl text-white font-extrabold mb-3 text-center">Jurusan Informatika</h2>
-                <img src="{{ asset('assets/images/pair-aslab-transparant.svg') }}" alt="">
+
+            <div class="mb-16">
+                <x-input-label for="password" class="mb-2" value="Password" />
+                <x-text-input name="password" id="password" type="password" class="w-full" placeholder="Password"
+                    required />
+                @error('password')
+                    <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                @enderror
             </div>
-        </div>
+
+            <div class="flex items-center justify-between">
+                <x-button-primary class="w-full py-4 text-xl" type="submit">
+                    Login
+                </x-button-primary>
+            </div>
+        </form>
     </div>
-@endsection
+
+    <div class="w-1/2 text-white flex flex-col items-center justify-center p-8 rounded-r-3xl relative overflow-hidden"
+        style="background-image: url('{{ asset('assets/images/login-page.png') }}'); background-size: cover; background-position: center;">
+        <div class="mb-4 w-full px-8">
+            <h2 class="text-5xl font-extrabold mb-2">Sistem Penjadwalan</h2>
+            <h2 class="text-5xl font-extrabold">Lab Jurusan Informatika</h2>
+        </div>
+        <img src="{{ asset('assets/images/pair-aslab-transparant.svg') }}" alt="">
+    </div>
+</x-layouts.guest>
