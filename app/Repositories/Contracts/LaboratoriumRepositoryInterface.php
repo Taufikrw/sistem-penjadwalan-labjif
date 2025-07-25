@@ -4,7 +4,7 @@ namespace App\Repositories\Contracts;
 
 interface LaboratoriumRepositoryInterface
 {
-    public function getAllLaboratoriums($sortBy = 'name', $order = 'asc', $perPage = null);
+    public function getAllLaboratoriums($sortBy = 'updated_at', $order = 'desc', $search = '', array $filters = [], $perPage = null);
 
     public function getLaboratoriumById($id);
 

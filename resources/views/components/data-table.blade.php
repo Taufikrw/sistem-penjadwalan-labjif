@@ -1,54 +1,95 @@
-<div class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-table-header">
+<div class="rounded-lg w-full overflow-x-auto px-4 bg-white">
+    <table class="w-full text-sm text-left rtl:text-right text-key-primary">
+        <thead class="border-b border-[#E5E2E1]">
             <tr>
+                <th scope="col" class="px-2 py-3 w-8">
+                    <div class="flex items-center justify-center h-full">
+                        <input type="checkbox" id="selectAllCheckboxes"
+                            class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer" />
+                    </div>
+                </th>
                 @foreach ($columns as $column)
-                    <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                        {{ $column['label'] }}</th>
+                    <th scope="col" class="px-4 py-3">
+                        <span
+                            class="flex items-center gap-1 font-extrabold {{ $column['sortable'] ? 'sortable cursor-pointer' : '' }}"
+                            data-field="{{ $column['field'] }}" data-sort-direction="">
+                            {{ $column['label'] }}
+                            @if ($column['sortable'])
+                                <span class="sort-indicator flex flex-col ml-1 gap-[3px]">
+                                    <x-icon-sort-up class="text-[#4B57AC] sort-asc-icon" />
+                                    <x-icon-sort-down class="text-[#4B57AC] sort-desc-icon" />
+                                </span>
+                            @endif
+                        </span>
+                    </th>
                 @endforeach
                 @if ($hasActions)
-                    <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                        Aksi
+                    <th scope="col" class="px-4 py-3">
+                        <span class="flex items-center gap-1 font-extrabold">
+                            Aksi
+                        </span>
                     </th>
                 @endif
             </tr>
         </thead>
-        <tbody id="{{ $tableId }}-body" class="divide-y-2 divide-table-header border-b-2 border-table-header">
+        <tbody id="{{ $tableId }}-body">
             <tr>
                 <td colspan="{{ count($columns) + ($hasActions ? 1 : 0) }}"
-                    class="px-6 py-4 text-center text-neutral-50">
-                    <div class="flex justify-center items-center gap-4">
-                        <div class="border-gray-300 h-8 w-8 animate-spin rounded-full border-5 border-t-secondary">
-                        </div>
-                        Loading...
+                    class="px-6 py-8 text-center text-neutral-50">
+                    <div class="flex justify-center items-center">
+                        <x-icon-spinner class="h-16 w-16 animate-spin" />
                     </div>
                 </td>
             </tr>
         </tbody>
     </table>
+    <div id="pagination"></div>
 </div>
 
 @push('scripts')
     <script type="module">
         $(document).ready(function() {
             const tableId = '{{ $tableId }}';
-            const url = '{{ $url }}';
+            let url = '{{ $url }}';
             const actionUrl = '{{ $actionUrl }}';
             const columns = @json($columns);
             const hasActions = {{ $hasActions ? 'true' : 'false' }};
             const primary = '{{ $primary }}';
+            const searchInputId = '{{ $searchInputId ?? '' }}';
+            const btnCreateId = '{{ $btnCreateId ?? '' }}';
+            const checked = $('.form-checkbox[name="selected[]"]:checked').length > 0;
 
-            function loadTableData() {
+            let currentSortBy = '';
+            let currentSortOrder = '';
+            let currentSearch = '';
+            let currentPage = 1;
+
+            function loadTableData(page = 1) {
+                currentPage = page;
+                let requestUrl = url;
+                const params = new URLSearchParams();
+
+                if (currentSortBy && currentSortOrder) {
+                    params.append('sort_by', currentSortBy);
+                    params.append('sort_order', currentSortOrder);
+                }
+                if (currentSearch) {
+                    params.append('search', currentSearch);
+                }
+                params.append('page', currentPage);
+                if ([...params].length > 0) {
+                    requestUrl = `${url}?${params.toString()}`;
+                }
+
                 $.ajax({
-                    url: url,
+                    url: requestUrl,
                     method: 'GET',
                     beforeSend: function() {
                         $(`#${tableId}-body`).html(
                             `<tr>
-                                <td colspan="8" class="px-6 py-4 text-center text-neutral-50">
-                                    <div class="flex justify-center items-center gap-4">
-                                        <div class="border-gray-300 h-8 w-8 animate-spin rounded-full border-5 border-t-secondary"></div>
-                                        Loading...
+                                <td colspan="${columns.length + (hasActions ? 1 : 0)}" class="px-6 py-8 text-center text-neutral-50">
+                                    <div class="flex justify-center items-center">
+                                        <x-icon-spinner class="h-16 w-16 animate-spin" />
                                     </div>
                                 </td>
                             </tr>`
@@ -60,7 +101,7 @@
                             rowsHtml =
                                 `
                                 <tr>
-                                    <td colspan="${columns.length + (hasActions ? 1 : 0)}" class="px-6 py-4 text-center text-neutral-50">
+                                    <td colspan="${columns.length + (hasActions ? 1 : 0)}" class="py-12 text-center font-medium">
                                         Tidak ada data.
                                     </td>
                                 </tr>
@@ -68,37 +109,41 @@
                         } else {
                             response.data.data.forEach(function(item) {
                                 rowsHtml +=
-                                    '<tr>';
+                                    `<tr class="border-b border-[#E5E2E1]">
+                                        <td class="px-2 py-5">
+                                            <div class="flex items-center justify-center h-full">
+                                                <input type="checkbox"
+                                                    class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer"
+                                                    name="selected[]" value="${item.id}" />
+                                            </div>
+                                        </td>`;
                                 columns.forEach(function(column) {
-                                    if (column.field === 'assistant_names') {
-                                        let assistants = item[column.field];
-                                        if (typeof assistants === 'string') {
-                                            assistants = assistants.split(',').map(s => s.trim());
-                                        }
-                                        let assistantsList = assistants.length > 0
-                                            ? `<ul class="list-disc pl-4">${assistants.map(a => `<li>${a}</li>`).join('')}</ul>`
-                                            : 'tidak ada asisten';
-                                        rowsHtml += `<td class="pl-6 py-4 whitespace-nowrap">${assistantsList}</td>`;
-                                    } else {
-                                        rowsHtml +=
-                                            `<td class="pl-6 py-4 whitespace-nowrap">${item[column.field]}</td>`;
-                                    }
+                                    rowsHtml +=
+                                        `<td class="px-4 py-4">
+                                            ${item[column.field]}
+                                        </td>`;
                                 });
                                 if (hasActions) {
                                     if (primary === 'nim') {
-                                        rowsHtml += `<td class="pl-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
-                                            <button data-id="${item.nim}" class="btn-edit"><x-heroicon-o-pencil-square class="w-5 h-5 text-extended-1 hover:text-extended-light cursor-pointer"/></button>
-                                            <button data-id="${item.nim}" class="btn-delete"><x-heroicon-o-trash class="w-5 h-5 text-error hover:text-error-darked cursor-pointer"/></button>
+                                        rowsHtml += `<td class="px-4 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <button data-id="${item.nim}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                                <button data-id="${item.nim}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                            </div>
                                         </td>`;
                                     } else if (primary === 'kode_praktikum') {
-                                        rowsHtml += `<td class="pl-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
-                                            <button data-id="${item.kode_praktikum}" class="btn-edit"><x-heroicon-o-pencil-square class="w-5 h-5 text-extended-1 hover:text-extended-light cursor-pointer"/></button>
-                                            <button data-id="${item.kode_praktikum}" class="btn-delete"><x-heroicon-o-trash class="w-5 h-5 text-error hover:text-error-darked cursor-pointer"/></button>
+                                        rowsHtml += `<td class="px-4 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <button data-id="${item.kode_praktikum}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                                <button data-id="${item.kode_praktikum}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                            </div>
                                         </td>`;
                                     } else {
-                                        rowsHtml += `<td class="pl-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
-                                            <button data-id="${item.id}" class="btn-edit"><x-heroicon-o-pencil-square class="w-5 h-5 text-extended-1 hover:text-extended-light cursor-pointer"/></button>
-                                            <button data-id="${item.id}" class="btn-delete"><x-heroicon-o-trash class="w-5 h-5 text-error hover:text-error-darked cursor-pointer"/></button>
+                                        rowsHtml += `<td class="px-4 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <button data-id="${item.id}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                                <button data-id="${item.id}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                            </div>
                                         </td>`;
                                     }
                                 }
@@ -106,13 +151,16 @@
                             });
                         }
                         $(`#${tableId}-body`).html(rowsHtml);
+                        updateSortIndicators()
+                        toggleButtons();
+                        renderPagination(response.data, tableId);
                     },
                     error: function(xhr, status, error) {
                         console.error("Error loading table data:", error);
                         $(`#${tableId}-body`).html(
                             `
                                 <tr>
-                                    <td colspan="${columns.length + (hasActions ? 1 : 0)}" class="px-6 py-4 text-center text-red-500">
+                                    <td colspan="${columns.length + (hasActions ? 1 : 0)}" class="py-12 text-center font-medium">
                                         Gagal memuat data. Silakan coba lagi.
                                     </td>
                                 </tr>
@@ -122,7 +170,169 @@
                 });
             }
 
+            function updateSortIndicators() {
+                $('.sortable').each(function() {
+                    const field = $(this).data('field');
+                    const sortOrder = $(this).data('sort-order');
+                    const ascIcon = $(this).find('.sort-asc-icon');
+                    const descIcon = $(this).find('.sort-desc-icon');
+
+                    ascIcon.css('visibility', 'visible');
+                    descIcon.css('visibility', 'visible');
+
+                    if (field === currentSortBy) {
+                        if (currentSortOrder === 'asc') {
+                            ascIcon.css('visibility', 'visible');
+                            descIcon.css('visibility', 'hidden');
+                        } else if (currentSortOrder === 'desc') {
+                            descIcon.css('visibility', 'visible');
+                            ascIcon.css('visibility', 'hidden');
+                        }
+                    }
+                });
+            }
+
+            function toggleButtons() {
+                const checkedCount = $('.form-checkbox[name="selected[]"]:checked').length;
+                if (checkedCount > 0) {
+                    $(`#${btnCreateId}`).addClass('hidden');
+                    $('#deleted-info').removeClass('hidden');
+                    $('#deleted-info').addClass('flex');
+                    $('#selected-info').removeClass('hidden').text(`${checkedCount} Dipilih`);
+                } else {
+                    $(`#${btnCreateId}`).removeClass('hidden');
+                    $('#deleted-info').addClass('hidden');
+                    $('#deleted-info').removeClass('flex');
+                    $('#selected-info').addClass('hidden').text('0 Dipilih');
+                }
+            }
+
+            function renderPagination(pagination, tableId) {
+                let html = '';
+                if (pagination.last_page > 1 || pagination.total > 0) {
+                    html += `<div class="flex justify-between items-center text-xs mt-4 mb-6">`;
+
+                    // Left: Showing x to y of z Data
+                    if (pagination.total > 0) {
+                        const from = pagination.from ?? 0;
+                        const to = pagination.to ?? 0;
+                        const total = pagination.total ?? 0;
+                        html += `<div class="text-[#535252] px-2">
+                            ${from} to ${to} Data dari ${total}
+                        </div>`;
+                    } else {
+                        html += `<div></div>`;
+                    }
+
+                    // Right: Pagination
+                    html += `<nav><ul class="inline-flex space-x-1 items-center">`;
+
+                    // Previous
+                    const prevDisabled = pagination.current_page === 1;
+                    html += `<li>
+                        <button class="pagination-btn px-3 py-2 ml-0 leading-tight rounded-l-lg ${prevDisabled ? 'text-gray-300' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer'}"
+                            data-page="${pagination.current_page - 1}" ${prevDisabled ? 'disabled' : ''}>
+                            <x-heroicon-s-chevron-left class="w-5 h-5" />
+                        </button>
+                    </li>`;
+
+                    // Calculate start and end page for max 4 pages
+                    let startPage = Math.max(1, pagination.current_page - 1);
+                    let endPage = Math.min(pagination.last_page, startPage + 3);
+
+                    // Adjust if at the end
+                    if (endPage - startPage < 3) {
+                        startPage = Math.max(1, endPage - 3);
+                    }
+
+                    for (let i = startPage; i <= endPage; i++) {
+                        html += `<li>
+                            <button class="pagination-btn px-3 py-2 leading-tight rounded-lg cursor-pointer ${i === pagination.current_page ? 'bg-key-tertiary text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'}"
+                                data-page="${i}">
+                                ${i}
+                            </button>
+                        </li>`;
+                    }
+
+                    // Next
+                    const nextDisabled = pagination.current_page === pagination.last_page;
+                    html += `<li>
+                        <button class="pagination-btn px-3 py-2 leading-tight rounded-r-lg ${nextDisabled ? 'text-gray-300' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer'}"
+                            data-page="${pagination.current_page + 1}" ${nextDisabled ? 'disabled' : ''}>
+                            <x-heroicon-s-chevron-right class="w-5 h-5" />
+                        </button>
+                    </li>`;
+
+                    html += `</ul></nav>`;
+                    html += `</div>`;
+                }
+                $(`#pagination`).html(html);
+            }
+
             loadTableData();
+
+            $(document).on('change', '#selectAllCheckboxes', function() {
+                $('.form-checkbox').not('#selectAllCheckboxes').prop('checked', this.checked);
+                this.indeterminate = false;
+                toggleButtons();
+            });
+
+            $(document).on('change', '.form-checkbox:not(#selectAllCheckboxes)', function() {
+                const total = $('.form-checkbox').not('#selectAllCheckboxes').length;
+                const checked = $('.form-checkbox').not('#selectAllCheckboxes').filter(':checked').length;
+                const selectAll = $('#selectAllCheckboxes').get(0);
+
+                if (checked === 0) {
+                    selectAll.checked = false;
+                    selectAll.indeterminate = false;
+                } else if (checked === total) {
+                    selectAll.checked = true;
+                    selectAll.indeterminate = false;
+                } else {
+                    selectAll.checked = false;
+                    selectAll.indeterminate = true;
+                }
+            });
+
+            toggleButtons();
+
+            $(document).on('change', '.form-checkbox[name="selected[]"]', function() {
+                toggleButtons();
+            });
+
+            $(document).on('click', '.pagination-btn', function() {
+                const page = parseInt($(this).data('page'));
+                if (!isNaN(page)) {
+                    loadTableData(page);
+                }
+            });
+
+            $(document).on('click', '.sortable', function() {
+                const clickedField = $(this).data('field');
+
+                if (clickedField === currentSortBy) {
+                    if (currentSortOrder === '') {
+                        currentSortOrder = 'asc';
+                    } else if (currentSortOrder === 'asc') {
+                        currentSortOrder = 'desc';
+                    } else {
+                        currentSortOrder = '';
+                        currentSortBy = '';
+                    }
+                } else {
+                    currentSortBy = clickedField;
+                    currentSortOrder = 'asc';
+                }
+
+                loadTableData();
+            });
+
+            if (searchInputId) {
+                $(document).on('input', `#${searchInputId}`, function() {
+                    currentSearch = $(this).val();
+                    loadTableData();
+                });
+            }
 
             $(document).on('click', '.btn-edit', function() {
                 const url = actionUrl + $(this).data('id');

@@ -119,11 +119,18 @@ class ScheduleController extends Controller
 
     public function laboratoriumData(Request $request)
     {
-        $sortBy = $request->get('sort_by', 'id');
-        $sortOrder = $request->get('sort_order', 'asc');
+        $sortBy = $request->get('sort_by', 'updated_at');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $search = $request->get('search', '');
+
+        $filters = [
+            'location' => $request->get('location', ''),
+        ];
+
+        $filters = array_filter($filters);
 
         try {
-            $data = $this->scheduleService->getLaboratoriumData($sortBy, $sortOrder);
+            $data = $this->scheduleService->getLaboratoriumData($sortBy, $sortOrder, $search, $filters);
             return response()->json([
                 'status' => 'success',
                 'data' => $data,
