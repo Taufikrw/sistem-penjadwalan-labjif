@@ -81,7 +81,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::prefix('api')->group(function () {
         Route::get('get-today-schedules', [ScheduleController::class, 'todaySchedule'])->name('api.today-schedules');
-        Route::get('get-assistant-data', [AssistantController::class, 'assistantData'])->name('api.assistant.data');
+        Route::get('get-assistant-table', [AssistantController::class, 'assistantTable'])->name('api.assistant.table');
         Route::get('get-assistant-data/{nim}', [AssistantController::class, 'assistantDetails'])->name('api.assistant.data.nim');
         Route::get('get-practicum-data', [ScheduleController::class, 'practicumData'])->name('api.practicum.data');
         Route::get('get-laboratorium-data', [ScheduleController::class, 'laboratoriumData'])->name('api.laboratorium.data');

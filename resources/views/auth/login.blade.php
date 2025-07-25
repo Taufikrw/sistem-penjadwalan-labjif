@@ -34,7 +34,7 @@
             </div>
 
             <div class="flex items-center justify-between">
-                <x-button-primary class="w-full py-4 text-xl" type="submit">
+                <x-button-primary class="w-full py-4 text-xl rounded-2xl" type="submit">
                     Login
                 </x-button-primary>
             </div>

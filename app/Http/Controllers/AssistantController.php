@@ -30,13 +30,23 @@ class AssistantController extends Controller
         return view('assistant.index', $data);
     }
 
-    public function assistantData(Request $request)
+    public function assistantTable(Request $request)
     {
         $sortBy = $request->get('sort_by', 'nim');
         $sortOrder = $request->get('sort_order', 'asc');
+        $search = $request->get('search', '');
+
+        $filters = [
+            'status' => $request->get('status', ''),
+            'prodi' => $request->get('prodi', ''),
+            'angkatan' => $request->get('angkatan', ''),
+            'tahun_masuk' => $request->get('tahun_masuk', ''),
+        ];
+
+        $filters = array_filter($filters);
 
         try {
-            $data = $this->assistantService->getAssistantsData($sortBy, $sortOrder);
+            $data = $this->assistantService->getAssistantsData($sortBy, $sortOrder, $search, $filters);
 
             return response()->json([
                 'status' => 'success',

@@ -1,136 +1,216 @@
-@extends('layouts.app')
+<x-layouts.app>
+    <x-slot:title>
+        Daftar Aslab
+    </x-slot:title>
 
-@section('title', 'Assistant')
-
-@section('content')
-    <div class="flex">
-        <x-sidebar />
-
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col">
-            <x-topbar />
-            
-            @if (session('success'))
-                <div class="bg-green-500 border border-green-700 text-white px-4 py-3 rounded relative" role="alert">
-                    <strong class="font-bold">Success!</strong>
-                    <span class="block sm:inline">{{ session('success') }}</span>
-                </div>
-            @endif
-
-            <div class="p-10 flex-1">
-                <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-                    <h1 class="text-3xl font-bold">Daftar Asisten</h1>
-                    <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
-                        <a href="{{ route('assistant.create') }}"
-                            class="bg-secondary font-bold py-2 px-4 rounded border-1 border-tertiary hover:bg-secondary-70">
-                            <p class="text-tertiary text-sm">Tambah</p>
-                        </a>
-                        <div class="relative w-full md:w-64">
-                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-tertiary" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                            </span>
-                            <input type="text" placeholder="Cari Asisten"
-                                class="block w-full pl-10 pr-3 py-2 border border-tertiary rounded-md leading-5 placeholder-tertiary focus:outline-none focus:ring-1 focus:ring-tertiary sm:text-sm">
-                        </div>
-                        <button
-                            class="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
-                                </path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-table-header">
-                            <tr>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Nama
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    NIM
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Program Studi
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Angkatan
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Tahun Masuk
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Jadwal Kuliah
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Jadwal Praktikum
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Aksi
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y-2 divide-table-header border-b-2 border-table-header">
-                            @forelse ($assistants as $item)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->nim }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->prodi }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->angkatan }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->tahun_masuk }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="{{ route('assistant.showCourse', $item->nim) }}"
-                                            class="text-tertiary-60 hover:text-tertiary flex items-center gap-1">
-                                            <x-heroicon-o-eye class="w-5 h-5"/>
-                                            Detail
-                                        </a>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="{{ route('assistant.showSchedule', $item->nim) }}"
-                                            class="text-tertiary-60 hover:text-tertiary flex items-center gap-1">
-                                            <x-heroicon-o-eye class="w-5 h-5"/>
-                                            Detail
-                                        </a>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
-                                        <a href="{{ route('assistant.edit', $item->nim) }}">
-                                            <x-heroicon-o-pencil-square class="w-5 h-5 text-extended-1 hover:text-extended-light"/>
-                                        </a>
-                                        <form action="{{ route('assistant.delete', $item->nim) }}" method="POST" class="flex">
-                                            {{-- CSRF token and method spoofing for DELETE --}}
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" onclick="return confirm('Yakin ingin menghapus asisten ini?')"><x-heroicon-o-trash class="w-5 h-5 text-error hover:text-error-darked"/></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="8" class="px-6 py-4 text-center text-neutral-50">
-                                        Tidak ada data asisten.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <div class="flex items-center justify-between">
+        <div class="relative w-full md:w-80 bg-white">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-[#C9C6C5]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clip-rule="evenodd"></path>
+                </svg>
+            </span>
+            <input type="text" placeholder="Cari..."
+                class="block w-full pl-10 pr-3 py-3 border border-[#C9C6C5] rounded-lg leading-5 placeholder-[#C9C6C5] focus:outline-none focus:ring-1 focus:ring-key-secondary sm:text-md">
         </div>
+        <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl" type="button">
+            <x-heroicon-s-plus class="w-5 h-5" />
+            Tambah
+        </x-button-primary>
     </div>
-@endsection
+
+    <div class="rounded-lg w-full overflow-x-auto px-4 bg-white">
+        <table class="w-full text-sm text-left rtl:text-right text-key-primary">
+            <thead class="border-b border-[#E5E2E1]">
+                <tr>
+                    <th scope="col" class="px-2 py-3 w-8">
+                        <div class="flex items-center justify-center h-full">
+                            <input type="checkbox" id="selectAllCheckboxes"
+                                class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer" />
+                        </div>
+                    </th>
+                    <th scope="col" class="px-4 py-3">
+                        <span class="flex items-center gap-1 font-extrabold">
+                            Nama
+                            <span class="flex flex-col ml-1">
+                                <x-icon-sort-up class="w-2 h-2 text-[#4B57AC]" />
+                                <x-icon-sort-down class="w-2 h-2 text-[#4B57AC]" />
+                            </span>
+                        </span>
+                    </th>
+                    <th scope="col" class="px-4 py-3">
+                        <span class="flex items-center gap-1 font-extrabold">
+                            NIM
+                            <span class="flex flex-col ml-1">
+                                <x-icon-sort-up class="w-2 h-2 text-[#4B57AC]" />
+                                <x-icon-sort-down class="w-2 h-2 text-[#4B57AC]" />
+                            </span>
+                        </span>
+                    </th>
+                    <th scope="col" class="px-4 py-3">
+                        <span class="flex items-center gap-1 font-extrabold">
+                            Program Studi
+                            <span class="flex flex-col ml-1">
+                                <x-icon-sort-up class="w-2 h-2 text-[#4B57AC]" />
+                                <x-icon-sort-down class="w-2 h-2 text-[#4B57AC]" />
+                            </span>
+                        </span>
+                    </th>
+                    <th scope="col" class="px-4 py-3">
+                        <span class="flex items-center gap-1 font-extrabold">
+                            Angkatan
+                            <span class="flex flex-col ml-1">
+                                <x-icon-sort-up class="w-2 h-2 text-[#4B57AC]" />
+                                <x-icon-sort-down class="w-2 h-2 text-[#4B57AC]" />
+                            </span>
+                        </span>
+                    </th>
+                    <th scope="col" class="px-4 py-3">
+                        <span class="flex items-center gap-1 font-extrabold">
+                            Tahun Masuk
+                            <span class="flex flex-col ml-1">
+                                <x-icon-sort-up class="w-2 h-2 text-[#4B57AC]" />
+                                <x-icon-sort-down class="w-2 h-2 text-[#4B57AC]" />
+                            </span>
+                        </span>
+                    </th>
+                    <th scope="col" class="px-4 py-3">
+                        <span class="flex items-center gap-1 font-extrabold">
+                            Status
+                        </span>
+                    </th>
+                    <th scope="col" class="px-4 py-3">
+                        <span class="flex items-center gap-1 font-extrabold">
+                            Jadwal Praktikum
+                        </span>
+                    </th>
+                    <th scope="col" class="px-4 py-3">
+                        <span class="flex items-center gap-1 font-extrabold">
+                            Jadwal Kuliah
+                        </span>
+                    </th>
+                    <th scope="col" class="px-4 py-3">
+                        <span class="flex items-center gap-1 font-extrabold">
+                            Aksi
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($assistants as $item)
+                    <tr class="border-b border-[#E5E2E1]">
+                        <td class="px-2 py-5">
+                            <div class="flex items-center justify-center h-full">
+                                <input type="checkbox"
+                                    class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer"
+                                    name="selected[]" value="{{ $item->nim }}" />
+                            </div>
+                        </td>
+                        <td class="px-4 py-4">
+                            {{ $item->name }}
+                        </td>
+                        <td class="px-4 py-4">
+                            {{ $item->nim }}
+                        </td>
+                        <td class="px-4 py-4">
+                            {{ $item->prodi }}
+                        </td>
+                        <td class="px-4 py-4">
+                            {{ $item->angkatan }}
+                        </td>
+                        <td class="px-4 py-4">
+                            {{ $item->tahun_masuk }}
+                        </td>
+                        <td class="px-4 py-4">
+                            @if ($item->status === 'aktif')
+                                <span
+                                    class="inline-block px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
+                                    Aktif
+                                </span>
+                            @elseif ($item->status === 'non-aktif')
+                                <span
+                                    class="inline-block px-3 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                                    Non-Aktif
+                                </span>
+                            @else
+                                <span
+                                    class="inline-block px-3 py-1 text-xs font-semibold text-blue-700 bg-blue-100 rounded-full">
+                                    {{ ucfirst($item->status) }}
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-4">
+                            <a href="{{ route('assistant.showCourse', $item->nim) }}"
+                                class="flex items-center gap-2 hover:text-key-secondary">
+                                <x-heroicon-o-eye class="w-4 h-4" />
+                                Detail
+                            </a>
+                        </td>
+                        <td class="px-4 py-4">
+                            <a href="{{ route('assistant.showSchedule', $item->nim) }}"
+                                class="flex items-center gap-2 hover:text-key-secondary">
+                                <x-heroicon-o-eye class="w-4 h-4" />
+                                Detail
+                            </a>
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('assistant.edit', $item->nim) }}">
+                                    <x-heroicon-s-pencil-square
+                                        class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary" />
+                                </a>
+                                <form action="{{ route('assistant.delete', $item->nim) }}" method="POST"
+                                    class="flex">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        onclick="return confirm('Yakin ingin menghapus asisten ini?')"><x-heroicon-s-trash
+                                            class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr class="border-b border-[#E5E2E1]">
+                        <td colspan="10" class="px-6 py-12 text-center text-key-primary">
+                            Tidak ada data
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    @push('scripts')
+        <script type="module">
+            $(document).ready(function() {
+                // Select/Deselect all checkboxes
+                $('#selectAllCheckboxes').on('change', function() {
+                    $('.form-checkbox').not('#selectAllCheckboxes').prop('checked', this.checked);
+                    // Remove indeterminate state
+                    this.indeterminate = false;
+                });
+
+                // Handle individual checkbox changes
+                $('.form-checkbox').not('#selectAllCheckboxes').on('change', function() {
+                    const total = $('.form-checkbox').not('#selectAllCheckboxes').length;
+                    const checked = $('.form-checkbox').not('#selectAllCheckboxes').filter(':checked').length;
+                    const selectAll = $('#selectAllCheckboxes').get(0);
+
+                    if (checked === 0) {
+                        selectAll.checked = false;
+                        selectAll.indeterminate = false;
+                    } else if (checked === total) {
+                        selectAll.checked = true;
+                        selectAll.indeterminate = false;
+                    } else {
+                        selectAll.checked = false;
+                        selectAll.indeterminate = true; // Show minus state
+                    }
+                });
+            });
+        </script>
+    @endpush
+</x-layouts.app>

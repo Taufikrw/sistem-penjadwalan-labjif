@@ -10,10 +10,25 @@ use Illuminate\Support\Facades\Hash;
 
 class AssistantRepository implements AssistantRepositoryInterface
 {
-    public function getAllAssistants($sortBy = 'nim', $order = 'asc', $perPage = null)
+    public function getAllAssistants($sortBy = 'nim', $order = 'asc', $search = '', array $filters = [], $perPage = null)
     {
-        $query = Assistant::with('user', 'courseSchedules', 'assistantSchedules')->orderBy($sortBy, $order);
+        $query = Assistant::with('user')->orderBy($sortBy, $order);
 
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('nim', 'like', "%{$search}%")
+                  ->orWhere('prodi', 'like', "%{$search}%")
+                  ->orWhere('angkatan', 'like', "%{$search}%")
+                  ->orWhere('tahun_masuk', 'like', "%{$search}%");
+            });
+        }
+
+        foreach ($filters as $key => $value) {
+            if (in_array($key, ['status', 'prodi', 'angkatan', 'tahun_masuk'])) {
+                $query->where($key, $value);
+            }
+        }
 
         if ($perPage) {
             return $query->paginate($perPage);

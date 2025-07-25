@@ -4,8 +4,8 @@ namespace App\Repositories\Contracts;
 
 interface AssistantRepositoryInterface
 {
-    public function getAllAssistants($sortBy = 'nim', $order = 'asc', $perPage = null);
-    
+    public function getAllAssistants($sortBy = 'nim', $order = 'asc', $search = '', array $filters = [], $perPage = null);
+
     public function getAssistantByNim($nim);
 
     public function getAssistantByNimIncludeTrashedWithUser($nim);

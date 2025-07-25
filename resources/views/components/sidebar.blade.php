@@ -1,5 +1,5 @@
 <div id="sidebar"
-    class="relative w-80 bg-white h-screen flex flex-col justify-between px-6 py-12 transform transition-all duration-300 ease-in-out">
+    class="relative flex-none w-80 bg-white h-screen flex flex-col justify-between px-6 py-12 transform transition-all duration-300 ease-in-out">
     <button id="toggleSidebar" class="absolute top-26 -right-4 p-2 rounded-full bg-white z-1 cursor-pointer">
         <svg id="minimize-icon" class="w-4 h-4 transition-all duration-300 ease-in-out" fill="none" stroke="currentColor"
             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -29,7 +29,7 @@
             @if (Auth::user()->role === 'admin')
                 <x-nav-link route="{{ route('assistant.index') }}" routeIs="assistant.*">
                     <x-heroicon-s-user class="w-5 h-5" />
-                    <span class="menu-text">Asisten</span>
+                    <span class="menu-text">Aslab</span>
                 </x-nav-link>
                 <x-nav-link route="{{ route('practicum.index') }}" routeIs="practicum.*">
                     <x-heroicon-s-book-open class="w-5 h-5" />
