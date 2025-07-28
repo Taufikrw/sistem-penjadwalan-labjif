@@ -1,4 +1,4 @@
-<form id="form-practicum"
+<form id="practicum-form"
     action="{{ isset($practicum) ? route('practicum.update', $practicum->kode_praktikum) : route('practicum.store') }}"
     method="POST">
     @csrf
@@ -6,63 +6,61 @@
         @method('PUT')
     @endif
 
-    <div>
-        <div class="mb-4">
-            <label for="kode_praktikum" class="block text-gray-700 text-sm font-bold mb-2">Kode Praktikum:</label>
-            <input type="text" name="kode_praktikum" id="kode_praktikum"
-                value="{{ old('kode_praktikum', isset($practicum) ? $practicum->kode_praktikum : '') }}"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('kode_praktikum') border-red-500 @enderror"
-                required>
-            @error('kode_praktikum')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div class="mb-4">
-            <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Nama Praktikum:</label>
-            <input type="text" name="name" id="name"
-                value="{{ old('name', isset($practicum) ? $practicum->name : '') }}"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('name') border-red-500 @enderror"
-                required>
-            @error('name')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div class="mb-4">
-            <label for="for_prodi" class="block text-gray-700 text-sm font-bold mb-2">Program Studi:</label>
-            <select name="for_prodi" id="for_prodi"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('for_prodi') border-red-500 @enderror"
-                required>
-                <option value="">Select Option</option>
-                <option value="Informatika"
-                    {{ old('for_prodi', isset($practicum) ? $practicum->for_prodi : '') == 'Informatika' ? 'selected' : '' }}>
-                    Informatika</option>
-                <option value="Sistem Informasi"
-                    {{ old('for_prodi', isset($practicum) ? $practicum->for_prodi : '') == 'Sistem Informasi' ? 'selected' : '' }}>
-                    Sistem Informasi</option>
-            </select>
-            @error('for_prodi')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div class="mb-4">
-            <label for="semester" class="block text-gray-700 text-sm font-bold mb-2">Semester:</label>
-            <input type="number" max="8" min="1" name="semester" id="semester"
-                value="{{ old('semester', isset($practicum) ? $practicum->semester : '') }}"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('semester') border-red-500 @enderror"
-                required>
-            @error('semester')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
+    <div id="title-hidden" class="hidden">
+        <div class="flex gap-3 items-center">
+            @isset($practicum)
+                <x-heroicon-s-pencil-square class="w-4 h-4" />
+                <span>Edit Praktikum</span>
+            @else
+                <x-heroicon-s-plus class="w-4 h-4" />
+                <span>Tambah Praktikum</span>
+            @endisset
         </div>
     </div>
 
-    <div class="mt-8">
-        <button type="submit"
-            class="bg-secondary hover:bg-secondary-40 text-tertiary border-1 border-tertiary font-bold py-2 px-8 rounded">
-            Kirim
-        </button>
+    <div class="grid grid-cols-2 gap-4">
+        <div class="col-span-2">
+            <x-input-label for="kode_praktikum" class="mb-2 text-sm" value="Kode Praktikum" />
+            <x-text-input name="kode_praktikum" id="kode_praktikum"
+                class="w-full" :value="old('kode_praktikum', isset($practicum) ? $practicum->kode_praktikum : '')"
+                placeholder="Masukkan kode praktikum" required />
+        </div>
+
+        <div class="col-span-2">
+            <x-input-label for="name" class="mb-2 text-sm" value="Nama Praktikum" />
+            <x-text-input name="name" id="name"
+                class="w-full" :value="old('name', isset($practicum) ? $practicum->name : '')"
+                placeholder="Masukkan nama praktikum" required />
+        </div>
+
+        <div>
+            <x-input-label for="for_prodi" class="mb-2 text-sm" value="Program Studi" />
+            <x-select-input id="for_prodi" name="for_prodi" :options="['Informatika' => 'Informatika', 'Sistem Informasi' => 'Sistem Informasi']" placeholder="Pilih program studi"
+                :selected="isset($practicum) ? $practicum->for_prodi : null" />
+        </div>
+
+        <div>
+            <x-input-label for="semester" class="mb-2 text-sm" value="Semester" />
+            <x-text-input name="semester" id="semester" class="w-full" :value="old('semester', isset($practicum) ? $practicum->semester : '')"
+                type="number" max="8" min="1" placeholder="Masukkan semester" required />
+        </div>
+    </div>
+
+    <div class="mt-8 flex justify-between items-center w-full">
+        <x-button-secondary class="rounded-xl py-3 px-6" type="button" id="btn-cancel-practicum"
+            onclick="closeModal()">
+            Batal
+        </x-button-secondary>
+        <x-button-primary class="rounded-xl py-3 px-6" type="submit" id="btn-submit-practicum">
+            Simpan
+        </x-button-primary>
     </div>
 </form>
+
+<script type="module">
+    $(document).ready(function() {
+        const title = $('#title-hidden').html();
+        $('#title').html(title);
+
+    });
+</script>

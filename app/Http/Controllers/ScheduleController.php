@@ -16,29 +16,6 @@ class ScheduleController extends Controller
         $this->scheduleService = $scheduleService;
     }
 
-    public function createPracticum()
-    {
-        return view('practicum.form')->render();
-    }
-
-    public function storePracticum(StorePracticumRequest $request)
-    {
-        $validated = $request->validated();
-
-        try {
-            $this->scheduleService->storePracticum($validated);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Practicum created successfully.',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to create practicum: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
-
     public function editPracticum(string $kode_praktikum)
     {
         $practicum = $this->scheduleService->getPracticumDetails($kode_praktikum);

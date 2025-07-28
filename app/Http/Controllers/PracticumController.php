@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePracticumRequest;
 use App\Services\PracticumService;
 use Illuminate\Http\Request;
 
@@ -43,6 +44,29 @@ class PracticumController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal mengambil data praktikum: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function create()
+    {
+        return view('practicum.form')->render();
+    }
+
+    public function store(StorePracticumRequest $request)
+    {
+        $validated = $request->validated();
+
+        try {
+            $this->practicumService->storePracticum($validated);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Practicum created successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to create practicum: ' . $e->getMessage(),
             ], 500);
         }
     }

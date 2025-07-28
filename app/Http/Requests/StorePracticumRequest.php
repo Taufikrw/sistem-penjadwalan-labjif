@@ -22,8 +22,8 @@ class StorePracticumRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'kode_praktikum' => 'required|string|max:255',
-            'name' => 'required|string|max:255',
+            'kode_praktikum' => 'required|string|max:20',
+            'name' => 'required|string|max:50',
             'for_prodi' => 'required|string|in:Informatika,Sistem Informasi',
             'semester' => 'required|integer|between:1,8',
         ];

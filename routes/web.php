@@ -55,8 +55,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('course/{nim}/{id}', [AssistantController::class, 'courseDestroy'])->name('course.delete');
 
     Route::get('practicums', [PracticumController::class, 'index'])->name('practicum.index');
-    Route::get('practicums/create', [ScheduleController::class, 'createPracticum'])->name('practicum.create');
-    Route::post('practicums/create', [ScheduleController::class, 'storePracticum'])->name('practicum.store');
+    Route::get('practicums/create', [PracticumController::class, 'create'])->name('practicum.create');
+    Route::post('practicums/create', [PracticumController::class, 'store'])->name('practicum.store');
 
     Route::get('practicums/{kode_praktikum}', [ScheduleController::class, 'editPracticum'])->name('practicum.edit');
     Route::put('practicums/{kode_praktikum}', [ScheduleController::class, 'updatePracticum'])->name('practicum.update');
