@@ -16,20 +16,6 @@ class ScheduleController extends Controller
         $this->scheduleService = $scheduleService;
     }
 
-    public function destroyPracticum($kode_praktikum)
-    {
-        // if (!$this->scheduleService->isPracticumExists($kode_praktikum)) {
-        //     return abort(404, 'Practicum not found');
-        // }
-
-        $this->scheduleService->deletePracticum($kode_praktikum);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Practicum deleted successfully.',
-        ]);
-    }
-
     public function index()
     {
         $data = $this->scheduleService->getScheduleList();

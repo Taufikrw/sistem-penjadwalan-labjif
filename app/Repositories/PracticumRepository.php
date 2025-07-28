@@ -75,4 +75,11 @@ class PracticumRepository implements PracticumRepositoryInterface
         
         return $practicum;
     }
+
+    public function deleteByKodePraktikums(array $kode_praktikums)
+    {
+        Practicum::whereIn('kode_praktikum', $kode_praktikums)->delete();
+
+        return true;
+    }
 }

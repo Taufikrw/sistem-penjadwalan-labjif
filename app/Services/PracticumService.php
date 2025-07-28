@@ -55,4 +55,14 @@ class PracticumService
     {
         $this->practicumRepository->updatePracticum($kode_praktikum, $data);
     }
+
+    public function deletePracticum($kode_praktikum)
+    {
+        $this->practicumRepository->deletePracticum($kode_praktikum);
+    }
+
+    public function bulkDeletePracticums(array $kode_praktikums)
+    {
+        $this->practicumRepository->deleteByKodePraktikums($kode_praktikums);
+    }
 }

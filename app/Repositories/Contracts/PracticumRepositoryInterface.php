@@ -15,4 +15,6 @@ interface PracticumRepositoryInterface
     public function updatePracticum($kode_praktikum, array $data);
 
     public function deletePracticum($kode_praktikum);
+
+    public function deleteByKodePraktikums(array $kode_praktikums);
 }

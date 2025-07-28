@@ -22,11 +22,6 @@ class ScheduleService
         $this->scheduleRepository = $scheduleRepository;
     }
 
-    public function deletePracticum($kode_praktikum)
-    {
-        $this->practicumRepository->deletePracticum($kode_praktikum);
-    }
-
     public function getScheduleList()
     {
         $schedules = $this->scheduleRepository->getAllSchedules();

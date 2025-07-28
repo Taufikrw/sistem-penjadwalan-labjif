@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePracticumBulkDeleteRequest;
 use App\Http\Requests\StorePracticumRequest;
 use App\Services\PracticumService;
 use Illuminate\Http\Request;
@@ -100,6 +101,40 @@ class PracticumController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal mengubah praktikum: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function destroy($kode_praktikum)
+    {
+        if (!$this->practicumService->isPracticumExists($kode_praktikum)) {
+            return abort(404, 'Praktikum tidak ditemukan');
+        }
+
+        $this->practicumService->deletePracticum($kode_praktikum);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data praktikum berhasil dihapus.',
+        ]);
+    }
+
+    public function bulkDelete(StorePracticumBulkDeleteRequest $request)
+    {
+        $validated = $request->validated();
+
+        try {
+            $kode_praktikums = $validated['ids'];
+
+            $this->practicumService->bulkDeletePracticums($kode_praktikums);
+            return response()->json([
+                'status' => 'success',
+                'message' => count($kode_praktikums) . ' data praktikum berhasil dihapus.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus data praktikum: ' . $e->getMessage(),
             ], 500);
         }
     }
