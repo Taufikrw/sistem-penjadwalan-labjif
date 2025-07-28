@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAssistantRequest extends FormRequest
+class UpdateAssistantRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,8 +28,7 @@ class StoreAssistantRequest extends FormRequest
             'angkatan' => 'required|integer|min:2020|max:' . date('Y'),
             'tahun_masuk' => 'required|integer|min:2020|max:' . date('Y'),
             'status' => 'required|string|in:aktif,non-aktif,selesai',
-            'password' => 'required|string|min:8|confirmed',
-            'password_confirmation' => 'required|string|min:8',
+            'ubah-password' => 'required|string|min:8',
         ];
     }
 }

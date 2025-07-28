@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('assistants', function (Blueprint $table) {
             $table->string('nim', 10)->unique()->primary();
-            $table->string('name', 20);
+            $table->string('name', 50);
             $table->string('prodi', 20);
             $table->year('angkatan');
             $table->year('tahun_masuk');

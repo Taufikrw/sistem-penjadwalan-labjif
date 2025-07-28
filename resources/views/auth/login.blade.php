@@ -49,4 +49,12 @@
         </div>
         <img src="{{ asset('assets/images/pair-aslab-transparant.svg') }}" alt="">
     </div>
+
+    @push('scripts')
+        <script type="module">
+            $(document).ready(function () {
+                window.initInputComponent();
+            });
+        </script>
+    @endpush
 </x-layouts.guest>

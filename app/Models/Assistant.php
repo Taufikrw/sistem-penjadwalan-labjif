@@ -20,6 +20,7 @@ class Assistant extends Model
         'prodi',
         'angkatan',
         'tahun_masuk',
+        'status',
         'user_id',
     ];
 

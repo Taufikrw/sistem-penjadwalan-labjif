@@ -9,17 +9,15 @@ use Illuminate\View\Component;
 class FormModal extends Component
 {
     public $modalId;
-    public $title;
     public $ajaxUrl;
     public $formId;
     
     /**
      * Create a new component instance.
      */
-    public function __construct(string $modalId, string $title, string $ajaxUrl, ?string $formId = null)
+    public function __construct(string $modalId, string $ajaxUrl, ?string $formId = null)
     {
         $this->modalId = $modalId;
-        $this->title = $title;
         $this->ajaxUrl = $ajaxUrl;
         $this->formId = $formId;
     }

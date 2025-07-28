@@ -25,13 +25,6 @@ class AssistantService
         $this->scheduleRepository = $scheduleRepository;
     }
 
-    public function getAssistantsList($sortBy, $sortOrder)
-    {
-        $assistants = $this->assistantRepository->getAllAssistants($sortBy, $sortOrder, '', [], 8);
-
-        return compact('assistants');
-    }
-
     public function getAssistantsData($sortBy, $sortOrder, $search, $filters)
     {
         return $this->assistantRepository->getAllAssistants($sortBy, $sortOrder, $search, $filters, 8);
@@ -167,6 +160,11 @@ class AssistantService
         }
 
         $this->assistantRepository->deleteAssistant($nim);
+    }
+
+    public function bulkDeleteAssistants(array $nims)
+    {
+        $this->assistantRepository->deleteByNims($nims);
     }
 
     public function getSetAssistantPage(string $id)

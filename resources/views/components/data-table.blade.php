@@ -58,6 +58,7 @@
             const searchInputId = '{{ $searchInputId ?? '' }}';
             const btnCreateId = '{{ $btnCreateId ?? '' }}';
             const checked = $('.form-checkbox[name="selected[]"]:checked').length > 0;
+            const bulkDeleteUrl = actionUrl + 'bulk-delete';
 
             let currentSortBy = '';
             let currentSortOrder = '';
@@ -108,20 +109,85 @@
                             `;
                         } else {
                             response.data.data.forEach(function(item) {
-                                rowsHtml +=
-                                    `<tr class="border-b border-[#E5E2E1]">
-                                        <td class="px-2 py-5">
-                                            <div class="flex items-center justify-center h-full">
-                                                <input type="checkbox"
-                                                    class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer"
-                                                    name="selected[]" value="${item.id}" />
-                                            </div>
-                                        </td>`;
-                                columns.forEach(function(column) {
+                                if (primary === 'nim') {
                                     rowsHtml +=
-                                        `<td class="px-4 py-4">
-                                            ${item[column.field]}
-                                        </td>`;
+                                        `<tr class="border-b border-[#E5E2E1]">
+                                            <td class="px-2 py-5">
+                                                <div class="flex items-center justify-center h-full">
+                                                    <input type="checkbox"
+                                                        class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer"
+                                                        name="selected[]" value="${item.nim}" />
+                                                </div>
+                                            </td>`;
+                                } else if (primary === 'kode_praktikum') {
+                                    rowsHtml +=
+                                        `<tr class="border-b border-[#E5E2E1]">
+                                            <td class="px-2 py-5">
+                                                <div class="flex items-center justify-center h-full">
+                                                    <input type="checkbox"
+                                                        class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer"
+                                                        name="selected[]" value="${item.kode_praktikum}" />
+                                                </div>
+                                            </td>`;
+                                } else {
+                                    rowsHtml +=
+                                        `<tr class="border-b border-[#E5E2E1]">
+                                            <td class="px-2 py-5">
+                                                <div class="flex items-center justify-center h-full">
+                                                    <input type="checkbox"
+                                                        class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer"
+                                                        name="selected[]" value="${item.id}" />
+                                                </div>
+                                            </td>`;
+                                }
+                                columns.forEach(function(column) {
+                                    if (column.field === 'status') {
+                                        let statusClass = '';
+                                        let statusText = '';
+                                        switch (item.status) {
+                                            case 'aktif':
+                                                statusClass = 'bg-green-100 text-green-700';
+                                                statusText = 'Aktif';
+                                                break;
+                                            case 'non-aktif':
+                                                statusClass = 'bg-red-100 text-red-700';
+                                                statusText = 'Non-Aktif';
+                                                break;
+                                            default:
+                                                statusClass = 'text-blue-700 bg-blue-100 capitalize';
+                                                statusText = item.status ?? '';
+                                                break;
+                                        }
+                                        rowsHtml +=
+                                            `<td class="px-4 py-4">
+                                                <span class="inline-block px-3 py-1 text-xs font-semibold ${statusClass} rounded-full">
+                                                    ${statusText}
+                                                </span>
+                                            </td>`;
+                                    } else if (column.field === 'jadwal_praktikum') {
+                                        rowsHtml +=
+                                            `<td class="px-4 py-4">
+                                                <a href="assistants/${item.nim}/detail-schedule"
+                                                    class="flex items-center gap-2 hover:text-key-secondary">
+                                                    <x-heroicon-o-eye class="w-4 h-4" />
+                                                    Detail
+                                                </a>
+                                            </td>`;
+                                    } else if (column.field === 'jadwal_kuliah') {
+                                        rowsHtml +=
+                                            `<td class="px-4 py-4">
+                                                <a href="assistants/${item.nim}/detail-course"
+                                                    class="flex items-center gap-2 hover:text-key-secondary">
+                                                    <x-heroicon-o-eye class="w-4 h-4" />
+                                                    Detail
+                                                </a>
+                                            </td>`;
+                                    } else {
+                                        rowsHtml +=
+                                            `<td class="px-4 py-4">
+                                                ${item[column.field]}
+                                            </td>`;
+                                    }
                                 });
                                 if (hasActions) {
                                     if (primary === 'nim') {
@@ -150,6 +216,8 @@
                                 rowsHtml += '</tr>';
                             });
                         }
+
+                        $('#selectAllCheckboxes').prop('checked', false).prop('indeterminate', false);
                         $(`#${tableId}-body`).html(rowsHtml);
                         updateSortIndicators()
                         toggleButtons();
@@ -246,9 +314,10 @@
                     }
 
                     for (let i = startPage; i <= endPage; i++) {
+                        const isCurrent = i === pagination.current_page;
                         html += `<li>
-                            <button class="pagination-btn px-3 py-2 leading-tight rounded-lg cursor-pointer ${i === pagination.current_page ? 'bg-key-tertiary text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'}"
-                                data-page="${i}">
+                            <button class="pagination-btn px-3 py-2 leading-tight rounded-lg ${isCurrent ? 'bg-key-tertiary text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer'}"
+                                data-page="${i}" ${isCurrent ? 'disabled' : ''}>
                                 ${i}
                             </button>
                         </li>`;
@@ -383,6 +452,66 @@
                     }
                 });
             });
+
+            $(document).on('click', '#btn-bulk-delete', function() {
+                const selectedIds = $('.form-checkbox[name="selected[]"]:checked').map(function() {
+                    return $(this).val();
+                }).get();
+
+                if (selectedIds.length === 0) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Tidak Ada Data Terpilih',
+                        text: 'Silakan pilih data yang ingin Anda hapus.',
+                        showConfirmButton: true
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Konfirmasi Hapus',
+                    text: `Apakah Anda yakin ingin menghapus ${selectedIds.length} data yang dipilih?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: bulkDeleteUrl,
+                            type: 'POST',
+                            data: {
+                                ids: selectedIds
+                            },
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: response.message,
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                }).then(() => {
+                                    loadTableData(currentPage); // Muat ulang data di halaman saat ini
+                                });
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal!',
+                                    text: xhr.responseJSON.message || 'Terjadi kesalahan saat menghapus data.',
+                                    showConfirmButton: true
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
         });
     </script>
 @endpush

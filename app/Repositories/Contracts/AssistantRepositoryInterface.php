@@ -4,7 +4,7 @@ namespace App\Repositories\Contracts;
 
 interface AssistantRepositoryInterface
 {
-    public function getAllAssistants($sortBy = 'nim', $order = 'asc', $search = '', array $filters = [], $perPage = null);
+    public function getAllAssistants($sortBy = 'updated_at', $order = 'desc', $search = '', array $filters = [], $perPage = null);
 
     public function getAssistantByNim($nim);
 
@@ -17,6 +17,8 @@ interface AssistantRepositoryInterface
     public function updateAssistant($nim, array $data);
 
     public function deleteAssistant($nim);
+
+    public function deleteByNims(array $nims);
 
     public function getAssistantAvailableSchedules($schedule_id);
 }

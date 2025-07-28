@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAssistantBulkDeleteRequest;
 use App\Http\Requests\StoreAssistantRequest;
 use App\Http\Requests\StoreAssistantScheduleRequest;
 use App\Http\Requests\StoreCourseScheduleRequest;
+use App\Http\Requests\UpdateAssistantRequest;
 use App\Services\AssistantService;
 use App\Services\ScheduleService;
 use Illuminate\Http\Request;
@@ -24,16 +26,14 @@ class AssistantController extends Controller
     }
 
     public function index()
-    {   
-        $data = $this->assistantService->getAssistantsList('nim', 'asc');
-        
-        return view('assistant.index', $data);
+    {
+        return view('assistant.index');
     }
 
     public function assistantTable(Request $request)
     {
-        $sortBy = $request->get('sort_by', 'nim');
-        $sortOrder = $request->get('sort_order', 'asc');
+        $sortBy = $request->get('sort_by', 'updated_at');
+        $sortOrder = $request->get('sort_order', 'desc');
         $search = $request->get('search', '');
 
         $filters = [
@@ -111,7 +111,7 @@ class AssistantController extends Controller
                     'message' => 'Assistant not found',
                 ], 404);
             }
-    
+
             return response()->json([
                 'status' => 'success',
                 'data' => $data,
@@ -147,9 +147,15 @@ class AssistantController extends Controller
 
         try {
             $this->assistantService->createAssistant($validated);
-            return redirect()->route('assistant.index')->with('success', 'Assistant created successfully');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data asisten berhasil dibuat.',
+            ]);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create assistant: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal membuat data asisten: ' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -158,27 +164,33 @@ class AssistantController extends Controller
         $assistant = $this->assistantService->getAssistantsDetails($nim);
 
         if (!$assistant) {
-            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+            return response()->view('errors.not-found', ['message' => 'Asisten tidak ditemukan'], 404);
         }
 
         return view('assistant.form', compact('assistant'));
     }
 
-    public function update(StoreAssistantRequest $request, string $nim)
+    public function update(UpdateAssistantRequest $request, string $nim)
     {
         $assistant = $this->assistantService->getAssistantsDetails($nim);
 
         if (!$assistant) {
-            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+            return response()->view('errors.not-found', ['message' => 'Asisten tidak ditemukan'], 404);
         }
 
         $validated = $request->validated();
 
         try {
             $this->assistantService->updateAssistant($validated, $nim);
-            return redirect()->route('assistant.index', $nim)->with('success', 'Assistant updated successfully');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data asisten berhasil diperbarui.',
+            ]);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to update assistant: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memperbarui asisten: ' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -192,9 +204,35 @@ class AssistantController extends Controller
 
         try {
             $this->assistantService->deleteAssistant($nim);
-            return redirect()->route('assistant.index')->with('success', 'Assistant deleted successfully');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data asisten berhasil dihapus.',
+            ]);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to delete assistant: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus data asisten: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function bulkDelete(StoreAssistantBulkDeleteRequest $request)
+    {
+        $validated = $request->validated();
+
+        try {
+            $nims = $validated['ids'];
+            $this->assistantService->bulkDeleteAssistants($nims);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data yang dipilih berhasil dihapus.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus data asisten: ' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -302,11 +340,11 @@ class AssistantController extends Controller
 
         return view('schedule.set-assistant', $data);
     }
-    
+
     public function storeSetAssistant(StoreAssistantScheduleRequest $request, string $id)
     {
         $validated = $request->validated();
-        
+
         if (!$this->scheduleService->isScheduleExists($id)) {
             return response()->view('errors.not-found', ['message' => 'Schedule not found'], 404);
         }

@@ -1,20 +1,20 @@
 <div id="{{ $modalId }}"
     class="fixed inset-0 z-50 hidden overflow-y-auto transition-opacity duration-300 ease-in-out">
     <div id="modalOverlay"
-        class="flex items-center justify-center min-h-screen px-4 py-8 bg-gray-900/75 transition-opacity duration-300 ease-in-out">
-        <div class="relative bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 transform transition-all duration-300 sm:my-8 sm:align-middle sm:w-full scale-95 opacity-0"
+        class="flex items-center justify-center min-h-screen bg-gray-900/75 transition-opacity duration-300 ease-in-out">
+        <div class="relative bg-white rounded-3xl shadow-xl max-w-2xl w-full p-8 transform transition-all duration-300 sm:my-8 sm:align-middle sm:w-full scale-95 opacity-0"
             id="modalContent">
-            <div class="flex items-center justify-between">
-                <h3 class="text-2xl font-bold">
-                    {{ $title }}
-                </h3>
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-key-primary font-bold text-xl" id="title"></h3>
                 <button id="closeModalBtn"
-                    class="text-gray-400 hover:text-gray-600 text-2xl font-bold focus:outline-none">
-                    &times;
+                    class="text-[#929090] hover:text-[#535252] focus:outline-none cursor-pointer">
+                    <x-heroicon-s-x-mark class="w-6 h-6" />
                 </button>
             </div>
 
-            <div class="modal-body mt-6">
+            <hr class="border-[#F4F0EF] mb-4">
+
+            <div class="modal-body">
             </div>
         </div>
     </div>
@@ -64,6 +64,7 @@
                     },
                     success: function(response) {
                         modalBody.html(response);
+                        window.initInputComponent();
                         if (formId) {
                             const form = modalBody.find(`#${formId}`);
                             if (form.length) {
@@ -72,6 +73,8 @@
                                     const formData = $(this).serialize();
                                     $('.text-red-500').remove();
                                     $('input, textarea').removeClass('border-red-500');
+                                    console.log(form.attr('method'));
+                                    
 
                                     $.ajax({
                                         url: form.attr('action'),
@@ -82,10 +85,10 @@
                                         },
                                         beforeSend: function() {
                                             form.find('button[type="submit"]')
-                                                .removeClass('px-8').html(`
-                                                    <div class="flex justify-center items-center gap-2 px-4">
-                                                        <div class="border-gray-100 h-5 w-5 animate-spin rounded-full border-3 border-t-tertiary"></div>
-                                                        Mengirim...
+                                                .html(`
+                                                    <div class="flex justify-center items-center gap-2">
+                                                        <x-icon-spinner class="h-5 w-5 animate-spin" />
+                                                        Menyimpan...
                                                     </div>
                                                 `).prop('disabled', true);
                                         },
