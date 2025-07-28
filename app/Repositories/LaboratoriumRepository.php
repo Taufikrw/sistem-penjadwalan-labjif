@@ -70,4 +70,11 @@ class LaboratoriumRepository implements LaboratoriumRepositoryInterface
 
         return false;
     }
+    
+    public function deleteByIds(array $ids)
+    {
+        Laboratorium::whereIn('id', $ids)->delete();
+
+        return true;
+    }
 }

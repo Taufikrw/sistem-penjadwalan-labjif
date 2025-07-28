@@ -111,20 +111,6 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function destroyLab($id)
-    {
-        // if (!$this->scheduleService->isRoomExists($id)) {
-        //     return abort(404, 'Laboratorium not found');
-        // }
-
-        $this->scheduleService->deleteLab($id);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Laboratorium deleted successfully.',
-        ]);
-    }
-
     public function index()
     {
         $data = $this->scheduleService->getScheduleList();

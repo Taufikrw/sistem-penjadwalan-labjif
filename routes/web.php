@@ -67,7 +67,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     
     Route::get('labs/{id}', [LaboratoriumController::class, 'edit'])->name('lab.edit');
     Route::put('labs/{id}', [LaboratoriumController::class, 'update'])->name('lab.update');
-    Route::delete('labs/{id}', [ScheduleController::class, 'destroyLab'])->name('lab.delete');
+    Route::delete('labs/{id}', [LaboratoriumController::class, 'destroy'])->name('lab.delete');
+    Route::post('labs/bulk-delete', [LaboratoriumController::class, 'bulkDelete'])->name('lab.bulk-delete');
 
     Route::get('schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');
     Route::post('schedule/create', [ScheduleController::class, 'store'])->name('schedule.store');

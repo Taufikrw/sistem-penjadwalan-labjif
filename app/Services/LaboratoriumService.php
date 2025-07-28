@@ -44,4 +44,14 @@ class LaboratoriumService
     {
         $this->laboratoriumRepository->updateLab($id, $data);
     }
+
+    public function deleteLab($id)
+    {
+        $this->laboratoriumRepository->deleteLab($id);
+    }
+
+    public function bulkDeleteLabs(array $ids)
+    {
+        $this->laboratoriumRepository->deleteByIds($ids);
+    }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Room;
 use App\Repositories\Contracts\LaboratoriumRepositoryInterface;
 use App\Repositories\Contracts\PracticumRepositoryInterface;
 use App\Repositories\Contracts\ScheduleRepositoryInterface;
@@ -69,11 +68,6 @@ class ScheduleService
     public function deletePracticum($kode_praktikum)
     {
         $this->practicumRepository->deletePracticum($kode_praktikum);
-    }
-
-    public function deleteLab($id)
-    {
-        $this->laboratoriumRepository->deleteLab($id);
     }
 
     public function getScheduleList()

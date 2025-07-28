@@ -13,4 +13,6 @@ interface LaboratoriumRepositoryInterface
     public function updateLab($id, array $data);
 
     public function deleteLab($id);
+
+    public function deleteByIds(array $ids);
 }
