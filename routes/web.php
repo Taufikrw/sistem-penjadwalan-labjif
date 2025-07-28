@@ -62,8 +62,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('practicum/{kode_praktikum}', [ScheduleController::class, 'destroyPracticum'])->name('practicum.delete');
 
     Route::get('labs', [LaboratoriumController::class, 'index'])->name('lab.index');
-    Route::get('labs/create', [ScheduleController::class, 'createLab'])->name('lab.create');
-    Route::post('labs/create', [ScheduleController::class, 'storeLab'])->name('lab.store');
+    Route::get('labs/create', [LaboratoriumController::class, 'create'])->name('lab.create');
+    Route::post('labs/create', [LaboratoriumController::class, 'store'])->name('lab.store');
     
     Route::get('labs/{id}', [ScheduleController::class, 'editLab'])->name('lab.edit');
     Route::put('labs/{id}', [ScheduleController::class, 'updateLab'])->name('lab.update');

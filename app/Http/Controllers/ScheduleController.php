@@ -112,29 +112,6 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function createLab()
-    {
-        return view('lab.form');
-    }
-
-    public function storeLab(StoreRoomRequest $request)
-    {
-        $validated = $request->validated();
-
-        try {
-            $this->scheduleService->createLab($validated);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Laboratorium created successfully.',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to create laboratorium: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
-
     public function editLab($id)
     {
         $laboratorium = $this->scheduleService->getLabDetails($id);

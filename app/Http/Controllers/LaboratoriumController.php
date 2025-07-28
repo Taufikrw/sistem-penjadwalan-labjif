@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreLabRequest;
 use App\Services\LaboratoriumService;
 use Illuminate\Http\Request;
 
@@ -42,6 +43,29 @@ class LaboratoriumController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal mengambil data laboratorium: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function create()
+    {
+        return view('lab.form');
+    }
+
+    public function store(StoreLabRequest $request)
+    {
+        $validated = $request->validated();
+
+        try {
+            $this->laboratoriumService->createLab($validated);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data laboratorium berhasil dibuat.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal membuat data laboratorium: ' . $e->getMessage(),
             ], 500);
         }
     }

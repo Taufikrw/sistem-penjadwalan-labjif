@@ -5,45 +5,53 @@
         @method('PUT')
     @endif
 
-    <div>
-        <div class="mb-4">
-            <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Nama Laboratorium:</label>
-            <input type="text" name="name" id="name"
-                value="{{ old('name', isset($laboratorium) ? $laboratorium->name : '') }}"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('name') border-red-500 @enderror"
-                required>
-            @error('name')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div class="mb-4">
-            <label for="capacity" class="block text-gray-700 text-sm font-bold mb-2">Kapasitas Lab:</label>
-            <input type="number" min="1" name="capacity" id="capacity"
-                value="{{ old('capacity', isset($laboratorium) ? $laboratorium->capacity : '') }}"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('capacity') border-red-500 @enderror"
-                required>
-            @error('capacity')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div class="mb-4">
-            <label for="location" class="block text-gray-700 text-sm font-bold mb-2">Lokasi Lab:</label>
-            <input type="text" name="location" id="location"
-                value="{{ old('location', isset($laboratorium) ? $laboratorium->location : '') }}"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('location') border-red-500 @enderror"
-                required>
-            @error('location')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
+    <div id="title-hidden" class="hidden">
+        <div class="flex gap-3 items-center">
+            @isset($laboratorium)
+                <x-heroicon-s-pencil-square class="w-4 h-4" />
+                <span>Edit Laboratorium</span>
+            @else
+                <x-heroicon-s-plus class="w-4 h-4" />
+                <span>Tambah Laboratorium</span>
+            @endisset
         </div>
     </div>
 
-    <div class="mt-8">
-        <button type="submit"
-            class="bg-secondary hover:bg-secondary-40 text-tertiary border-1 border-tertiary font-bold py-2 px-8 rounded cursor-pointer">
-            Kirim
-        </button>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <x-input-label for="name" class="mb-2 text-sm" value="Nama" />
+            <x-text-input name="name" id="name" class="w-full" :value="old('name', isset($laboratorium) ? $laboratorium->name : '')"
+                placeholder="Masukkan nama laboratorium" required />
+        </div>
+
+        <div>
+            <x-input-label for="capacity" class="mb-2 text-sm" value="Kapasitas" />
+            <x-text-input name="capacity" id="capacity" class="w-full" :value="old('capacity', isset($laboratorium) ? $laboratorium->capacity : '')"
+                type="number" min="1" placeholder="Masukkan kapasitas laboratorium" required />
+        </div>
+
+        <div>
+            <x-input-label for="location" class="mb-2 text-sm" value="Lokasi" />
+            <x-select-input id="location_select" name="location" :options="['Pattimura I' => 'Pattimura I', 'Pattimura II' => 'Pattimura II', 'Pattimura III' => 'Pattimura III']" placeholder="Pilih lokasi laboratorium"
+                :selected="isset($laboratorium) ? $laboratorium->location : null" />
+        </div>
+    </div>
+
+    <div class="mt-8 flex justify-between items-center w-full">
+        <x-button-secondary class="rounded-xl py-3 px-6" type="button" id="btn-cancel-lab"
+            onclick="closeModal()">
+            Batal
+        </x-button-secondary>
+        <x-button-primary class="rounded-xl py-3 px-6" type="submit" id="btn-submit-lab">
+            Simpan
+        </x-button-primary>
     </div>
 </form>
+
+<script type="module">
+    $(document).ready(function() {
+        const title = $('#title-hidden').html();
+        $('#title').html(title);
+
+    });
+</script>

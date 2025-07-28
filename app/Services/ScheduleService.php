@@ -94,11 +94,6 @@ class ScheduleService
         return $this->laboratoriumRepository->getLaboratoriumById($id) !== null;
     }
 
-    public function createLab(array $data)
-    {
-        $this->laboratoriumRepository->storeLab($data);
-    }
-
     public function updateLab($id, array $data)
     {
         $this->laboratoriumRepository->updateLab($id, $data);

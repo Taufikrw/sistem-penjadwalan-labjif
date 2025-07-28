@@ -18,4 +18,9 @@ class LaboratoriumService
     {
         return $this->laboratoriumRepository->getAllLaboratoriums($sortBy, $sortOrder, $search, $filters, 8);
     }
+    
+    public function createLab(array $data)
+    {
+        $this->laboratoriumRepository->storeLab($data);
+    }
 }
