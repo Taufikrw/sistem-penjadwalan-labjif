@@ -78,11 +78,6 @@ class ScheduleService
         return compact('labs');
     }
 
-    public function getLaboratoriumData($sortBy, $sortOrder, $search, $filters)
-    {
-        return $this->laboratoriumRepository->getAllLaboratoriums($sortBy, $sortOrder, $search, $filters, 8);
-    }
-
     public function getLabDetails($id)
     {
         $lab = $this->laboratoriumRepository->getLaboratoriumById($id);

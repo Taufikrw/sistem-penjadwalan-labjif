@@ -3,6 +3,7 @@
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FrontController;
+use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\ScheduleController;
 use Illuminate\Support\Facades\Route;
 
@@ -60,13 +61,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('practicum/{kode_praktikum}', [ScheduleController::class, 'updatePracticum'])->name('practicum.update');
     Route::delete('practicum/{kode_praktikum}', [ScheduleController::class, 'destroyPracticum'])->name('practicum.delete');
 
-    Route::get('lab', [ScheduleController::class, 'listLaboratoriums'])->name('lab.index');
-    Route::get('lab/create', [ScheduleController::class, 'createLab'])->name('lab.create');
-    Route::post('lab/create', [ScheduleController::class, 'storeLab'])->name('lab.store');
+    Route::get('labs', [LaboratoriumController::class, 'index'])->name('lab.index');
+    Route::get('labs/create', [ScheduleController::class, 'createLab'])->name('lab.create');
+    Route::post('labs/create', [ScheduleController::class, 'storeLab'])->name('lab.store');
     
-    Route::get('lab/{id}', [ScheduleController::class, 'editLab'])->name('lab.edit');
-    Route::put('lab/{id}', [ScheduleController::class, 'updateLab'])->name('lab.update');
-    Route::delete('lab/{id}', [ScheduleController::class, 'destroyLab'])->name('lab.delete');
+    Route::get('labs/{id}', [ScheduleController::class, 'editLab'])->name('lab.edit');
+    Route::put('labs/{id}', [ScheduleController::class, 'updateLab'])->name('lab.update');
+    Route::delete('labs/{id}', [ScheduleController::class, 'destroyLab'])->name('lab.delete');
 
     Route::get('schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');
     Route::post('schedule/create', [ScheduleController::class, 'store'])->name('schedule.store');
@@ -83,8 +84,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::prefix('api')->group(function () {
         Route::get('get-today-schedules', [ScheduleController::class, 'todaySchedule'])->name('api.today-schedules');
         Route::get('get-assistant-table', [AssistantController::class, 'assistantTable'])->name('api.assistant.table');
+        Route::get('get-laboratorium-table', [LaboratoriumController::class, 'labsTable'])->name('api.laboratorium.data');
         Route::get('get-practicum-data', [ScheduleController::class, 'practicumData'])->name('api.practicum.data');
-        Route::get('get-laboratorium-data', [ScheduleController::class, 'laboratoriumData'])->name('api.laboratorium.data');
         Route::get('get-course-schedules/{nim}', [AssistantController::class, 'courseSchedulesData'])->name('api.course-schedules');
     });
 });

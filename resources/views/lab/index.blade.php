@@ -24,21 +24,21 @@
             <div id="selected-info" class="text-key-primary font-bold">
                 0 Dipilih
             </div>
-            <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl" type="button"
-                id="btn-bulk-delete">
+            <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl"
+                type="button" id="btn-bulk-delete">
                 <x-heroicon-s-trash class="w-5 h-5" />
                 Hapus
             </x-button-primary>
         </div>
     </div>
 
-    <x-data-table url="{{ route('api.laboratorium.data') }}" action-url="lab/" :columns="[
+    <x-data-table url="{{ route('api.laboratorium.data') }}" action-url="labs/" :columns="[
         ['label' => 'Nama', 'field' => 'name', 'sortable' => true],
         ['label' => 'Lokasi', 'field' => 'location', 'sortable' => true],
         ['label' => 'Kapasitas', 'field' => 'capacity', 'sortable' => true],
     ]" :has-actions="true"
         table-id="laboratorium-table" search-input-id="search-lab" btn-create-id="btn-create-lab" />
 
-    <x-form-modal modal-id="laboratoriumModal" title="Formulir Laboratorium Baru" ajax-url="{{ route('lab.create') }}"
-        action-url="lab/" form-id="lab-form" />
+    <x-form-modal modal-id="laboratoriumModal" ajax-url="{{ route('lab.create') }}" action-url="labs/"
+        form-id="lab-form" />
 </x-layouts.app>
