@@ -71,8 +71,8 @@
                                 form.on('submit', function(e) {
                                     e.preventDefault();
                                     const formData = $(this).serialize();
-                                    $('.text-red-500').remove();
-                                    $('input, textarea').removeClass('border-red-500');
+                                    $('.error-message').remove();
+                                    $('input, textarea').removeClass('border-[#BA1A1A]');
                                     console.log(form.attr('method'));
                                     
 
@@ -131,10 +131,10 @@
                                                         );
                                                     inputElement
                                                         .addClass(
-                                                            'border-red-500'
+                                                            'border-[#BA1A1A]'
                                                         );
-                                                    inputElement.after(
-                                                        `<p class="text-red-500 text-sm mt-1">${value[0]}</p>`
+                                                    inputElement.closest('.relative').after(
+                                                        `<p class="error-message text-[#BA1A1A] text-sm mt-1 font-semibold">${value[0]}</p>`
                                                     );
                                                 });
                                                 Swal.fire({

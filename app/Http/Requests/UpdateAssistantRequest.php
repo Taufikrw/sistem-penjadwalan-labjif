@@ -28,7 +28,6 @@ class UpdateAssistantRequest extends FormRequest
             'angkatan' => 'required|integer|min:2020|max:' . date('Y'),
             'tahun_masuk' => 'required|integer|min:2020|max:' . date('Y'),
             'status' => 'required|string|in:aktif,non-aktif,selesai',
-            'ubah-password' => 'required|string|min:8',
         ];
     }
 }

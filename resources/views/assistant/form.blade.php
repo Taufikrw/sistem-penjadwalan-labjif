@@ -23,75 +23,48 @@
             <x-input-label for="name" class="mb-2 text-sm" value="Nama" />
             <x-text-input name="name" id="name" class="w-full" :value="old('name', isset($assistant) ? $assistant->name : '')"
                 placeholder="Masukkan nama asisten" required />
-            @error('name')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
         </div>
         <div>
             <x-input-label for="nim" class="mb-2 text-sm" value="NIM" />
             <x-text-input name="nim" id="nim" class="w-full" :value="old('nim', isset($assistant) ? $assistant->nim : '')"
                 placeholder="Masukkan NIM asisten" required />
-            @error('nim')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
         </div>
         <div>
             <x-input-label for="prodi" class="mb-2 text-sm" value="Program Studi" />
             <x-select-input id="prodi_select" name="prodi" :options="['Sistem Informasi' => 'Sistem Informasi', 'Informatika' => 'Informatika']" placeholder="Pilih prodi asisten"
                 :selected="isset($assistant) ? $assistant->prodi : null" />
-            @error('prodi')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
         </div>
         <div>
             <x-input-label for="angkatan" class="mb-2 text-sm" value="Angkatan" />
             <x-text-input name="angkatan" id="angkatan" class="w-full" type="number" :value="old('angkatan', isset($assistant) ? $assistant->angkatan : '')"
                 placeholder="Masukkan angkatan asisten" required />
-            @error('angkatan')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
         </div>
         <div>
             <x-input-label for="tahun_masuk" class="mb-2 text-sm" value="Tahun Masuk" />
             <x-text-input name="tahun_masuk" id="tahun_masuk" class="w-full" type="number" min="2021"
                 :value="old('tahun_masuk', isset($assistant) ? $assistant->tahun_masuk : date('Y'))" placeholder="Masukkan tahun masuk asisten" required />
-            @error('tahun_masuk')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
         </div>
         <div class="{{ isset($assistant) ? '' : 'hidden' }}">
             <x-input-label for="status" class="mb-2 text-sm" value="Status" />
             <x-select-input id="status_select" name="status" :options="['aktif' => 'Aktif', 'non-aktif' => 'Non-Aktif', 'selesai' => 'Selesai']" placeholder="Pilih status asisten"
                 :selected="isset($assistant) ? $assistant->status : 'aktif'" />
-            @error('status')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
         </div>
         @isset($assistant)
             <div>
                 <x-input-label for="ubah-password" class="mb-2 text-sm" value="Ubah Kata Sandi" />
                 <x-text-input name="ubah-password" id="ubah-password" class="w-full" type="password" :value="old('password')"
                     placeholder="Masukkan kata sandi baru" />
-                @error('password')
-                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                @enderror
             </div>
         @endisset
         <div class="{{ isset($assistant) ? 'hidden' : '' }}">
             <x-input-label for="password" class="mb-2 text-sm" value="Kata Sandi" />
             <x-text-input name="password" id="password" class="w-full" type="password" :value="old('password')"
                 placeholder="Masukkan kata sandi" />
-            @error('password')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
         </div>
         <div class="{{ isset($assistant) ? 'hidden' : '' }}">
             <x-input-label for="password_confirmation" class="mb-2 text-sm" value="Konfirmasi Kata Sandi" />
             <x-text-input name="password_confirmation" id="password_confirmation" class="w-full" type="password"
                 placeholder="Konfirmasi kata sandi" />
-            @error('password_confirmation')
-                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-            @enderror
         </div>
     </div>
     <div class="mt-8 flex justify-between items-center w-full">

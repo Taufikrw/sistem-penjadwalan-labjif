@@ -167,7 +167,7 @@
                                     } else if (column.field === 'jadwal_praktikum') {
                                         rowsHtml +=
                                             `<td class="px-4 py-4">
-                                                <a href="assistants/${item.nim}/detail-schedule"
+                                                <a href="assistants/${item.nim}/detail-jadwal-praktikum"
                                                     class="flex items-center gap-2 hover:text-key-secondary">
                                                     <x-heroicon-o-eye class="w-4 h-4" />
                                                     Detail
@@ -176,7 +176,7 @@
                                     } else if (column.field === 'jadwal_kuliah') {
                                         rowsHtml +=
                                             `<td class="px-4 py-4">
-                                                <a href="assistants/${item.nim}/detail-course"
+                                                <a href="assistants/${item.nim}/detail-jadwal-kuliah"
                                                     class="flex items-center gap-2 hover:text-key-secondary">
                                                     <x-heroicon-o-eye class="w-4 h-4" />
                                                     Detail

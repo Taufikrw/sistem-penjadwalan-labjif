@@ -38,8 +38,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('assistants/create', [AssistantController::class, 'create'])->name('assistant.create');
     Route::post('assistants/create', [AssistantController::class, 'store'])->name('assistant.store');
 
-    Route::get('assistants/{nim}/detail-course', [AssistantController::class, 'show'])->name('assistant.showCourse');
-    Route::get('assistants/{nim}/detail-schedule', [AssistantController::class, 'showSchedule'])->name('assistant.showSchedule');
+    Route::get('assistants/{nim}/detail-jadwal-kuliah', [AssistantController::class, 'show'])->name('assistant.showCourse');
+    Route::get('assistants/{nim}/detail-jadwal-praktikum', [AssistantController::class, 'showSchedule'])->name('assistant.showSchedule');
     Route::get('assistants/{nim}', [AssistantController::class, 'edit'])->name('assistant.edit');
     Route::put('assistants/{nim}', [AssistantController::class, 'update'])->name('assistant.update');
     Route::delete('assistants/{nim}', [AssistantController::class, 'destroy'])->name('assistant.delete');
@@ -83,7 +83,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::prefix('api')->group(function () {
         Route::get('get-today-schedules', [ScheduleController::class, 'todaySchedule'])->name('api.today-schedules');
         Route::get('get-assistant-table', [AssistantController::class, 'assistantTable'])->name('api.assistant.table');
-        Route::get('get-assistant-data/{nim}', [AssistantController::class, 'assistantDetails'])->name('api.assistant.data.nim');
         Route::get('get-practicum-data', [ScheduleController::class, 'practicumData'])->name('api.practicum.data');
         Route::get('get-laboratorium-data', [ScheduleController::class, 'laboratoriumData'])->name('api.laboratorium.data');
         Route::get('get-course-schedules/{nim}', [AssistantController::class, 'courseSchedulesData'])->name('api.course-schedules');

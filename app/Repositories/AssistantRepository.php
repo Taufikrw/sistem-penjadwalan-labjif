@@ -110,9 +110,9 @@ class AssistantRepository implements AssistantRepositoryInterface
             'status' => $data['status'],
         ]);
 
-        if (isset($data['ubah-password'])) {
+        if (isset($data['password'])) {
             if ($assistant->user) {
-                $assistant->user->update(['password' => bcrypt($data['ubah-password'])]);
+                $assistant->user->update(['password' => bcrypt($data['password'])]);
             }
         }
 

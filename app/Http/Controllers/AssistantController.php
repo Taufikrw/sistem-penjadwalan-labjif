@@ -164,7 +164,7 @@ class AssistantController extends Controller
         $assistant = $this->assistantService->getAssistantsDetails($nim);
 
         if (!$assistant) {
-            return response()->view('errors.not-found', ['message' => 'Asisten tidak ditemukan'], 404);
+            return response()->view('errors.404', ['message' => 'Asisten tidak ditemukan'], 404);
         }
 
         return view('assistant.form', compact('assistant'));
@@ -175,10 +175,11 @@ class AssistantController extends Controller
         $assistant = $this->assistantService->getAssistantsDetails($nim);
 
         if (!$assistant) {
-            return response()->view('errors.not-found', ['message' => 'Asisten tidak ditemukan'], 404);
+            return response()->view('errors.404', ['message' => 'Asisten tidak ditemukan'], 404);
         }
 
         $validated = $request->validated();
+        $validated['password'] = $request->input('ubah-password', null);
 
         try {
             $this->assistantService->updateAssistant($validated, $nim);
@@ -199,7 +200,7 @@ class AssistantController extends Controller
         $assistant = $this->assistantService->getAssistantsDetails($nim);
 
         if (!$assistant) {
-            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+            return response()->view('errors.404', ['message' => 'Assistant not found'], 404);
         }
 
         try {
@@ -224,9 +225,11 @@ class AssistantController extends Controller
             $nims = $validated['ids'];
             $this->assistantService->bulkDeleteAssistants($nims);
 
+            $count = count($nims);
+
             return response()->json([
                 'status' => 'success',
-                'message' => 'Data yang dipilih berhasil dihapus.'
+                'message' => "{$count} data asisten berhasil dihapus."
             ]);
         } catch (\Exception $e) {
             return response()->json([
