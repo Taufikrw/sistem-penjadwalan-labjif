@@ -7,9 +7,34 @@ use App\Repositories\Contracts\PracticumRepositoryInterface;
 
 class PracticumRepository implements PracticumRepositoryInterface
 {
-    public function getAllPracticums($sortBy = 'kode_praktikum', $sortOrder = 'asc', $perpage = null)
+    public function getAllPracticums($sortBy = 'updated_at', $sortOrder = 'desc', $search = '', array $filters = [], $perpage = null)
     {
+        $allowedSortColumns = ['kode_praktikum', 'name', 'semester', 'for_prodi', 'updated_at'];
+        $sortBy = in_array(strtolower($sortBy), $allowedSortColumns) ? strtolower($sortBy) : 'updated_at';
+        $sortOrder = in_array(strtolower($sortOrder), ['asc', 'desc']) ? strtolower($sortOrder) : 'desc';
+        
         $query = Practicum::with('schedules')->orderBy($sortBy, $sortOrder);
+
+        if (!empty($search)) {
+            $lowerSearch = strtolower($search);
+            $query->where(function ($q) use ($lowerSearch) {
+                $q->whereRaw('LOWER(kode_praktikum) LIKE ?', ["%{$lowerSearch}%"])
+                    ->orWhereRaw('LOWER(name) LIKE ?', ["%{$lowerSearch}%"])
+                    ->orWhereRaw('CAST(semester AS TEXT) LIKE ?', ["%{$lowerSearch}%"])
+                    ->orWhereRaw('LOWER(for_prodi) LIKE ?', ["%{$lowerSearch}%"]);
+            });
+        }
+
+        foreach ($filters as $key => $value) {
+            if (in_array($key, ['semester', 'for_prodi'])) {
+                $lowerValue = strtolower($value);
+                if ($key === 'semester') {
+                    $query->whereRaw("CAST(semester AS TEXT) LIKE ?", ["%{$lowerValue}%"]);
+                } else {
+                    $query->whereRaw("LOWER({$key}) LIKE ?", ["%{$lowerValue}%"]);
+                }
+            }
+        }
 
         if ($perpage) {
             return $query->paginate($perpage);

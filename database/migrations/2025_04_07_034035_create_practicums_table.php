@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('practicums', function (Blueprint $table) {
             $table->string('kode_praktikum', 20)->unique()->primary();
-            $table->string('name', 20);
+            $table->string('name', 50);
             $table->string('for_prodi', 20);
             $table->integer('semester');
 

@@ -16,31 +16,6 @@ class ScheduleController extends Controller
         $this->scheduleService = $scheduleService;
     }
 
-    public function listPracticums()
-    {
-        return view('practicum.index');
-    }
-
-    public function practicumData(Request $request)
-    {
-        $sortBy = $request->get('sort_by', 'kode_praktikum');
-        $sortOrder = $request->get('sort_order', 'asc');
-
-        try {
-            $data = $this->scheduleService->getPracticumList($sortBy, $sortOrder);
-            return response()->json([
-                'status' => 'success',
-                'data' => $data,
-                'message' => 'Practicum data retrieved successfully.',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to retrieve practicum data: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
-
     public function createPracticum()
     {
         return view('practicum.form')->render();

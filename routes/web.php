@@ -4,6 +4,7 @@ use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\LaboratoriumController;
+use App\Http\Controllers\PracticumController;
 use App\Http\Controllers\ScheduleController;
 use Illuminate\Support\Facades\Route;
 
@@ -53,13 +54,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('course/{nim}/{id}', [AssistantController::class, 'courseUpdate'])->name('course.update');
     Route::delete('course/{nim}/{id}', [AssistantController::class, 'courseDestroy'])->name('course.delete');
 
-    Route::get('practicum', [ScheduleController::class, 'listPracticums'])->name('practicum.index');
-    Route::get('practicum/create', [ScheduleController::class, 'createPracticum'])->name('practicum.create');
-    Route::post('practicum/create', [ScheduleController::class, 'storePracticum'])->name('practicum.store');
+    Route::get('practicums', [PracticumController::class, 'index'])->name('practicum.index');
+    Route::get('practicums/create', [ScheduleController::class, 'createPracticum'])->name('practicum.create');
+    Route::post('practicums/create', [ScheduleController::class, 'storePracticum'])->name('practicum.store');
 
-    Route::get('practicum/{kode_praktikum}', [ScheduleController::class, 'editPracticum'])->name('practicum.edit');
-    Route::put('practicum/{kode_praktikum}', [ScheduleController::class, 'updatePracticum'])->name('practicum.update');
-    Route::delete('practicum/{kode_praktikum}', [ScheduleController::class, 'destroyPracticum'])->name('practicum.delete');
+    Route::get('practicums/{kode_praktikum}', [ScheduleController::class, 'editPracticum'])->name('practicum.edit');
+    Route::put('practicums/{kode_praktikum}', [ScheduleController::class, 'updatePracticum'])->name('practicum.update');
+    Route::delete('practicums/{kode_praktikum}', [ScheduleController::class, 'destroyPracticum'])->name('practicum.delete');
 
     Route::get('labs', [LaboratoriumController::class, 'index'])->name('lab.index');
     Route::get('labs/create', [LaboratoriumController::class, 'create'])->name('lab.create');
@@ -85,8 +86,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::prefix('api')->group(function () {
         Route::get('get-today-schedules', [ScheduleController::class, 'todaySchedule'])->name('api.today-schedules');
         Route::get('get-assistant-table', [AssistantController::class, 'assistantTable'])->name('api.assistant.table');
-        Route::get('get-laboratorium-table', [LaboratoriumController::class, 'labsTable'])->name('api.laboratorium.data');
-        Route::get('get-practicum-data', [ScheduleController::class, 'practicumData'])->name('api.practicum.data');
+        Route::get('get-laboratorium-table', [LaboratoriumController::class, 'labsTable'])->name('api.laboratorium.table');
+        Route::get('get-practicum-table', [PracticumController::class, 'practicumsTable'])->name('api.practicum.table');
         Route::get('get-course-schedules/{nim}', [AssistantController::class, 'courseSchedulesData'])->name('api.course-schedules');
     });
 });

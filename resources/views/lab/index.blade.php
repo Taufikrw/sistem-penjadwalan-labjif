@@ -32,7 +32,7 @@
         </div>
     </div>
 
-    <x-data-table url="{{ route('api.laboratorium.data') }}" action-url="labs/" :columns="[
+    <x-data-table url="{{ route('api.laboratorium.table') }}" action-url="labs/" :columns="[
         ['label' => 'Nama', 'field' => 'name', 'sortable' => true],
         ['label' => 'Lokasi', 'field' => 'location', 'sortable' => true],
         ['label' => 'Kapasitas', 'field' => 'capacity', 'sortable' => true],
