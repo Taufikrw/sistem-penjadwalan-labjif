@@ -16,44 +16,11 @@ class ScheduleController extends Controller
         $this->scheduleService = $scheduleService;
     }
 
-    public function editPracticum(string $kode_praktikum)
-    {
-        $practicum = $this->scheduleService->getPracticumDetails($kode_praktikum);
-
-        if (!$practicum) {
-            return response()->view('errors.not-found', ['message' => 'Practicum not found'], 404);
-        }
-
-        return view('practicum.form', compact('practicum'))->render();
-    }
-
-    public function updatePracticum(StorePracticumRequest $request, $kode_praktikum)
-    {
-        if (!$this->scheduleService->isPracticumExists($kode_praktikum)) {
-            return response()->view('errors.not-found', ['message' => 'Practicum not found'], 404);
-        }
-
-        $validated = $request->validated();
-
-        try {
-            $this->scheduleService->updatePracticum($kode_praktikum, $validated);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Practicum updated successfully.',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to update practicum: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
-
     public function destroyPracticum($kode_praktikum)
     {
-        if (!$this->scheduleService->isPracticumExists($kode_praktikum)) {
-            return abort(404, 'Practicum not found');
-        }
+        // if (!$this->scheduleService->isPracticumExists($kode_praktikum)) {
+        //     return abort(404, 'Practicum not found');
+        // }
 
         $this->scheduleService->deletePracticum($kode_praktikum);
 

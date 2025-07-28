@@ -22,32 +22,6 @@ class ScheduleService
         $this->scheduleRepository = $scheduleRepository;
     }
 
-    public function getPracticumList($sortBy, $sortOrder)
-    {
-        return $this->practicumRepository->getAllPracticums($sortBy, $sortOrder, 8);
-    }
-
-    public function getPracticumDetails($kode_praktikum)
-    {
-        $practicum = $this->practicumRepository->getPracticumByKode($kode_praktikum);
-
-        if (empty($practicum)) {
-            return null;
-        }
-
-        return $practicum;
-    }
-
-    public function isPracticumExists($kode_praktikum)
-    {
-        return $this->practicumRepository->getPracticumByKode($kode_praktikum) !== null;
-    }
-
-    public function updatePracticum($kode_praktikum, array $data)
-    {
-        $this->practicumRepository->updatePracticum($kode_praktikum, $data);
-    }
-
     public function deletePracticum($kode_praktikum)
     {
         $this->practicumRepository->deletePracticum($kode_praktikum);

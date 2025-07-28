@@ -58,8 +58,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('practicums/create', [PracticumController::class, 'create'])->name('practicum.create');
     Route::post('practicums/create', [PracticumController::class, 'store'])->name('practicum.store');
 
-    Route::get('practicums/{kode_praktikum}', [ScheduleController::class, 'editPracticum'])->name('practicum.edit');
-    Route::put('practicums/{kode_praktikum}', [ScheduleController::class, 'updatePracticum'])->name('practicum.update');
+    Route::get('practicums/{kode_praktikum}', [PracticumController::class, 'edit'])->name('practicum.edit');
+    Route::put('practicums/{kode_praktikum}', [PracticumController::class, 'update'])->name('practicum.update');
     Route::delete('practicums/{kode_praktikum}', [ScheduleController::class, 'destroyPracticum'])->name('practicum.delete');
 
     Route::get('labs', [LaboratoriumController::class, 'index'])->name('lab.index');

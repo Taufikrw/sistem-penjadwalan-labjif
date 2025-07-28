@@ -61,12 +61,45 @@ class PracticumController extends Controller
             $this->practicumService->storePracticum($validated);
             return response()->json([
                 'status' => 'success',
-                'message' => 'Practicum created successfully.',
+                'message' => 'Data praktikum berhasil dibuat.',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to create practicum: ' . $e->getMessage(),
+                'message' => 'Gagal membuat praktikum: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function edit(string $kode_praktikum)
+    {
+        $practicum = $this->practicumService->getPracticumDetails($kode_praktikum);
+
+        if (!$practicum) {
+            return response()->view('errors.404', ['message' => 'Praktikum tidak ditemukan'], 404);
+        }
+
+        return view('practicum.form', compact('practicum'))->render();
+    }
+
+    public function update(StorePracticumRequest $request, $kode_praktikum)
+    {
+        if (!$this->practicumService->isPracticumExists($kode_praktikum)) {
+            return response()->view('errors.404', ['message' => 'Praktikum tidak ditemukan'], 404);
+        }
+
+        $validated = $request->validated();
+
+        try {
+            $this->practicumService->updatePracticum($kode_praktikum, $validated);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data praktikum berhasil diubah.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengubah praktikum: ' . $e->getMessage(),
             ], 500);
         }
     }
