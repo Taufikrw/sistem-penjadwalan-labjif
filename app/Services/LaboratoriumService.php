@@ -23,4 +23,25 @@ class LaboratoriumService
     {
         $this->laboratoriumRepository->storeLab($data);
     }
+
+    public function getLabDetails($id)
+    {
+        $lab = $this->laboratoriumRepository->getLaboratoriumById($id);
+
+        if (empty($lab)) {
+            return null;
+        }
+
+        return $lab;
+    }
+
+    public function isLabExists($id)
+    {
+        return $this->laboratoriumRepository->getLaboratoriumById($id) !== null;
+    }
+
+    public function updateLab($id, array $data)
+    {
+        $this->laboratoriumRepository->updateLab($id, $data);
+    }
 }

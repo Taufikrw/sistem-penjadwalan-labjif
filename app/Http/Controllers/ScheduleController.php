@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePracticumRequest;
-use App\Http\Requests\StoreRoomRequest;
 use App\Http\Requests\StoreScheduleRequest;
 use App\Services\ScheduleService;
 use Illuminate\Http\Request;
@@ -112,44 +111,11 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function editLab($id)
-    {
-        $laboratorium = $this->scheduleService->getLabDetails($id);
-
-        if (!$laboratorium) {
-            return response()->view('errors.not-found', ['message' => 'Room not found'], 404);
-        }
-
-        return view('lab.form', compact('laboratorium'));
-    }
-
-    public function updateLab(StoreRoomRequest $request, $id)
-    {
-        if (!$this->scheduleService->isRoomExists($id)) {
-            return response()->view('errors.not-found', ['message' => 'Room not found'], 404);
-        }
-
-        $validated = $request->validated();
-
-        try {
-            $this->scheduleService->updateLab($id, $validated);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Laboratorium updated successfully.',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to update laboratorium: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
-
     public function destroyLab($id)
     {
-        if (!$this->scheduleService->isRoomExists($id)) {
-            return abort(404, 'Laboratorium not found');
-        }
+        // if (!$this->scheduleService->isRoomExists($id)) {
+        //     return abort(404, 'Laboratorium not found');
+        // }
 
         $this->scheduleService->deleteLab($id);
 

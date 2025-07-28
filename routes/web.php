@@ -65,8 +65,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('labs/create', [LaboratoriumController::class, 'create'])->name('lab.create');
     Route::post('labs/create', [LaboratoriumController::class, 'store'])->name('lab.store');
     
-    Route::get('labs/{id}', [ScheduleController::class, 'editLab'])->name('lab.edit');
-    Route::put('labs/{id}', [ScheduleController::class, 'updateLab'])->name('lab.update');
+    Route::get('labs/{id}', [LaboratoriumController::class, 'edit'])->name('lab.edit');
+    Route::put('labs/{id}', [LaboratoriumController::class, 'update'])->name('lab.update');
     Route::delete('labs/{id}', [ScheduleController::class, 'destroyLab'])->name('lab.delete');
 
     Route::get('schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');

@@ -69,4 +69,37 @@ class LaboratoriumController extends Controller
             ], 500);
         }
     }
+
+    public function edit($id)
+    {
+        $laboratorium = $this->laboratoriumService->getLabDetails($id);
+        
+        if (!$laboratorium) {
+            return response()->view('errors.404', ['message' => 'Laboratorium tidak ditemukan'], 404);
+        }
+
+        return view('lab.form', compact('laboratorium'));
+    }
+
+    public function update(StoreLabRequest $request, $id)
+    {
+        if (!$this->laboratoriumService->isLabExists($id)) {
+            return response()->view('errors.404', ['message' => 'Laboratorium tidak ditemukan'], 404);
+        }
+
+        $validated = $request->validated();
+
+        try {
+            $this->laboratoriumService->updateLab($id, $validated);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data laboratorium berhasil diperbarui.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memperbarui data laboratorium: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }
