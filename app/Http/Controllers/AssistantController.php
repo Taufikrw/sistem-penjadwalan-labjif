@@ -86,45 +86,6 @@ class AssistantController extends Controller
         }
     }
 
-    public function show(string $nim)
-    {
-        $data = $this->assistantService->getAssistantWithCourse($nim);
-
-        if (!$data) {
-            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
-        }
-
-        return view('assistant.show', $data);
-    }
-
-    public function courseSchedulesData(Request $request, string $nim)
-    {
-        $sortBy = $request->get('sort_by', 'day');
-        $sortOrder = $request->get('sort_order', 'asc');
-
-        try {
-            $data = $this->scheduleService->getCourseSchedules($nim, $sortBy, $sortOrder);
-
-            if (!$data) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Assistant not found',
-                ], 404);
-            }
-
-            return response()->json([
-                'status' => 'success',
-                'data' => $data,
-                'message' => 'Course schedules retrieved successfully.',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to retrieve course schedules: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
-
     public function showSchedule(string $nim)
     {
         $data = $this->assistantService->getAssistantWithSchedule($nim);
@@ -385,18 +346,6 @@ class AssistantController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to update assistant: ' . $e->getMessage());
         }
-    }
-
-    public function courseSchedules()
-    {
-        $nim = Auth::user()->username;
-        $data = $this->assistantService->getAssistantWithCourse($nim);
-
-        if (!$data) {
-            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
-        }
-
-        return view('assistant.show', $data);
     }
 
     public function createCourseSchedule()

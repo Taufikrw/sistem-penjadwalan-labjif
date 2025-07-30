@@ -24,13 +24,16 @@ Route::middleware(['auth', 'role:admin,assistant'])->group(function () {
     
     Route::get('schedule', [ScheduleController::class, 'index'])->name('schedule.index');
     
-    Route::get('course-schedule', [AssistantController::class, 'courseSchedules'])->name('course.index');
-    Route::get('course-schedule/create', [AssistantController::class, 'createCourseSchedule'])->name('course-schedule.create');
-    Route::post('course-schedule/create', [AssistantController::class, 'storeCourseSchedule'])->name('course-schedule.store');
+    Route::get('jadwal-kuliah/create', [AssistantController::class, 'createCourseSchedule'])->name('course-schedule.create');
+    Route::post('jadwal-kuliah/create', [AssistantController::class, 'storeCourseSchedule'])->name('course-schedule.store');
     
-    Route::get('course-schedule/{id}', [AssistantController::class, 'editCourseSchedule'])->name('course-schedule.edit');
-    Route::put('course-schedule/{id}', [AssistantController::class, 'updateCourseSchedule'])->name('course-schedule.update');
-    Route::delete('course-schedule/{id}', [AssistantController::class, 'destroyCourseSchedule'])->name('course-schedule.delete');
+    Route::get('jadwal-kuliah/{id}', [AssistantController::class, 'editCourseSchedule'])->name('course-schedule.edit');
+    Route::put('jadwal-kuliah/{id}', [AssistantController::class, 'updateCourseSchedule'])->name('course-schedule.update');
+    Route::delete('jadwal-kuliah/{id}', [AssistantController::class, 'destroyCourseSchedule'])->name('course-schedule.delete');
+
+    Route::prefix('api')->group(function () {
+        Route::get('get-course-table/{nim}', [ScheduleController::class, 'courseTable'])->name('api.course-schedules.table');
+    });
 });
 
 
@@ -40,7 +43,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('assistants/create', [AssistantController::class, 'create'])->name('assistant.create');
     Route::post('assistants/create', [AssistantController::class, 'store'])->name('assistant.store');
 
-    Route::get('assistants/{nim}/detail-jadwal-kuliah', [AssistantController::class, 'show'])->name('assistant.showCourse');
+    Route::get('assistants/{nim}/detail-jadwal-kuliah', [ScheduleController::class, 'indexCourseSchedule'])->name('assistant.showCourse');
     Route::get('assistants/{nim}/detail-jadwal-praktikum', [AssistantController::class, 'showSchedule'])->name('assistant.showSchedule');
     Route::get('assistants/{nim}', [AssistantController::class, 'edit'])->name('assistant.edit');
     Route::put('assistants/{nim}', [AssistantController::class, 'update'])->name('assistant.update');
@@ -89,10 +92,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('get-assistant-table', [AssistantController::class, 'assistantTable'])->name('api.assistant.table');
         Route::get('get-laboratorium-table', [LaboratoriumController::class, 'labsTable'])->name('api.laboratorium.table');
         Route::get('get-practicum-table', [PracticumController::class, 'practicumsTable'])->name('api.practicum.table');
-        Route::get('get-course-schedules/{nim}', [AssistantController::class, 'courseSchedulesData'])->name('api.course-schedules');
     });
 });
 
 Route::middleware(['auth', 'role:assistant'])->group(function () {
     Route::get('history', [AssistantController::class, 'history'])->name('history.index');
+    Route::get('jadwal-kuliah', [ScheduleController::class, 'indexCourse'])->name('course.index');
 });

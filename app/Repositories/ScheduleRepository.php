@@ -143,9 +143,24 @@ class ScheduleRepository implements ScheduleRepositoryInterface
             ->get();
     }
 
-    public function getCourseSchedulesByNim($nim, $sortBy = 'day', $order = 'asc', $perPage = null)
+    public function getCourseSchedulesByNim($nim, $sortBy = 'day', $order = 'asc', $search = '', $perPage = null)
     {
+        $allowedSortColumns = ['start_time', 'name', 'course'];
+        $sortBy = in_array(strtolower($sortBy), $allowedSortColumns) ? strtolower($sortBy) : 'day';
+        $order = in_array(strtolower($order), ['asc', 'desc']) ? strtolower($order) : 'asc';
+
         $query = CourseSchedule::where('owner', $nim);
+
+        if (!empty($search)) {
+            $lowerSearch = strtolower($search);
+            $query->where(function ($q) use ($lowerSearch) {
+            $q->whereRaw('LOWER(name) LIKE ?', ["%{$lowerSearch}%"])
+                ->orWhereRaw('LOWER(CAST(course AS TEXT)) LIKE ?', ["%{$lowerSearch}%"])
+                ->orWhereRaw('LOWER(day) LIKE ?', ["%{$lowerSearch}%"])
+                ->orWhereRaw('LOWER(CAST(start_time AS TEXT)) LIKE ?', ["%{$lowerSearch}%"])
+                ->orWhereRaw('LOWER(CAST(end_time AS TEXT)) LIKE ?', ["%{$lowerSearch}%"]);
+            });
+        }
 
         foreach ((array) $sortBy as $column) {
             if ($column === 'day') {

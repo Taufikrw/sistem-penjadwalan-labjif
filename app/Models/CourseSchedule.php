@@ -31,8 +31,15 @@ class CourseSchedule extends Model
         'end_time' => 'datetime:H:i',
     ];
 
+    protected $appends = ['jam'];
+
     public function assistant()
     {
         return $this->belongsTo(Assistant::class, 'owner', 'nim');
+    }
+
+    public function getJamAttribute()
+    {
+        return $this->start_time->format('H:i A') . ' - ' . $this->end_time->format('H:i A');
     }
 }

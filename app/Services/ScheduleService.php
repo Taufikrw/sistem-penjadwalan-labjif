@@ -75,8 +75,8 @@ class ScheduleService
         return $this->scheduleRepository->getScheduleByDay($dayName, 8);
     }
 
-    public function getCourseSchedules($nim, $sortBy, $sortOrder)
+    public function getCourseSchedules($nim, $sortBy, $sortOrder, $search)
     {
-        return $this->scheduleRepository->getCourseSchedulesByNim($nim, $sortBy, $sortOrder, 8);
+        return $this->scheduleRepository->getCourseSchedulesByNim($nim, $sortBy, $sortOrder, $search, 8);
     }
 }
