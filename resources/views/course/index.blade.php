@@ -1,12 +1,23 @@
 <x-layouts.app>
     <x-slot:title>
-        Jadwal Perkuliahan
-        @isset($assistant)
-            - {{ $assistant->name }}
-        @endisset
+        @if (isset($assistant))
+            Jadwal Kuliah - {{ $assistant->name }}
+        @else
+            Jadwal Kuliah
+        @endif
     </x-slot>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    @if (isset($assistant))
+        <x-slot:back_button>
+            <a href="{{ route('assistant.index') }}"
+                class="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors w-fit">
+                <x-heroicon-s-arrow-left class="w-4 h-4" />
+                Kembali
+            </a>
+        </x-slot:back_button>
+    @endif
 
     <div class="flex items-center justify-between">
         <div class="relative w-full md:w-80 bg-white">
@@ -20,8 +31,8 @@
             <input type="text" placeholder="Cari..." id="search-course"
                 class="block w-full pl-10 pr-3 py-3 border border-[#C9C6C5] rounded-lg leading-5 placeholder-[#C9C6C5] focus:outline-none focus:ring-1 focus:ring-key-secondary sm:text-md">
         </div>
-        <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl" type="button"
-            id="btn-create-course" onclick="showDynamicModal()">
+        <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl"
+            type="button" id="btn-create-course" onclick="showDynamicModal()">
             <x-heroicon-s-plus class="w-5 h-5" />
             Tambah
         </x-button-primary>
@@ -39,15 +50,17 @@
 
     <x-data-table
         url="{{ isset($assistant) ? route('api.course-schedules.table', $assistant->nim) : route('api.course-schedules.table', Auth::user()->username) }}"
-        action-url="{{ Auth::user()->role === 'admin' ? '/course/'.$assistant->nim.'/' : '/jadwal-kuliah/' }}" :columns="[
+        action-url="{{ Auth::user()->role === 'admin' ? '/course/' . $assistant->nim . '/' : '/jadwal-kuliah/' }}"
+        :columns="[
             ['label' => 'Hari', 'field' => 'day', 'sortable' => false],
             ['label' => 'Mata Kuliah', 'field' => 'course', 'sortable' => true],
             ['label' => 'Kelas', 'field' => 'name', 'sortable' => true],
             ['label' => 'Jam', 'field' => 'jam', 'sortable' => true],
-        ]" :has-actions="true" table-id="laboratorium-table"
-        search-input-id="search-course" btn-create-id="btn-create-course" />
+        ]" :has-actions="true" table-id="laboratorium-table" search-input-id="search-course"
+        btn-create-id="btn-create-course" />
 
-    <x-form-modal modal-id="courseModal" ajax-url="{{ Auth::user()->role === 'admin' ? route('course.create', $assistant->nim) : route('course-schedule.create') }}"
+    <x-form-modal modal-id="courseModal"
+        ajax-url="{{ Auth::user()->role === 'admin' ? route('course.create', $assistant->nim) : route('course-schedule.create') }}"
         form-id="course-form" />
 
 </x-layouts.app>
