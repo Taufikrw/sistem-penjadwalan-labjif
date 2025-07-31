@@ -174,7 +174,10 @@ class ScheduleController extends Controller
         $assistant = $this->assistantService->getAssistantsDetails($nim);
 
         if (!$assistant) {
-            return response()->view('errors.not-found', ['message' => 'Asisten tidak ditemukan'], 404);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Asisten tidak ditemukan',
+            ], 404);
         }
 
         $validated = $request->validated();
@@ -189,6 +192,90 @@ class ScheduleController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal membuat data jadwal kuliah: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function editCourseLaboran(string $nim, string $id)
+    {
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Asisten tidak ditemukan',
+            ], 404);
+        }
+
+        $courseItem = $this->assistantService->getCourseDetails($id);
+
+        if (!$courseItem) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Jadwal kuliah tidak ditemukan',
+            ], 404);
+        }
+
+        return view('course.form', compact('assistant', 'courseItem'));
+    }
+
+    public function editCourseAssistant(string $id)
+    {
+        $nim = Auth::user()->username;
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Asisten tidak ditemukan',
+            ], 404);
+        }
+
+        $courseItem = $this->assistantService->getCourseDetails($id);
+
+        if (!$courseItem) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Jadwal kuliah tidak ditemukan',
+            ], 404);
+        }
+
+        return view('course.form', compact('assistant', 'courseItem'));
+    }
+
+    public function updateCourse(StoreCourseScheduleRequest $request, string $id)
+    {
+        $nim = $request->input('owner');
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Asisten tidak ditemukan',
+            ], 404);
+        }
+
+        $courseItem = $this->assistantService->getCourseDetails($id);
+
+        if (!$courseItem) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Jadwal kuliah tidak ditemukan',
+            ], 404);
+        }
+
+        $validated = $request->validated();
+
+        try {
+            $this->assistantService->updateCourseSchedule($validated, $id);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data Jadwal Kuliah berhasil diperbarui.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memperbarui data jadwal kuliah: ' . $e->getMessage(),
             ], 500);
         }
     }

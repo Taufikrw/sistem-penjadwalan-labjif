@@ -25,7 +25,7 @@ Route::middleware(['auth', 'role:admin,assistant'])->group(function () {
     Route::get('schedule', [ScheduleController::class, 'index'])->name('schedule.index');
 
     Route::post('course/create', [ScheduleController::class, 'storeCourse'])->name('course.store');
-    Route::put('course/{id}', [AssistantController::class, 'courseUpdate'])->name('course.update');
+    Route::put('course/{id}', [ScheduleController::class, 'updateCourse'])->name('course.update');
     Route::delete('course/{id}', [AssistantController::class, 'courseDestroy'])->name('course.delete');
 
     Route::prefix('api')->group(function () {
@@ -48,7 +48,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('assistants/bulk-delete', [AssistantController::class, 'bulkDelete'])->name('assistant.bulk-delete');
 
     Route::get('course/{nim}/create', [ScheduleController::class, 'createCourseLaboran'])->name('course.create');
-    Route::get('course/{nim}/{id}', [AssistantController::class, 'courseEdit'])->name('course.edit');
+    Route::get('course/{nim}/{id}', [ScheduleController::class, 'editCourseLaboran'])->name('course.edit');
 
     Route::get('practicums', [PracticumController::class, 'index'])->name('practicum.index');
     Route::get('practicums/create', [PracticumController::class, 'create'])->name('practicum.create');
@@ -93,7 +93,7 @@ Route::middleware(['auth', 'role:assistant'])->group(function () {
     Route::get('jadwal-kuliah', [ScheduleController::class, 'indexCourse'])->name('course.index');
 
     Route::get('jadwal-kuliah/create', [ScheduleController::class, 'createCourseAssistant'])->name('course-schedule.create');
-    Route::get('jadwal-kuliah/{id}', [AssistantController::class, 'editCourseSchedule'])->name('course-schedule.edit');
-    Route::put('jadwal-kuliah/{id}', [AssistantController::class, 'updateCourseSchedule'])->name('course-schedule.update');
+    Route::get('jadwal-kuliah/{id}', [ScheduleController::class, 'editCourseAssistant'])->name('course-schedule.edit');
+    
     Route::delete('jadwal-kuliah/{id}', [AssistantController::class, 'destroyCourseSchedule'])->name('course-schedule.delete');
 });

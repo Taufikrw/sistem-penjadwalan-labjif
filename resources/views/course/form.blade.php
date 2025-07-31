@@ -1,7 +1,7 @@
 <form id="course-form"
     action="
         @isset($courseItem)
-            {{ route('course.update', [$assistant->nim, $courseItem->id]) }}
+            {{ route('course.update', [$courseItem->id]) }}
         @else
             {{ route('course.store') }}
         @endisset"
