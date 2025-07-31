@@ -79,4 +79,9 @@ class ScheduleService
     {
         return $this->scheduleRepository->getCourseSchedulesByNim($nim, $sortBy, $sortOrder, $search, 8);
     }
+
+    public function bulkDeleteCourses(array $ids)
+    {
+        $this->scheduleRepository->deleteCourseByIds($ids);
+    }
 }

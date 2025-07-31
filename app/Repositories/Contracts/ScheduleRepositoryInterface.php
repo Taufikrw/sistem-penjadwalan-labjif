@@ -31,4 +31,6 @@ interface ScheduleRepositoryInterface
     public function getHistoryByNim($nim);
 
     public function getCourseSchedulesByNim($nim, $sortBy = 'day', $order = 'asc', $search = '', $perPage = null);
+    
+    public function deleteCourseByIds(array $ids);
 }

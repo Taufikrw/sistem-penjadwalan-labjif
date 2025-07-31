@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCourseBulkDeleteRequest;
 use App\Http\Requests\StoreCourseScheduleRequest;
-use App\Http\Requests\StorePracticumRequest;
 use App\Http\Requests\StoreScheduleRequest;
 use App\Services\AssistantService;
 use App\Services\ScheduleService;
@@ -276,6 +276,87 @@ class ScheduleController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal memperbarui data jadwal kuliah: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function destroyCourseLaboran(string $nim, string $id)
+    {
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Asisten tidak ditemukan',
+            ], 404);
+        }
+        
+        $courseItem = $this->assistantService->getCourseDetails($id);
+
+        if (!$courseItem) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Jadwal kuliah tidak ditemukan',
+            ], 404);
+        }
+
+        try {
+            $this->assistantService->deleteCourseSchedule($id);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Jadwal kuliah berhasil dihapus.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus jadwal kuliah: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function destroyCourseAssistant(string $id)
+    {
+        $courseItem = $this->assistantService->getCourseDetails($id);
+
+        if (!$courseItem) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Jadwal kuliah tidak ditemukan',
+            ], 404);
+        }
+
+        try {
+            $this->assistantService->deleteCourseSchedule($id);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Jadwal kuliah berhasil dihapus.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus jadwal kuliah: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function bulkDeleteCourse(StoreCourseBulkDeleteRequest $request)
+    {
+        $validated = $request->validated();
+
+        try {
+            $ids = $validated['ids'];
+            $this->scheduleService->bulkDeleteCourses($ids);
+
+            $count = count($ids);
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => "{$count} data jadwal kuliah berhasil dihapus.",
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus data jadwal kuliah: ' . $e->getMessage(),
             ], 500);
         }
     }

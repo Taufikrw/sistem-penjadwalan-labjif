@@ -6,6 +6,8 @@
         @endisset
     </x-slot>
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <div class="flex items-center justify-between">
         <div class="relative w-full md:w-80 bg-white">
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

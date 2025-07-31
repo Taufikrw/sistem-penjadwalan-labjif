@@ -176,4 +176,11 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 
         return $query->get();
     }
+
+    public function deleteCourseByIds(array $ids)
+    {
+        CourseSchedule::whereIn('id', $ids)->delete();
+
+        return true;
+    }
 }

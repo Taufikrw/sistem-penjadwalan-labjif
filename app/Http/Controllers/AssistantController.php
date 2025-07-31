@@ -200,28 +200,6 @@ class AssistantController extends Controller
         }
     }
 
-    public function courseDestroy(string $nim, string $id)
-    {
-        $assistant = $this->assistantService->getAssistantsDetails($nim);
-
-        if (!$assistant) {
-            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
-        }
-
-        $courseItem = $this->assistantService->getCourseDetails($id);
-
-        if (!$courseItem) {
-            return response()->view('errors.not-found', ['message' => 'Course schedule not found'], 404);
-        }
-
-        try {
-            $this->assistantService->deleteCourseSchedule($id);
-            return redirect()->route('assistant.showCourse', $nim)->with('success', 'Jadwal perkuliahan berhasil dihapus');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to delete course schedule: ' . $e->getMessage());
-        }
-    }
-
     public function setAssistant(string $id)
     {
         if (!$this->scheduleService->isScheduleExists($id)) {
@@ -273,29 +251,6 @@ class AssistantController extends Controller
             return redirect()->route('schedule.index')->with('success', 'Assistant updated successfully');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to update assistant: ' . $e->getMessage());
-        }
-    }
-
-    public function destroyCourseSchedule(string $id)
-    {
-        $nim = Auth::user()->username;
-        $assistant = $this->assistantService->getAssistantsDetails($nim);
-
-        if (!$assistant) {
-            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
-        }
-
-        $courseItem = $this->assistantService->getCourseDetails($id);
-
-        if (!$courseItem) {
-            return response()->view('errors.not-found', ['message' => 'Course schedule not found'], 404);
-        }
-
-        try {
-            $this->assistantService->deleteCourseSchedule($id);
-            return redirect()->route('course.index')->with('success', 'Jadwal perkuliahan berhasil dihapus');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to delete course schedule: ' . $e->getMessage());
         }
     }
 
