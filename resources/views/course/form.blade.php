@@ -1,161 +1,82 @@
-@extends('layouts.app')
+<form id="course-form"
+    action="
+        @isset($courseItem)
+            {{ route('course.update', [$assistant->nim, $courseItem->id]) }}
+        @else
+            {{ route('course.store') }}
+        @endisset"
+    method="POST">
+    @csrf
+    @if (isset($courseItem))
+        @method('PUT')
+    @endif
 
-@section('title', 'Create Course')
-
-@section('content')
-    <div class="flex">
-        <x-sidebar />
-
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col">
-            <x-topbar />
-
-            @if (session('error'))
-                <div class="bg-red-100 border border-red-400 text-error px-4 py-3 rounded relative" role="alert">
-                    <strong class="font-bold">Error!</strong>
-                    <span class="block sm:inline">{{ session('error') }}</span>
-                </div>
-            @endif
-
-            <div class="p-10 flex-1">
-                <h1 class="text-3xl font-bold mb-6">
-                    @isset($courseItem)
-                        Edit Jadwal Kuliah
-                    @else
-                        Tambah Jadwal Kuliah
-                    @endisset
-                </h1>
-
-                <form
-                    action="
-                    @if (Auth::user()->role === 'admin') @isset($courseItem)
-                            {{ route('course.update', [$assistant->nim, $courseItem->id]) }}
-                        @else
-                            {{ route('course.store', $assistant->nim) }}
-                        @endisset
-                    @else
-                        @isset($courseItem)
-                            {{ route('course-schedule.update', $courseItem->id) }}
-                        @else
-                            {{ route('course-schedule.store') }}
-                             @endisset @endif"
-                    method="POST">
-                    @csrf
-                    @if (isset($courseItem))
-                        @method('PUT')
-                    @endif
-
-                    <div class="grid grid-cols-4 gap-4">
-                        <div class="col-span-2">
-                            <label for="course" class="block text-gray-700 text-sm font-bold mb-2">Course</label>
-                            <select name="course" id="course"
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                required>
-                                <option value="">Select Course</option>
-                                @foreach (App\Enums\Course::cases() as $course)
-                                    <option value="{{ $course->value }}" data-prodi="{{ $course->prodi() }}"
-                                        {{ old('course', isset($courseItem) ? $courseItem->course->value : '') == $course->value ? 'selected' : '' }}>
-                                        {{ $course->value }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('course')
-                                <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="col-span-2">
-                            <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name</label>
-                            <div class="flex items-center">
-                                @if (!isset($courseItem))
-                                    <span id="prodi-prefix"
-                                        class="shadow appearance-none border border-r-0 rounded-l w-16 py-2 px-3 text-gray-700 bg-gray-200 leading-tight text-center">
-                                        IF-
-                                    </span>
-                                @endif
-
-                                <input type="text" name="name" id="name"
-                                    maxlength="{{ isset($courseItem) ? '4' : '1' }}"
-                                    class="shadow appearance-none border rounded-r w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline uppercase"
-                                    value="{{ old('name', isset($courseItem) ? $courseItem->name : '') }}" required>
-                            </div>
-                            @error('name')
-                                <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="tahun_ajar" class="block text-gray-700 text-sm font-bold mb-2">Tahun Ajaran:</label>
-                            <input type="number" min="2021" name="tahun_ajar" id="tahun_ajar"
-                                value="{{ old('tahun_ajar', isset($courseItem) ? $courseItem->tahun_ajar : now()->year) }}"
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('tahun_ajar') border-red-500 @enderror"
-                                placeholder="Masukkan tahun ajar"
-                                required>
-                            @error('tahun_ajar')
-                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="day" class="block text-gray-700 text-sm font-bold mb-2">Day</label>
-                            <select name="day" id="day"
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                required>
-                                <option value="">Select Day</option>
-                                @foreach (App\Enums\Day::cases() as $day)
-                                    <option value="{{ $day->value }}"
-                                        {{ old('day', isset($courseItem) ? $courseItem->day->value : '') == $day->value ? 'selected' : '' }}>
-                                        {{ $day->value }}</option>
-                                @endforeach
-                            </select>
-                            @error('day')
-                                <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="start_time" class="block text-gray-700 text-sm font-bold mb-2">Started Time</label>
-                            <input type="time" name="start_time" id="start_time"
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                value="{{ old('start_time', isset($courseItem) ? $courseItem->start_time->format('H:i') : '') }}"
-                                required>
-                            @error('start_time')
-                                <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="end_time" class="block text-gray-700 text-sm font-bold mb-2">End Time</label>
-                            <input type="time" name="end_time" id="end_time"
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                value="{{ old('end_time', isset($courseItem) ? $courseItem->end_time->format('H:i') : '') }}"
-                                required>
-                            @error('end_time')
-                                <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="mt-8">
-                        <button type="submit"
-                            class="bg-secondary hover:bg-secondary-40 text-tertiary border-1 border-tertiary font-bold py-2 px-8 rounded">
-                            Kirim
-                        </button>
-                    </div>
-                </form>
-            </div>
+    <div id="title-hidden" class="hidden">
+        <div class="flex gap-3 items-center">
+            @isset($courseItem)
+                <x-heroicon-s-pencil-square class="w-4 h-4" />
+                <span>Edit Jadwal Kuliah</span>
+            @else
+                <x-heroicon-s-plus class="w-4 h-4" />
+                <span>Tambah Jadwal Kuliah</span>
+            @endisset
         </div>
     </div>
-@endsection
 
-@push('scripts')
-    <script>
-        document.getElementById('course').addEventListener('change', function() {
-            const selectedCourse = this.value;
-            const selectedOption = this.options[this.selectedIndex];
-            const prodi = selectedOption.getAttribute('data-prodi');
-            const prefix = prodi === 'Teknik Informatika' ? 'IF-' : 'SI-';
-            document.getElementById('prodi-prefix').textContent = prefix;
-        });
-    </script>
-@endpush
+    <div class="grid grid-cols-2 gap-4">
+        <div class="col-span-2">
+            <x-input-label for="course" class="mb-2 text-sm" value="Mata Kuliah" />
+            <x-text-input name="course" id="course" class="w-full" :value="old('course', isset($courseItem) ? $courseItem->course : '')"
+                placeholder="Masukkan nama mata kuliah" required />
+        </div>
+
+        <div class="col-span-2">
+            <x-input-label for="name" class="mb-2 text-sm" value="Kelas" />
+            <x-text-input name="name" id="name" class="w-full" :value="old('name', isset($courseItem) ? $courseItem->name : '')"
+                placeholder="Masukkan nama kelas (IF/SI-X)" required />
+        </div>
+
+        <div>
+            <x-input-label for="tahun_ajar" class="mb-2 text-sm" value="Tahun Ajaran" />
+            <x-text-input name="tahun_ajar" id="tahun_ajar" class="w-full" :value="old('tahun_ajar', isset($courseItem) ? $courseItem->tahun_ajar : now()->year)" type="number"
+                min="2021" placeholder="Masukkan tahun ajar" required />
+        </div>
+
+        <div>
+            <x-input-label for="day" class="mb-2 text-sm" value="Hari" />
+            <x-select-input id="day" name="day" :options="collect(App\Enums\Day::cases())
+                ->mapWithKeys(fn($day) => [$day->value => $day->value])
+                ->toArray()" placeholder="Pilih hari" :selected="old('day', isset($courseItem) ? $courseItem->day->value : null)"
+                required />
+        </div>
+
+        <div>
+            <x-input-label for="start_time" class="mb-2 text-sm" value="Jam Mulai" />
+            <x-text-input type="time" name="start_time" id="start_time" class="w-full" :value="old('start_time', isset($courseItem) ? $courseItem->start_time->format('H:i') : '')" required />
+        </div>
+
+        <div>
+            <x-input-label for="end_time" class="mb-2 text-sm" value="Jam Selesai" />
+            <x-text-input type="time" name="end_time" id="end_time" class="w-full" :value="old('end_time', isset($courseItem) ? $courseItem->end_time->format('H:i') : '')" required />
+        </div>
+
+        <input type="hidden" name="owner" id="owner" value="{{ $assistant->nim }}">
+    </div>
+
+    <div class="mt-8 flex justify-between items-center w-full">
+        <x-button-secondary class="rounded-xl py-3 px-6" type="button" id="btn-cancel-course" onclick="closeModal()">
+            Batal
+        </x-button-secondary>
+        <x-button-primary class="rounded-xl py-3 px-6" type="submit" id="btn-submit-course">
+            Simpan
+        </x-button-primary>
+    </div>
+</form>
+
+<script type="module">
+    $(document).ready(function() {
+        const title = $('#title-hidden').html();
+        $('#title').html(title);
+
+    });
+</script>

@@ -87,21 +87,7 @@ class AssistantService
 
     public function createCourseSchedule(array $data)
     {
-        $course = $data['course'];
-        $courseEnum = null;
-        foreach (\App\Enums\Course::cases() as $enumCase) {
-            if ($enumCase->value === $course) {
-                $courseEnum = $enumCase;
-                break;
-            }
-        }
-        
-        $prodi = $courseEnum->prodi();
-        $data['name'] = ($prodi === 'Teknik Informatika' ? 'IF-' : 'SI-') . $data['name'];
-        
-        $this->courseScheduleRepository->storeCourseSchedule($data);
-
-        return $data['owner'];
+        return $this->courseScheduleRepository->storeCourseSchedule($data);
     }
 
     public function updateCourseSchedule(array $data, string $id)

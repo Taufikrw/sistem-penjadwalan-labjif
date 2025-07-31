@@ -25,7 +25,6 @@ class CourseSchedule extends Model
     ];
 
     protected $casts = [
-        'course' => Course::class,
         'day' => Day::class,
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',

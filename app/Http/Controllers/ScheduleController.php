@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCourseScheduleRequest;
 use App\Http\Requests\StorePracticumRequest;
 use App\Http\Requests\StoreScheduleRequest;
 use App\Services\AssistantService;
 use App\Services\ScheduleService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
@@ -139,6 +141,54 @@ class ScheduleController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to retrieve course schedules: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function createCourseAssistant()
+    {
+        $nim = Auth::user()->username;
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->view('errors.404', ['message' => 'Asisten tidak ditemukan'], 404);
+        }
+
+        return view('course.form', compact('assistant'));
+    }
+
+    public function createCourseLaboran(string $nim)
+    {
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->view('errors.404', ['message' => 'Asisten tidak ditemukan'], 404);
+        }
+
+        return view('course.form', compact('assistant'));
+    }
+
+    public function storeCourse(StoreCourseScheduleRequest $request)
+    {
+        $nim = $request->input('owner');
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->view('errors.not-found', ['message' => 'Asisten tidak ditemukan'], 404);
+        }
+
+        $validated = $request->validated();
+
+        try {
+            $this->assistantService->createCourseSchedule($validated);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data Jadwal Kuliah berhasil dibuat.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal membuat data jadwal kuliah: ' . $e->getMessage(),
             ], 500);
         }
     }

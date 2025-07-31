@@ -200,36 +200,6 @@ class AssistantController extends Controller
         }
     }
 
-    public function courseCreate(string $nim)
-    {
-        $assistant = $this->assistantService->getAssistantsDetails($nim);
-
-        if (!$assistant) {
-            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
-        }
-
-        return view('course.form', compact('assistant'));
-    }
-
-    public function courseStore(StoreCourseScheduleRequest $request, string $nim)
-    {
-        $assistant = $this->assistantService->getAssistantsDetails($nim);
-
-        if (!$assistant) {
-            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
-        }
-
-        $validated = $request->validated();
-        $validated['owner'] = $nim;
-
-        try {
-            $course_owner = $this->assistantService->createCourseSchedule($validated);
-            return redirect()->route('assistant.showCourse', $course_owner)->with('success', 'Jadwal perkuliahan berhasil dibuat');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create course schedule: ' . $e->getMessage());
-        }
-    }
-
     public function courseEdit(string $nim, string $id)
     {
         $assistant = $this->assistantService->getAssistantsDetails($nim);
@@ -345,38 +315,6 @@ class AssistantController extends Controller
             return redirect()->route('schedule.index')->with('success', 'Assistant updated successfully');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to update assistant: ' . $e->getMessage());
-        }
-    }
-
-    public function createCourseSchedule()
-    {
-        $nim = Auth::user()->username;
-        $assistant = $this->assistantService->getAssistantsDetails($nim);
-
-        if (!$assistant) {
-            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
-        }
-
-        return view('course.form', compact('assistant'));
-    }
-
-    public function storeCourseSchedule(StoreCourseScheduleRequest $request)
-    {
-        $nim = Auth::user()->username;
-        $assistant = $this->assistantService->getAssistantsDetails($nim);
-
-        if (!$assistant) {
-            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
-        }
-
-        $validated = $request->validated();
-        $validated['owner'] = $nim;
-
-        try {
-            $this->assistantService->createCourseSchedule($validated);
-            return redirect()->route('course.index')->with('success', 'Jadwal perkuliahan berhasil dibuat');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create course schedule: ' . $e->getMessage());
         }
     }
 

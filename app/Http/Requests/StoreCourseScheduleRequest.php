@@ -24,12 +24,13 @@ class StoreCourseScheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:4',
+            'name' => 'required|string|min:4|max:4',
             'course' => 'required|string|max:255',
             'tahun_ajar' => 'required|integer|digits:4',
             'day' => ['required', 'string', Rule::enum(Day::class)],
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
+            'owner' => 'required|string|exists:assistants,nim',
         ];
     }
 }
