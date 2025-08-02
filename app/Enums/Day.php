@@ -10,5 +10,4 @@ enum Day: string
     case KAMIS = 'Kamis';
     case JUMAT = 'Jumat';
     case SABTU = 'Sabtu';
-    case MINGGU = 'Minggu';
 }

@@ -34,7 +34,7 @@
         </thead>
         <tbody id="{{ $tableId }}-body">
             <tr>
-                <td colspan="{{ count($columns) + ($hasActions ? 1 : 0) }}"
+                <td colspan="{{ count($columns) + 1 + ($hasActions ? 1 : 0) }}"
                     class="px-6 py-8 text-center text-neutral-50">
                     <div class="flex justify-center items-center">
                         <x-icon-spinner class="h-16 w-16 animate-spin" />
@@ -59,11 +59,14 @@
             const btnCreateId = '{{ $btnCreateId ?? '' }}';
             const checked = $('.form-checkbox[name="selected[]"]:checked').length > 0;
             const bulkDeleteUrl = actionUrl + 'bulk-delete';
+            const hasSetAssistant = {{ $hasSetAssistant ? 'true' : 'false' }};
+            const filters = @json($filters);
 
             let currentSortBy = '';
             let currentSortOrder = '';
             let currentSearch = '';
             let currentPage = 1;
+            let currentFilters = { ...filters };
 
             function loadTableData(page = 1) {
                 currentPage = page;
@@ -77,33 +80,32 @@
                 if (currentSearch) {
                     params.append('search', currentSearch);
                 }
+                Object.keys(currentFilters).forEach(function(key) {
+                    if (currentFilters[key]) {
+                        params.append(key, currentFilters[key]);
+                    }
+                });
                 params.append('page', currentPage);
-                if ([...params].length > 0) {
+
+                if (url.includes('?')) {
+                    requestUrl = url.replace(/\?$/, '');
+                    requestUrl += `&${params.toString()}`;
+                } else if ([...params].length > 0) {
                     requestUrl = `${url}?${params.toString()}`;
                 }
 
                 $.ajax({
                     url: requestUrl,
                     method: 'GET',
-                    beforeSend: function() {
-                        $(`#${tableId}-body`).html(
-                            `<tr>
-                                <td colspan="${columns.length + (hasActions ? 1 : 0)}" class="px-6 py-8 text-center text-neutral-50">
-                                    <div class="flex justify-center items-center">
-                                        <x-icon-spinner class="h-16 w-16 animate-spin" />
-                                    </div>
-                                </td>
-                            </tr>`
-                        );
-                    },
                     success: function(response) {
                         let rowsHtml = '';
                         if (response.data.data.length === 0) {
                             rowsHtml =
                                 `
                                 <tr>
-                                    <td colspan="${columns.length + (hasActions ? 1 : 0)}" class="py-12 text-center font-medium">
-                                        Tidak ada data.
+                                    <td colspan="${columns.length + 1 + (hasActions ? 1 : 0)}" class="py-8 text-center font-medium">
+                                        <x-icon-no-data class="w-70 mx-auto" />
+                                        <span class="font-bold">Tidak ada data.</span>
                                     </td>
                                 </tr>
                             `;
@@ -146,7 +148,8 @@
                                         let statusText = '';
                                         switch (item.status) {
                                             case 'aktif':
-                                                statusClass = 'bg-green-100 text-green-700';
+                                                statusClass =
+                                                    'bg-green-100 text-green-700';
                                                 statusText = 'Aktif';
                                                 break;
                                             case 'non-aktif':
@@ -154,7 +157,8 @@
                                                 statusText = 'Non-Aktif';
                                                 break;
                                             default:
-                                                statusClass = 'text-blue-700 bg-blue-100 capitalize';
+                                                statusClass =
+                                                    'text-blue-700 bg-blue-100 capitalize';
                                                 statusText = item.status ?? '';
                                                 break;
                                         }
@@ -182,6 +186,20 @@
                                                     Detail
                                                 </a>
                                             </td>`;
+                                    } else if (column.field === 'assistant_names') {
+                                        rowsHtml += `<td class="px-4 py-2">`;
+                                        if (item.assistant_schedules && item
+                                            .assistant_schedules.length > 0) {
+                                            item.assistant_schedules.forEach(function(
+                                                asst, index) {
+                                                rowsHtml +=
+                                                    `<span class="block">${index + 1}. ${asst.assistant.name}</span>`;
+                                            });
+                                        } else {
+                                            rowsHtml +=
+                                                `<span class="block">Tidak ada asisten</span>`;
+                                        }
+                                        rowsHtml += `</td>`;
                                     } else {
                                         rowsHtml +=
                                             `<td class="px-4 py-4">
@@ -205,12 +223,22 @@
                                             </div>
                                         </td>`;
                                     } else {
-                                        rowsHtml += `<td class="px-4 py-4">
-                                            <div class="flex items-center gap-2">
-                                                <button data-id="${item.id}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
-                                                <button data-id="${item.id}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
-                                            </div>
-                                        </td>`;
+                                        if (hasSetAssistant) {
+                                            rowsHtml += `<td class="px-4 py-4">
+                                                <div class="flex items-center gap-2">
+                                                    <button data-id="${item.id}" class="btn-set-assistant"><x-heroicon-s-users class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                                    <button data-id="${item.id}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                                    <button data-id="${item.id}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                                </div>
+                                            </td>`;
+                                        } else {
+                                            rowsHtml += `<td class="px-4 py-4">
+                                                <div class="flex items-center gap-2">
+                                                    <button data-id="${item.id}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                                    <button data-id="${item.id}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                                </div>
+                                            </td>`;
+                                        }
                                     }
                                 }
                                 rowsHtml += '</tr>';
@@ -496,14 +524,17 @@
                                     showConfirmButton: false,
                                     timer: 2000
                                 }).then(() => {
-                                    loadTableData(currentPage); // Muat ulang data di halaman saat ini
+                                    loadTableData(
+                                        currentPage
+                                    ); // Muat ulang data di halaman saat ini
                                 });
                             },
                             error: function(xhr) {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Gagal!',
-                                    text: xhr.responseJSON.message || 'Terjadi kesalahan saat menghapus data.',
+                                    text: xhr.responseJSON.message ||
+                                        'Terjadi kesalahan saat menghapus data.',
                                     showConfirmButton: true
                                 });
                             }

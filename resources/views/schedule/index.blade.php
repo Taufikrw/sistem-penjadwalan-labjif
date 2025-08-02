@@ -1,151 +1,101 @@
-@extends('layouts.app')
+<x-layouts.app>
+    <x-slot:title>
+        Jadwal Praktikum
+    </x-slot>
 
-@section('title', 'Schedule')
-
-@section('content')
-    <div class="flex">
-        <x-sidebar />
-
-        <!-- Main Content -->
-        <div class="flex-1 flex-col">
-            <x-topbar />
-
-            @if (session('success'))
-                <div class="bg-green-500 text-white px-4 py-3 relative" role="alert">
-                    <strong class="font-bold">Success!</strong>
-                    <span class="block sm:inline">{{ session('success') }}</span>
-                </div>
-            @endif
-
-            <div class="p-10 flex-1">
-                <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-                    <h1 class="text-3xl font-bold">Daftar Jadwal Praktikum</h1>
-                    @if (Auth::user()->role === 'admin')
-                        <div
-                            class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
-                            <a href="#"
-                                class="bg-secondary font-bold py-2 px-4 rounded border-1 border-tertiary hover:bg-secondary-70">
-                                <p class="text-tertiary text-sm">Generate</p>
-                            </a>
-                            <a href="{{ route('schedule.create') }}"
-                                class="bg-secondary font-bold py-2 px-4 rounded border-1 border-tertiary hover:bg-secondary-70">
-                                <p class="text-tertiary text-sm">Tambah</p>
-                            </a>
-                        </div>
-                    @endif
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-table-header">
-                            <tr>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Nama Praktikum
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Dosen Pengampu
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Ruangan
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Asisten
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                    Jadwal
-                                </th>
-                                @if (Auth::user()->role === 'admin')
-                                    <th scope="col"
-                                        class="px-6 py-3 text-left text-sm font-medium text-black tracking-wider">
-                                        Aksi
-                                    </th>
-                                @endif
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y-2 divide-table-header border-b-2 border-table-header">
-                            @forelse ($schedules as $item)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->practicum->name }} {{ $item->name }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->dosen }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->laboratorium->name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @if (Auth::user()->role === 'admin')
-                                            @if ($item->assistantSchedules && $item->assistantSchedules->isEmpty())
-                                                <a href="{{ route('schedule.set-assistant', $item->id) }}"
-                                                    class="text-error hover:text-error-darked flex items-center gap-1">
-                                                    <x-heroicon-o-plus class="w-4 h-4" /> Tambah Asisten
-                                                </a>
-                                            @elseif ($item->assistantSchedules->count() === 1)
-                                                <div class="space-y-1">
-                                                    @foreach ($item->assistantSchedules as $assistant)
-                                                        <span
-                                                            class="block text-gray-700">{{ Str::limit($assistant->assistant->name, 15) }}</span>
-                                                    @endforeach
-                                                    <a href="{{ route('schedule.edit-assistant', $item->id) }}"
-                                                        class="text-error hover:text-error-darked flex items-center gap-1">
-                                                        <x-heroicon-o-plus class="w-4 h-4" /> Tambah Asisten
-                                                    </a>
-                                                </div>
-                                            @else
-                                                <div class="space-y-1">
-                                                    @foreach ($item->assistantSchedules as $assistant)
-                                                        <span
-                                                            class="block text-gray-700">{{ Str::limit($assistant->assistant->name, 15) }}</span>
-                                                    @endforeach
-                                                    <a href="{{ route('schedule.edit-assistant', $item->id) }}"
-                                                        class="text-secondary hover:underline">Edit Asisten</a>
-                                                </div>
-                                            @endif
-                                        @else
-                                            <div class="space-y-1">
-                                                @forelse ($item->assistantSchedules as $assistant)
-                                                    <span
-                                                        class="block text-gray-700">{{ Str::limit($assistant->assistant->name, 15) }}</span>
-                                                @empty
-                                                    <span class="block text-gray-700">Tidak ada asisten</span>
-                                                @endforelse
-                                            </div>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $item->day }}
-                                        {{ $item->start_time->format('H:i A') }} -
-                                        {{ $item->end_time->format('H:i A') }}</td>
-                                    @if (Auth::user()->role === 'admin')
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <div class="flex gap-2">
-                                                <a href="{{ route('schedule.edit', $item->id) }}">
-                                                    <x-heroicon-o-pencil-square
-                                                        class="w-5 h-5 text-extended-1 hover:text-extended-light" />
-                                                </a>
-                                                <form action="{{ route('schedule.delete', $item->id) }}" method="POST"
-                                                    class="flex">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                        onclick="return confirm('Yakin ingin menghapus asisten ini?')"><x-heroicon-o-trash
-                                                            class="w-5 h-5 text-error hover:text-error-darked" /></button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    @endif
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="8" class="px-6 py-4 text-center text-neutral-50">
-                                        Tidak ada data jadwal praktikum.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+    <div class="flex items-center justify-between">
+        <div class="relative w-full md:w-80 bg-white">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-[#C9C6C5]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clip-rule="evenodd"></path>
+                </svg>
+            </span>
+            <input type="text" placeholder="Cari..." id="search-schedule-list"
+                class="block w-full pl-10 pr-3 py-3 border border-[#C9C6C5] rounded-lg leading-5 placeholder-[#C9C6C5] focus:outline-none focus:ring-1 focus:ring-key-secondary sm:text-md">
+        </div>
+        <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl" type="button"
+            id="btn-create-schedule-list" onclick="showDynamicModal()">
+            <x-heroicon-s-plus class="w-5 h-5" />
+            Tambah
+        </x-button-primary>
+        <div id="deleted-info" class="items-center gap-6 hidden">
+            <div id="selected-info" class="text-key-primary font-bold">
+                0 Dipilih
             </div>
+            <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl"
+                type="button" id="btn-bulk-delete">
+                <x-heroicon-s-trash class="w-5 h-5" />
+                Hapus
+            </x-button-primary>
         </div>
     </div>
-@endsection
+
+    <div id="card-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
+        <div class="cols-span-1 md:col-span-2 lg:col-span-5 py-12">
+            <x-icon-spinner class="h-16 w-16 animate-spin mx-auto" />
+        </div>
+    </div>
+</x-layouts.app>
+
+<script type="module">
+    $(document).ready(function() {
+        const cardContainer = $('#card-container');
+        const searchInput = $('#search-schedule-list');
+
+        function loadCard() {
+            $.ajax({
+                url: '/api/get-year-schedule-list',
+                method: 'GET',
+                success: function(data) {
+                    cardContainer.empty();
+                    if (!data.data || data.data.length === 0) {
+                        cardContainer.append(`
+                                <div
+                                    class="rounded-xl bg-white cols-span-1 md:col-span-2 lg:col-span-5 p-4 flex flex-col py-12 justify-center items-center">
+                                    <x-icon-no-data class="w-70 mx-auto" />
+                                    <span class="font-bold text-sm text-key-primary">Tidak ada data</span>
+                                </div>
+                            `);
+                    } else {
+                        data.data.forEach(item => {
+                            const card = `
+                                    <div class="rounded-xl bg-white p-4 h-40 flex flex-col justify-between border border-[#C9C6C5]">
+                                        <div class="year-list text-key-primary">
+                                            <h3 class="font-bold text-lg capitalize">Praktikum ${item.semester}</h3>
+                                            <p class="text-gray-600">${item.tahun_ajaran}</p>
+                                        </div>
+                                        <a href="/schedule-detail?semester=${encodeURIComponent(item.semester)}&tahun_ajar=${encodeURIComponent(item.tahun_ajar)}" class="w-full">
+                                            <x-button-secondary class="flex items-center px-5 py-3 text-md gap-2 rounded-xl w-full"
+                                                type="button" id="btn-create-course">
+                                                <x-heroicon-s-eye class="w-5 h-5" />
+                                                Detail
+                                            </x-button-secondary>
+                                        </a>
+                                    </div>
+                                `;
+                            cardContainer.append(card);
+                        });
+                    }
+                }
+            });
+        }
+
+        loadCard();
+
+        if (searchInput) {
+            searchInput.on('input', function() {
+                const searchValue = $(this).val().toLowerCase();
+                cardContainer.children().each(function() {
+                    const yearListText = $(this).find('.year-list').text().toLowerCase();
+                    if (yearListText.includes(searchValue)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        }
+    });
+</script>

@@ -17,10 +17,12 @@ class DataTable extends Component
     public $hasAssistant;
     public $searchInputId;
     public $btnCreateId;
+    public $hasSetAssistant;
+    public $filters;
     /**
      * Create a new component instance.
      */
-    public function __construct(string $url, string $actionUrl, array $columns, bool $hasActions = false, string $tableId = 'data-table', string $primary = 'id', bool $hasAssistant = false, string $searchInputId = '', string $btnCreateId = '')
+    public function __construct(string $url, string $actionUrl, array $columns, bool $hasActions = false, string $tableId = 'data-table', string $primary = 'id', bool $hasAssistant = false, string $searchInputId = '', string $btnCreateId = '', bool $hasSetAssistant = false, array $filters = [])
     {
         $this->url = $url;
         $this->actionUrl = $actionUrl;
@@ -31,6 +33,8 @@ class DataTable extends Component
         $this->hasAssistant = $hasAssistant;
         $this->searchInputId = $searchInputId;
         $this->btnCreateId = $btnCreateId;
+        $this->hasSetAssistant = $hasSetAssistant;
+        $this->filters = $filters;
     }
 
     /**

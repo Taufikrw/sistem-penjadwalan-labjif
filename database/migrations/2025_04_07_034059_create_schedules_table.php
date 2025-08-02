@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('kode_praktikum', 20);
             $table->uuid('laboratorium_id');
             $table->string('dosen', 50);
+            $table->string('jenis_semester', 7);
             $table->string('tahun_ajar', 4);
             $table->string('day', 10);
             $table->time('start_time');

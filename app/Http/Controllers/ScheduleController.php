@@ -290,7 +290,7 @@ class ScheduleController extends Controller
                 'message' => 'Asisten tidak ditemukan',
             ], 404);
         }
-        
+
         $courseItem = $this->assistantService->getCourseDetails($id);
 
         if (!$courseItem) {
@@ -348,7 +348,7 @@ class ScheduleController extends Controller
             $this->scheduleService->bulkDeleteCourses($ids);
 
             $count = count($ids);
-            
+
             return response()->json([
                 'status' => 'success',
                 'message' => "{$count} data jadwal kuliah berhasil dihapus.",
@@ -359,5 +359,84 @@ class ScheduleController extends Controller
                 'message' => 'Gagal menghapus data jadwal kuliah: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function yearScheduleList()
+    {
+        try {
+            $years = $this->scheduleService->getYearScheduleList();
+            return response()->json([
+                'status' => 'success',
+                'data' => $years,
+                'message' => 'Daftar tahun jadwal berhasil diambil.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil daftar tahun jadwal: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function show(Request $request)
+    {
+        $semester = $request->query('semester');
+        $tahunAjar = $request->query('tahun_ajar');
+        if ($semester === 'genap') {
+            $tahunAjaran = ($tahunAjar - 1) . '/' . $tahunAjar;
+        } else {
+            $tahunAjaran = $tahunAjar . '/' . ($tahunAjar + 1);
+        }
+        $day = $request->query('day', 'Senin');
+
+        return view('schedule.show', compact('semester', 'tahunAjaran', 'tahunAjar', 'day'));
+    }
+
+    public function scheduleTable(Request $request)
+    {
+        $sortBy = $request->get('sort_by', 'start_time');
+        $sortOrder = $request->get('sort_order', 'asc');
+        $search = $request->get('search', '');
+
+        $filters = [
+            'day' => $request->get('day', ''),
+            'practicum_name' => $request->get('practicum_name', ''),
+            'laboratorium_name' => $request->get('laboratorium_name', ''),
+            'tahun_ajar' => $request->get('tahun_ajar', ''),
+            'jenis_semester' => $request->get('jenis_semester', ''),
+            'start_time' => $request->get('start_time', ''),
+        ];
+
+        $filters = array_filter($filters);
+
+
+        try {
+            $schedules = $this->scheduleService->getScheduleData($sortBy, $sortOrder, $search, $filters);
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $schedules,
+                'message' => 'Schedules retrieved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve schedules: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function indexScheduleAssistant(Request $request) {
+        $schedule = $this->scheduleService->getNewestTahunAjaran();
+        $semester = $schedule->jenis_semester;
+        $tahunAjar = $schedule->tahun_ajar;
+        if ($semester === 'genap') {
+            $tahunAjaran = ($tahunAjar - 1) . '/' . $tahunAjar;
+        } else {
+            $tahunAjaran = $tahunAjar . '/' . ($tahunAjar + 1);
+        }
+        $day = $request->query('day', 'Senin');
+
+        return view('schedule.show', compact('semester', 'tahunAjaran', 'tahunAjar', 'day'));
     }
 }

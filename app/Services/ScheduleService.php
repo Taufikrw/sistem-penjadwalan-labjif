@@ -84,4 +84,19 @@ class ScheduleService
     {
         $this->scheduleRepository->deleteCourseByIds($ids);
     }
+
+    public function getYearScheduleList()
+    {
+        return $this->scheduleRepository->getYearScheduleList();
+    }
+
+    public function getScheduleData($sortBy, $sortOrder, $search, $filters)
+    {
+        return $this->scheduleRepository->getAllSchedules($sortBy, $sortOrder, $search, $filters, 8);
+    }
+
+    public function getNewestTahunAjaran()
+    {
+        return $this->scheduleRepository->getNewestTahunAjaran();
+    }
 }

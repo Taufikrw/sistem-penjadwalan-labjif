@@ -21,14 +21,14 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'role:admin,assistant'])->group(function () {
     Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
-    
-    Route::get('schedule', [ScheduleController::class, 'index'])->name('schedule.index');
 
     Route::post('course/create', [ScheduleController::class, 'storeCourse'])->name('course.store');
     Route::put('course/{id}', [ScheduleController::class, 'updateCourse'])->name('course.update');
 
     Route::prefix('api')->group(function () {
         Route::get('get-course-table/{nim}', [ScheduleController::class, 'courseTable'])->name('api.course-schedules.table');
+        Route::get('get-year-schedule-list', [ScheduleController::class, 'yearScheduleList'])->name('api.year-schedule.list');
+        Route::get('get-schedule-table', [ScheduleController::class, 'scheduleTable'])->name('api.schedule.table');
     });
 });
 
@@ -69,6 +69,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('labs/{id}', [LaboratoriumController::class, 'destroy'])->name('lab.delete');
     Route::post('labs/bulk-delete', [LaboratoriumController::class, 'bulkDelete'])->name('lab.bulk-delete');
 
+    Route::get('schedule', [ScheduleController::class, 'index'])->name('schedule.index');
+    Route::get('schedule-detail', [ScheduleController::class, 'show'])->name('schedule.detail');
     Route::get('schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');
     Route::post('schedule/create', [ScheduleController::class, 'store'])->name('schedule.store');
 
@@ -97,4 +99,6 @@ Route::middleware(['auth', 'role:assistant'])->group(function () {
     Route::get('jadwal-kuliah/{id}', [ScheduleController::class, 'editCourseAssistant'])->name('course-schedule.edit');
     Route::delete('jadwal-kuliah/{id}', [ScheduleController::class, 'destroyCourseAssistant'])->name('course-schedule.delete');
     Route::post('jadwal-kuliah/bulk-delete', [ScheduleController::class, 'bulkDeleteCourse'])->name('course-schedule.bulk-delete');
+
+    Route::get('jadwal-praktikum', [ScheduleController::class, 'indexScheduleAssistant'])->name('schedule.index-assistant');
 });

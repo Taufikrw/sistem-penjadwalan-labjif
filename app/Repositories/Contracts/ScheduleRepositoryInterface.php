@@ -33,4 +33,8 @@ interface ScheduleRepositoryInterface
     public function getCourseSchedulesByNim($nim, $sortBy = 'day', $order = 'asc', $search = '', $perPage = null);
     
     public function deleteCourseByIds(array $ids);
+
+    public function getYearScheduleList();
+
+    public function getNewestTahunAjaran();
 }

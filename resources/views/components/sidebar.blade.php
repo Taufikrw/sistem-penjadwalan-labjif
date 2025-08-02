@@ -39,6 +39,10 @@
                     <x-heroicon-s-beaker class="w-5 h-5" />
                     <span class="menu-text">Laboratorium</span>
                 </x-nav-link>
+                <x-nav-link route="{{ route('schedule.index') }}" routeIs="schedule.*">
+                    <x-heroicon-s-calendar-date-range class="w-5 h-5" />
+                    <span class="menu-text">Jadwal Praktikum</span>
+                </x-nav-link>
             @endif
             @if (Auth::user()->role === 'assistant')
                 <x-nav-link route="{{ route('history.index') }}" routeIs="history.*">
@@ -49,11 +53,11 @@
                     <x-heroicon-s-calendar class="w-5 h-5" />
                     <span class="menu-text">Jadwal Perkuliahan</span>
                 </x-nav-link>
+                <x-nav-link route="{{ route('schedule.index-assistant') }}" routeIs="schedule.*">
+                    <x-heroicon-s-calendar-date-range class="w-5 h-5" />
+                    <span class="menu-text">Jadwal Praktikum</span>
+                </x-nav-link>
             @endif
-            <x-nav-link route="{{ route('schedule.index') }}" routeIs="schedule.*">
-                <x-heroicon-s-calendar-date-range class="w-5 h-5" />
-                <span class="menu-text">Jadwal Praktikum</span>
-            </x-nav-link>
         </div>
     </nav>
     <div>
