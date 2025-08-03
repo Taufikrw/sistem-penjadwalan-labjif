@@ -1,5 +1,9 @@
 <x-layouts.app>
-    <x-slot name="title">{{ Str::title('Jadwal Praktikum ' . $semester . ' ' . $tahunAjaran) }}</x-slot>
+    @if ($semester && $tahunAjaran)
+        <x-slot name="title">{{ Str::title('Jadwal Praktikum ' . $semester . ' ' . $tahunAjaran) }}</x-slot>
+    @else
+        <x-slot name="title">Jadwal Praktikum</x-slot>
+    @endif
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -41,7 +45,8 @@
                     <button type="button"
                         class="py-2 transition w-full
                             hover:text-key-primary hover:border-b-2 hover:border-key-primary
-                            {{ $day === $hari ? 'text-key-primary border-b-2 font-bold border-key-primary' : 'text-gray-600 cursor-pointer' }}" {{ $day === $hari ? 'disabled' : '' }}>
+                            {{ $day === $hari ? 'text-key-primary border-b-2 font-bold border-key-primary' : 'text-gray-600 cursor-pointer' }}"
+                        {{ $day === $hari ? 'disabled' : '' }}>
                         {{ $hari }}
                     </button>
                 </a>
@@ -61,6 +66,6 @@
         has-actions="{{ Auth::user()->role === 'admin' ? true : false }}" table-id="schedule-table"
         search-input-id="search-schedule" btn-create-id="btn-create-schedule" :has-setAssistant="true" />
 
-    <x-form-modal modal-id="scheduleModal" ajax-url="{{ route('schedule.create') }}" action-url="schedule/"
+    <x-form-modal modal-id="scheduleModal" ajax-url="{{ route('schedule.create') }}" :params="['tahun_ajar' => $tahunAjar, 'jenis_semester' => $semester, 'day' => $day]" action-url="schedule/"
         form-id="schedule-form" />
 </x-layouts.app>

@@ -6,8 +6,7 @@
             id="modalContent">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-key-primary font-bold text-xl" id="title"></h3>
-                <button id="closeModalBtn"
-                    class="text-[#929090] hover:text-[#535252] focus:outline-none cursor-pointer">
+                <button id="closeModalBtn" class="text-[#929090] hover:text-[#535252] focus:outline-none cursor-pointer">
                     <x-heroicon-s-x-mark class="w-6 h-6" />
                 </button>
             </div>
@@ -29,6 +28,11 @@
             const modalElement = $(`#${modalId}`);
             const modalBody = modalElement.find('.modal-body');
             const csrfToken = $('meta[name="csrf-token"]').attr('content');
+            const params = @json($params);
+
+            let currentParams = {
+                ...params
+            };
 
             window.openModal = function() {
                 modalElement.removeClass('hidden');
@@ -46,10 +50,24 @@
             }
 
             window.showDynamicModal = function(url = ajaxUrl) {
+                let requestUrl = url;
+                const urlParams = new URLSearchParams();
                 window.openModal();
+                Object.keys(currentParams).forEach(function(key) {
+                    if (currentParams[key]) {
+                        urlParams.append(key, currentParams[key]);
+                    }
+                });
+
+                if (url.includes('?')) {
+                    requestUrl = url.replace(/\?$/, '');
+                    requestUrl += `&${urlParams.toString()}`;
+                } else if ([...urlParams].length > 0) {
+                    requestUrl = `${url}?${urlParams.toString()}`;
+                }
 
                 $.ajax({
-                    url: url,
+                    url: requestUrl,
                     type: 'GET',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken
@@ -73,8 +91,6 @@
                                     const formData = $(this).serialize();
                                     $('.error-message').remove();
                                     $('input, textarea').removeClass('border-[#BA1A1A]');
-                                    console.log(form.attr('method'));
-                                    
 
                                     $.ajax({
                                         url: form.attr('action'),
@@ -133,9 +149,12 @@
                                                         .addClass(
                                                             'border-[#BA1A1A]'
                                                         );
-                                                    inputElement.closest('.relative').after(
-                                                        `<p class="error-message text-[#BA1A1A] text-sm mt-1 font-semibold">${value[0]}</p>`
-                                                    );
+                                                    inputElement
+                                                        .closest(
+                                                            '.relative')
+                                                        .after(
+                                                            `<p class="error-message text-[#BA1A1A] text-sm mt-1 font-semibold">${value[0]}</p>`
+                                                        );
                                                 });
                                                 Swal.fire({
                                                     icon: 'error',

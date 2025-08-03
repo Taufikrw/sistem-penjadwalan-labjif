@@ -39,9 +39,9 @@
     </button>
 
     <div id="{{ $optionsId }}"
-        class="absolute z-10 mt-2 max-h-60 w-full overflow-auto rounded-xl bg-white py-1 text-base shadow-lg border border-[#C9C6C5] focus:outline-none hidden">
+        class="absolute z-10 mt-2 max-h-40 w-full overflow-auto rounded-xl bg-white py-1 text-base shadow-lg border border-[#C9C6C5] focus:outline-none hidden">
         @foreach ($options as $value => $text)
-            <div class="custom-option cursor-pointer select-none relative py-2 pl-3 pr-4 text-black hover:bg-gray-100"
+            <div class="custom-option cursor-pointer select-none relative py-2 pl-4 pr-4 text-black hover:bg-gray-100"
                 data-value="{{ $value }}" data-text="{{ $text }}">
                 <span class="block truncate">{{ $text }}</span>
             </div>

@@ -18,6 +18,7 @@ class Schedule extends Model
         'laboratorium_id',
         'dosen',
         'tahun_ajar',
+        'jenis_semester',
         'day',
         'start_time',
         'end_time',

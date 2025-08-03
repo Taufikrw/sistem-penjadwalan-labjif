@@ -29,6 +29,7 @@ class StoreScheduleRequest extends FormRequest
             'laboratorium_id' => 'required|uuid|exists:laboratoriums,id',
             'dosen' => 'required|string|max:255',
             'tahun_ajar' => 'required|integer|digits:4',
+            'jenis_semester' => 'required|string|in:ganjil,genap',
             'day' => ['required', 'string', Rule::enum(Day::class)],
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',

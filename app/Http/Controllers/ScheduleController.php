@@ -23,16 +23,21 @@ class ScheduleController extends Controller
 
     public function index()
     {
-        $data = $this->scheduleService->getScheduleList();
+        $data = $this->scheduleService->getScheduleCreatePage();
+        $dayForm = 'Senin';
 
-        return view('schedule.index', $data);
+        return view('schedule.index', $data, compact('dayForm'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $tahunAjar = $request->query('tahun_ajar');
+        $semester = $request->query('jenis_semester');
+        $dayForm = $request->query('day', 'Senin');
+        
         $data = $this->scheduleService->getScheduleCreatePage();
 
-        return view('schedule.form', $data);
+        return view('schedule.form', $data, compact('tahunAjar', 'semester', 'dayForm'));
     }
 
     public function store(StoreScheduleRequest $request)
@@ -41,9 +46,15 @@ class ScheduleController extends Controller
 
         try {
             $this->scheduleService->storeSchedule($validated);
-            return redirect()->route('schedule.index')->with('success', 'Schedule created successfully.');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data Jadwal Praktikum berhasil dibuat.',
+            ]);
         } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Failed to create schedule: ' . $e->getMessage()]);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal membuat data Jadwal Praktikum: ' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -428,8 +439,8 @@ class ScheduleController extends Controller
 
     public function indexScheduleAssistant(Request $request) {
         $schedule = $this->scheduleService->getNewestTahunAjaran();
-        $semester = $schedule->jenis_semester;
-        $tahunAjar = $schedule->tahun_ajar;
+        $semester = $schedule ? $schedule->jenis_semester : null;
+        $tahunAjar = $schedule ? $schedule->tahun_ajar : null;
         if ($semester === 'genap') {
             $tahunAjaran = ($tahunAjar - 1) . '/' . $tahunAjar;
         } else {

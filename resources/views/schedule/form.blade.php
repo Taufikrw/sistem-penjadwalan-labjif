@@ -1,4 +1,108 @@
-@extends('layouts.app')
+<form id="schedule-form" action="{{ isset($schedule) ? route('schedule.update', $schedule->id) : route('schedule.store') }}"
+    method="POST">
+    @csrf
+    @if (isset($schedule))
+        @method('PUT')
+    @endif
+
+    <div id="title-hidden" class="hidden">
+        <div class="flex gap-3 items-center">
+            @isset($schedule)
+                <x-heroicon-s-pencil-square class="w-4 h-4" />
+                <span>Edit Jadwal Praktikum</span>
+            @else
+                <x-heroicon-s-plus class="w-4 h-4" />
+                <span>Tambah Jadwal Praktikum</span>
+            @endisset
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+        <div class="col-span-2">
+            <x-input-label for="kode_praktikum" class="mb-1 text-sm" value="Nama Praktikum" />
+            <x-select-input
+                id="kode_praktikum"
+                name="kode_praktikum"
+                :options="$practicums->pluck('name', 'kode_praktikum')->toArray()"
+                placeholder="Pilih Nama Praktikum"
+                :selected="old('kode_praktikum', isset($schedule) ? $schedule->kode_praktikum : null)"
+                required
+            />
+            @error('kode_praktikum')
+                <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div class="col-span-2">
+            <x-input-label for="laboratorium_id" class="mb-1 text-sm" value="Nama Laboratorium" />
+            <x-select-input
+                id="laboratorium_id"
+                name="laboratorium_id"
+                :options="$labs->pluck('name', 'id')->toArray()"
+                placeholder="Pilih Nama Laboratorium"
+                :selected="old('laboratorium_id', isset($schedule) ? $schedule->laboratorium_id : null)"
+                required
+            />
+            @error('kode_praktikum')
+                <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div class="col-span-2">
+            <x-input-label for="dosen" class="mb-1 text-sm" value="Nama Dosen" />
+            <x-text-input name="dosen" id="dosen" class="w-full" :value="old('dosen', isset($schedule) ? $schedule->dosen : '')"
+                placeholder="Masukkan nama dosen" required />
+        </div>
+
+        <div>
+            <x-input-label for="name" class="mb-1 text-sm" value="Nama Kelas" />
+            <x-text-input name="name" id="name" class="w-full" :value="old('name', isset($schedule) ? $schedule->name : '')"
+                type="text" placeholder="Masukkan nama kelas (IF/SI-X)" required />
+        </div>
+
+        <div>
+            <x-input-label for="day" class="mb-1 text-sm" value="Hari" />
+            <x-select-input id="day" name="day" :options="collect(App\Enums\Day::cases())
+                ->mapWithKeys(fn($day) => [$day->value => $day->value])
+                ->toArray()" placeholder="Pilih hari" :selected="old('day', isset($schedule) ? $schedule->day->value : $dayForm)"
+                required />
+        </div>
+
+        <div>
+            <x-input-label for="start_time" class="mb-1 text-sm" value="Jam Mulai" />
+            <x-text-input type="time" name="start_time" id="start_time" class="w-full" :value="old('start_time', isset($schedule) ? $schedule->start_time->format('H:i') : '')" required />
+        </div>
+
+        <div>
+            <x-input-label for="end_time" class="mb-1 text-sm" value="Jam Selesai" />
+            <x-text-input type="time" name="end_time" id="end_time" class="w-full" :value="old('end_time', isset($schedule) ? $schedule->end_time->format('H:i') : '')" required />
+        </div>
+
+        <input type="hidden" name="tahun_ajar" id="tahun_ajar" value="{{ old('tahun_ajar', isset($schedule) ? $schedule->tahun_ajar : $tahunAjar) }}">
+        <input type="hidden" name="jenis_semester" id="jenis_semester" value="{{ old('jenis_semester', isset($schedule) ? $schedule->jenis_semester : $semester) }}">
+    </div>
+
+    <div class="mt-8 flex justify-between items-center w-full">
+        <x-button-secondary class="rounded-xl py-3 px-6" type="button" id="btn-cancel-schedule"
+            onclick="closeModal()">
+            Batal
+        </x-button-secondary>
+        <x-button-primary class="rounded-xl py-3 px-6" type="submit" id="btn-submit-schedule">
+            Simpan
+        </x-button-primary>
+    </div>
+</form>
+
+<script type="module">
+    $(document).ready(function() {
+        const title = $('#title-hidden').html();
+        $('#title').html(title);
+
+    });
+</script>
+
+
+{{-- @extends('layouts.app')
 
 @section('title', 'Create Schedule')
 
@@ -157,4 +261,4 @@
             </div>
         </div>
     </div>
-@endsection
+@endsection --}}

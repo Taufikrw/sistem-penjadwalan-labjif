@@ -11,15 +11,17 @@ class FormModal extends Component
     public $modalId;
     public $ajaxUrl;
     public $formId;
+    public $params;
     
     /**
      * Create a new component instance.
      */
-    public function __construct(string $modalId, string $ajaxUrl, ?string $formId = null)
+    public function __construct(string $modalId, string $ajaxUrl, ?string $formId = null, array $params = [])
     {
         $this->modalId = $modalId;
         $this->ajaxUrl = $ajaxUrl;
         $this->formId = $formId;
+        $this->params = $params;
     }
 
     /**

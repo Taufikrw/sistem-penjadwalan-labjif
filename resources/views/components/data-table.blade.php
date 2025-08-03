@@ -2,12 +2,14 @@
     <table class="w-full text-sm text-left rtl:text-right text-key-primary">
         <thead class="border-b border-[#E5E2E1]">
             <tr>
-                <th scope="col" class="px-2 py-3 w-8">
-                    <div class="flex items-center justify-center h-full">
-                        <input type="checkbox" id="selectAllCheckboxes"
-                            class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer" />
-                    </div>
-                </th>
+                @if ($hasActions)
+                    <th scope="col" class="px-2 py-3 w-8">
+                        <div class="flex items-center justify-center h-full">
+                            <input type="checkbox" id="selectAllCheckboxes"
+                                class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer" />
+                        </div>
+                    </th>
+                @endif
                 @foreach ($columns as $column)
                     <th scope="col" class="px-4 py-3">
                         <span
@@ -66,7 +68,9 @@
             let currentSortOrder = '';
             let currentSearch = '';
             let currentPage = 1;
-            let currentFilters = { ...filters };
+            let currentFilters = {
+                ...filters
+            };
 
             function loadTableData(page = 1) {
                 currentPage = page;
@@ -111,36 +115,36 @@
                             `;
                         } else {
                             response.data.data.forEach(function(item) {
-                                if (primary === 'nim') {
-                                    rowsHtml +=
-                                        `<tr class="border-b border-[#E5E2E1]">
-                                            <td class="px-2 py-5">
+                                rowsHtml += '<tr class="border-b border-[#E5E2E1]">';
+                                if (hasActions) {
+                                    if (primary === 'nim') {
+                                        rowsHtml +=
+                                            `<td class="px-2 py-5">
                                                 <div class="flex items-center justify-center h-full">
                                                     <input type="checkbox"
                                                         class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer"
                                                         name="selected[]" value="${item.nim}" />
                                                 </div>
                                             </td>`;
-                                } else if (primary === 'kode_praktikum') {
-                                    rowsHtml +=
-                                        `<tr class="border-b border-[#E5E2E1]">
-                                            <td class="px-2 py-5">
+                                    } else if (primary === 'kode_praktikum') {
+                                        rowsHtml +=
+                                            `<td class="px-2 py-5">
                                                 <div class="flex items-center justify-center h-full">
                                                     <input type="checkbox"
                                                         class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer"
                                                         name="selected[]" value="${item.kode_praktikum}" />
                                                 </div>
                                             </td>`;
-                                } else {
-                                    rowsHtml +=
-                                        `<tr class="border-b border-[#E5E2E1]">
-                                            <td class="px-2 py-5">
+                                    } else {
+                                        rowsHtml +=
+                                            `<td class="px-2 py-5">
                                                 <div class="flex items-center justify-center h-full">
                                                     <input type="checkbox"
                                                         class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer"
                                                         name="selected[]" value="${item.id}" />
                                                 </div>
                                             </td>`;
+                                    }
                                 }
                                 columns.forEach(function(column) {
                                     if (column.field === 'status') {
@@ -172,7 +176,7 @@
                                         rowsHtml +=
                                             `<td class="px-4 py-4">
                                                 <a href="assistants/${item.nim}/detail-jadwal-praktikum"
-                                                    class="flex items-center gap-2 hover:text-key-secondary">
+                                                    class="flex items-center gap-2 hover:text-key-secondary w-fit">
                                                     <x-heroicon-o-eye class="w-4 h-4" />
                                                     Detail
                                                 </a>
@@ -181,7 +185,7 @@
                                         rowsHtml +=
                                             `<td class="px-4 py-4">
                                                 <a href="assistants/${item.nim}/detail-jadwal-kuliah"
-                                                    class="flex items-center gap-2 hover:text-key-secondary">
+                                                    class="flex items-center gap-2 hover:text-key-secondary w-fit">
                                                     <x-heroicon-o-eye class="w-4 h-4" />
                                                     Detail
                                                 </a>
