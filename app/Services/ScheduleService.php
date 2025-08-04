@@ -68,6 +68,11 @@ class ScheduleService
         $this->scheduleRepository->deleteSchedule($id);
     }
 
+    public function bulkDeleteSchedules(array $ids)
+    {
+        $this->scheduleRepository->deleteScheduleByIds($ids);
+    }
+
     public function getTodaySchedules()
     {
         $dayName = now()->locale('id')->translatedFormat('l');

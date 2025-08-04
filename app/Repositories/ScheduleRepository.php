@@ -111,6 +111,13 @@ class ScheduleRepository implements ScheduleRepositoryInterface
         return false;
     }
 
+    public function deleteScheduleByIds(array $ids)
+    {
+        Schedule::whereIn('id', $ids)->delete();
+
+        return true;
+    }
+
     public function getAssistantByScheduleId($scheduleId)
     {
         return AssistantSchedule::with('assistant')->where('schedule_id', $scheduleId)->get();
@@ -226,20 +233,26 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 
     public function getYearScheduleList()
     {
-        return Schedule::selectRaw("DISTINCT jenis_semester, tahun_ajar as tahun_ajar_asli, CASE WHEN jenis_semester = 'ganjil' THEN CONCAT(tahun_ajar, '/', (tahun_ajar::int + 1)) ELSE CONCAT((tahun_ajar::int - 1), '/', tahun_ajar) END as tahun_ajar")
+        $schedules = Schedule::select('tahun_ajar', 'jenis_semester')
             ->orderBy('tahun_ajar', 'desc')
+            ->orderByRaw("CASE WHEN jenis_semester = 'ganjil' THEN 0 ELSE 1 END")
             ->get()
-            ->map(function ($item) {
-                return [
-                    'semester' => $item->jenis_semester,
-                    'tahun_ajaran' => $item->tahun_ajar,
-                    'tahun_ajar' => $item->tahun_ajar_asli,
-                ];
-            })
             ->unique(function ($item) {
-                return $item['semester'] . '-' . $item['tahun_ajar'];
+                return $item->tahun_ajar . '-' . $item->jenis_semester;
             })
             ->values();
+
+        return $schedules->map(function ($item) {
+            $tahunAjarFormatted = $item->jenis_semester === 'ganjil'
+                ? $item->tahun_ajar . '/' . ((int)$item->tahun_ajar + 1)
+                : ((int)$item->tahun_ajar - 1) . '/' . $item->tahun_ajar;
+
+            return [
+                'semester' => $item->jenis_semester,
+                'tahun_ajaran' => $tahunAjarFormatted,
+                'tahun_ajar' => $item->tahun_ajar,
+            ];
+        });
     }
 
     public function getNewestTahunAjaran()
@@ -254,12 +267,12 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 
         $maxTahunAjar = $newest->first()->tahun_ajar;
 
-        $genap = $newest->where('tahun_ajar', $maxTahunAjar)
-            ->where('jenis_semester', 'genap')
+        $ganjil = $newest->where('tahun_ajar', $maxTahunAjar)
+            ->where('jenis_semester', 'ganjil')
             ->first();
 
-        if ($genap) {
-            return $genap;
+        if ($ganjil) {
+            return $ganjil;
         }
 
         return $newest->first();

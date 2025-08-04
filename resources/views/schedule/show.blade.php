@@ -55,7 +55,7 @@
         <hr class="text-gray-300">
     </div>
 
-    <x-data-table url="/api/get-schedule-table" :filters="['semester' => $semester, 'tahun_ajar' => $tahunAjar, 'day' => $day]" action-url="schedule/" :columns="[
+    <x-data-table url="/api/get-schedule-table" :filters="['jenis_semester' => $semester, 'tahun_ajar' => $tahunAjar, 'day' => $day]" action-url="schedule/" :columns="[
         ['label' => 'Mata Kuliah', 'field' => 'practicum_name', 'sortable' => true],
         ['label' => 'Kelas', 'field' => 'name', 'sortable' => true],
         ['label' => 'Lab', 'field' => 'laboratorium_name', 'sortable' => false],

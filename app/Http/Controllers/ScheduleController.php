@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCourseBulkDeleteRequest;
 use App\Http\Requests\StoreCourseScheduleRequest;
+use App\Http\Requests\StoreScheduleBulkDeleteRequest;
 use App\Http\Requests\StoreScheduleRequest;
 use App\Services\AssistantService;
 use App\Services\ScheduleService;
@@ -63,7 +64,10 @@ class ScheduleController extends Controller
         $schedule = $this->scheduleService->getScheduleDetails($id);
 
         if (!$schedule) {
-            return response()->view('errors.not-found', ['message' => 'Schedule not found'], 404);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Jadwal Praktikum tidak ditemukan',
+            ], 404);
         }
 
         $data = $this->scheduleService->getScheduleCreatePage($schedule);
@@ -74,25 +78,71 @@ class ScheduleController extends Controller
     public function update(StoreScheduleRequest $request, $id)
     {
         if (!$this->scheduleService->isScheduleExists($id)) {
-            return response()->view('errors.not-found', ['message' => 'Schedule not found'], 404);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Jadwal Praktikum tidak ditemukan',
+            ], 404);
         }
 
         $validated = $request->validated();
 
-        $this->scheduleService->updateSchedule($id, $validated);
-
-        return redirect()->route('schedule.index')->with('success', 'Schedule updated successfully.');
+        try {
+            $this->scheduleService->updateSchedule($id, $validated);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data Jadwal Praktikum berhasil diperbarui.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memperbarui data Jadwal Praktikum: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function destroy($id)
     {
         if (!$this->scheduleService->isScheduleExists($id)) {
-            return response()->view('errors.not-found', ['message' => 'Schedule not found'], 404);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Jadwal Praktikum tidak ditemukan',
+            ], 404);
         }
 
-        $this->scheduleService->deleteSchedule($id);
+        try {
+            $this->scheduleService->deleteSchedule($id);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data Jadwal Praktikum berhasil dihapus.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus Data Jadwal Praktikum: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 
-        return redirect()->route('schedule.index')->with('success', 'Schedule deleted successfully.');
+    public function bulkDelete(StoreScheduleBulkDeleteRequest $request)
+    {
+        $validated = $request->validated();
+
+        try {
+            $ids = $validated['ids'];
+            $this->scheduleService->bulkDeleteSchedules($ids);
+
+            $count = count($ids);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => "{$count} data Jadwal Praktikum berhasil dihapus.",
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus data Jadwal Praktikum: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function todaySchedule()
