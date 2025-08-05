@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('nim', 10);
 
             $table->foreign('schedule_id')->references('id')->on('schedules')->onDelete('cascade');
-            $table->foreign('nim')->references('nim')->on('assistants')->onDelete('cascade');
+            $table->foreign('nim')->references('nim')->on('assistants')->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

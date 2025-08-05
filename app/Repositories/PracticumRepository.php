@@ -26,13 +26,14 @@ class PracticumRepository implements PracticumRepositoryInterface
         }
 
         foreach ($filters as $key => $value) {
-            if (in_array($key, ['semester', 'for_prodi'])) {
-                $lowerValue = strtolower($value);
-                if ($key === 'semester') {
-                    $query->whereRaw("CAST(semester AS TEXT) LIKE ?", ["%{$lowerValue}%"]);
+            if ($key === 'semester') {
+                if (is_array($value)) {
+                    $query->whereIn('semester', $value);
                 } else {
-                    $query->whereRaw("LOWER({$key}) LIKE ?", ["%{$lowerValue}%"]);
+                    $query->whereRaw("CAST(semester AS TEXT) LIKE ?", ["%".strtolower($value)."%"]);
                 }
+            } elseif ($key === 'for_prodi') {
+                $query->whereRaw("LOWER(for_prodi) LIKE ?", ["%".strtolower($value)."%"]);
             }
         }
 

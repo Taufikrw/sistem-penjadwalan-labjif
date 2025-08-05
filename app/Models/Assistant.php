@@ -38,4 +38,9 @@ class Assistant extends Model
     {
         return $this->hasMany(AssistantSchedule::class, 'nim', 'nim');
     }
+
+    public function preferences()
+    {
+        return $this->hasMany(Preference::class, 'nim', 'nim');
+    }
 }

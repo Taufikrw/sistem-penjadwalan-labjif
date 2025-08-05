@@ -25,4 +25,9 @@ class Practicum extends Model
     {
         return $this->hasMany(Schedule::class, 'kode_praktikum', 'kode_praktikum');
     }
+
+    public function preferences()
+    {
+        return $this->hasMany(Preference::class, 'kode_praktikum', 'kode_praktikum');
+    }
 }

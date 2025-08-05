@@ -36,7 +36,7 @@ class ScheduleController extends Controller
         $semester = $request->query('jenis_semester');
         $dayForm = $request->query('day', 'Senin');
         
-        $data = $this->scheduleService->getScheduleCreatePage();
+        $data = $this->scheduleService->getScheduleCreatePage($semester);
 
         return view('schedule.form', $data, compact('tahunAjar', 'semester', 'dayForm'));
     }

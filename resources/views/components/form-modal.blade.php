@@ -74,9 +74,8 @@
                     },
                     beforeSend: function() {
                         modalBody.html(`
-                            <div class="flex justify-center items-center gap-4">
-                                <div class="border-gray-300 h-8 w-8 animate-spin rounded-full border-5 border-t-secondary"></div>
-                                Loading...
+                            <div class="flex justify-center items-center">
+                                <x-icon-spinner class="h-16 w-16 animate-spin" />
                             </div>
                         `);
                     },

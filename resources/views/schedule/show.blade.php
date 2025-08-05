@@ -66,6 +66,13 @@
         has-actions="{{ Auth::user()->role === 'admin' ? true : false }}" table-id="schedule-table"
         search-input-id="search-schedule" btn-create-id="btn-create-schedule" :has-setAssistant="true" />
 
-    <x-form-modal modal-id="scheduleModal" ajax-url="{{ route('schedule.create') }}" :params="['tahun_ajar' => $tahunAjar, 'jenis_semester' => $semester, 'day' => $day]" action-url="schedule/"
-        form-id="schedule-form" />
+    <x-form-modal modal-id="scheduleModal" ajax-url="{{ route('schedule.create') }}" :params="['tahun_ajar' => $tahunAjar, 'jenis_semester' => $semester, 'day' => $day]"
+        action-url="schedule/" form-id="schedule-form" />
+
+    <x-modal modal-id="setAssistantModal">
+        <x-slot:title>
+            <x-heroicon-s-users class="w-4 h-4" />
+            <span>Pilih Aslab</span>
+        </x-slot:title>
+    </x-modal>
 </x-layouts.app>

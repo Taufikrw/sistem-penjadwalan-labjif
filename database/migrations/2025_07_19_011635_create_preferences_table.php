@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string('nim', 10);
             $table->string('kode_praktikum', 20);
 
-            $table->foreign('nim')->references('nim')->on('assistants')->onDelete('cascade');
-            $table->foreign('kode_praktikum')->references('kode_praktikum')->on('practicums')->onDelete('cascade');
+            $table->foreign('nim')->references('nim')->on('assistants')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('kode_praktikum')->references('kode_praktikum')->on('practicums')->onUpdate('cascade')->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

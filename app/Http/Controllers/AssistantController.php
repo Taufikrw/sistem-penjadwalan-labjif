@@ -203,7 +203,7 @@ class AssistantController extends Controller
     public function setAssistant(string $id)
     {
         if (!$this->scheduleService->isScheduleExists($id)) {
-            return response()->view('errors.not-found', ['message' => 'Schedule not found'], 404);
+            return response()->view('errors.404', ['message' => 'Jadwal tidak ditemukan'], 404);
         }
 
         $data = $this->assistantService->getSetAssistantPage($id);
@@ -216,21 +216,27 @@ class AssistantController extends Controller
         $validated = $request->validated();
 
         if (!$this->scheduleService->isScheduleExists($id)) {
-            return response()->view('errors.not-found', ['message' => 'Schedule not found'], 404);
+            return response()->view('errors.404', ['message' => 'Jadwal tidak ditemukan'], 404);
         }
 
         try {
             $this->assistantService->setAssistantToSchedule($validated, $id);
-            return redirect()->route('schedule.index')->with('success', 'Assistant set successfully');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Asisten berhasil ditetapkan.',
+            ]);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to set assistant: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menetapkan asisten: ' . $e->getMessage(),
+            ], 500);
         }
     }
 
     public function editAssistant(string $id)
     {
         if (!$this->scheduleService->isScheduleExists($id)) {
-            return response()->view('errors.not-found', ['message' => 'Schedule not found'], 404);
+            return response()->view('errors.404', ['message' => 'Jadwal tidak ditemukan'], 404);
         }
 
         $data = $this->assistantService->getSetAssistantPage($id);
@@ -243,14 +249,20 @@ class AssistantController extends Controller
         $validated = $request->validated();
 
         if (!$this->scheduleService->isScheduleExists($id)) {
-            return response()->view('errors.not-found', ['message' => 'Schedule not found'], 404);
+            return response()->view('errors.404', ['message' => 'Jadwal tidak ditemukan'], 404);
         }
 
         try {
             $this->assistantService->updateAssistantToSchedule($validated, $id);
-            return redirect()->route('schedule.index')->with('success', 'Assistant updated successfully');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Asisten berhasil diperbarui.',
+            ]);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to update assistant: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memperbarui asisten: ' . $e->getMessage(),
+            ], 500);
         }
     }
 

@@ -547,6 +547,60 @@
                 });
             });
 
+            $('#setAssistantModal').find('#closeModalBtn').on('click', function() {
+                $('#setAssistantModal').find('#modalContent').removeClass('scale-100 opacity-100').addClass(
+                    'scale-95 opacity-0');
+                setTimeout(() => {
+                    $('#setAssistantModal').addClass('hidden');
+                }, 300);
+            });
+
+            $('#setAssistantModal').find('#modalOverlay').on('click', function(e) {
+                if (e.target === this) {
+                    $('#setAssistantModal').find('#modalContent').removeClass('scale-100 opacity-100').addClass(
+                        'scale-95 opacity-0');
+                    setTimeout(() => {
+                        $('#setAssistantModal').addClass('hidden');
+                    }, 300);
+                }
+            });
+
+            $(document).on('click', '.btn-set-assistant', function() {
+                const scheduleId = $(this).data('id');
+                const url = actionUrl + 'set-assistant/' + scheduleId;
+                console.log('Set Assistant URL:', url);
+
+                $('#setAssistantModal').removeClass('hidden');
+                setTimeout(() => {
+                    $('#setAssistantModal').find('#modalContent').removeClass('scale-95 opacity-0')
+                        .addClass('scale-100 opacity-100');
+                }, 10);
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    beforeSend: function() {
+                        $('#setAssistantModal').find('.modal-body').html(`
+                            <div class="flex justify-center items-center">
+                                <x-icon-spinner class="h-16 w-16 animate-spin" />
+                            </div>
+                        `);
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        $('#setAssistantModal').find('.modal-body').html(response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading modal content:", error);
+                        $('#setAssistantModal').find('.modal-body').html(
+                            '<p class="text-red-500 text-center">Gagal memuat formulir. Silakan coba lagi.</p>'
+                        );
+                    }
+                });
+            });
         });
     </script>
 @endpush

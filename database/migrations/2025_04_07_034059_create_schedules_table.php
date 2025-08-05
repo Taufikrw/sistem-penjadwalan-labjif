@@ -23,7 +23,7 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
 
-            $table->foreign('kode_praktikum')->references('kode_praktikum')->on('practicums')->onDelete('cascade');
+            $table->foreign('kode_praktikum')->references('kode_praktikum')->on('practicums')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('laboratorium_id')->references('id')->on('laboratoriums')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
