@@ -69,9 +69,7 @@ class AssistantService
 
         $schedules = $this->scheduleRepository->getSchedulesByNim($nim);
 
-        $histories = $this->scheduleRepository->getHistoryByNim($nim);
-
-        return compact('assistant', 'schedules', 'histories');
+        return compact('assistant', 'schedules');
     }
 
     public function getCourseDetails($id)
@@ -201,14 +199,6 @@ class AssistantService
 
     public function getAssistantHistory(string $nim)
     {
-        $assistant = $this->assistantRepository->getAssistantByNim($nim);
-
-        if (!$assistant) {
-            return null;
-        }
-
-        $histories = $this->scheduleRepository->getHistoryByNim($nim);
-
-        return compact('assistant', 'histories');
+        return $this->scheduleRepository->getHistoryByNim($nim);
     }
 }

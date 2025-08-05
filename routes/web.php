@@ -29,6 +29,7 @@ Route::middleware(['auth', 'role:admin,assistant'])->group(function () {
         Route::get('get-course-table/{nim}', [ScheduleController::class, 'courseTable'])->name('api.course-schedules.table');
         Route::get('get-year-schedule-list', [ScheduleController::class, 'yearScheduleList'])->name('api.year-schedule.list');
         Route::get('get-schedule-table', [ScheduleController::class, 'scheduleTable'])->name('api.schedule.table');
+        Route::get('get-history-table/{nim}', [AssistantController::class, 'historyTable'])->name('api.history.table');
     });
 });
 
@@ -93,7 +94,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:assistant'])->group(function () {
-    Route::get('history', [AssistantController::class, 'history'])->name('history.index');
     Route::get('jadwal-kuliah', [ScheduleController::class, 'indexCourse'])->name('course.index');
 
     Route::get('jadwal-kuliah/create', [ScheduleController::class, 'createCourseAssistant'])->name('course-schedule.create');

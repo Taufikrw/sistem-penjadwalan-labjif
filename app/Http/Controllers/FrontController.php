@@ -24,7 +24,7 @@ class FrontController extends Controller
                 return abort(404, 'Asistant not found');
             }
 
-            return view('dashboard-assistant', $data);
+            return view('assistant.show-schedule', $data);
         } elseif (Auth::user()->role === 'admin') {
             return view('dashboard');
         }

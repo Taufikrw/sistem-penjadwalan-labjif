@@ -266,15 +266,21 @@ class AssistantController extends Controller
         }
     }
 
-    public function history()
+    public function historyTable(string $nim)
     {
-        $nim = Auth::user()->username;
-        $data = $this->assistantService->getAssistantHistory($nim);
-
-        if (!$data) {
-            return response()->view('errors.not-found', ['message' => 'Assistant not found'], 404);
+        try {
+            $history = $this->assistantService->getAssistantHistory($nim);
+            $history->makeHidden(['laboratorium_name', 'practicum_name', 'jam', 'assistant_names', 'laboratorium', 'practicum', 'assistantSchedules']);
+            return response()->json([
+                'status' => 'success',
+                'data' => $history,
+                'message' => 'Schedules retrieved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil data riwayat: ' . $e->getMessage()
+            ]);
         }
-
-        return view('assistant.history', $data);
     }
 }

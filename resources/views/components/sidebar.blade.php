@@ -45,10 +45,6 @@
                 </x-nav-link>
             @endif
             @if (Auth::user()->role === 'assistant')
-                <x-nav-link route="{{ route('history.index') }}" routeIs="history.*">
-                    <x-heroicon-s-clock class="w-5 h-5" />
-                    <span class="menu-text">Riwayat</span>
-                </x-nav-link>
                 <x-nav-link route="{{ route('course.index') }}" routeIs="course.*">
                     <x-heroicon-s-calendar class="w-5 h-5" />
                     <span class="menu-text">Jadwal Perkuliahan</span>
