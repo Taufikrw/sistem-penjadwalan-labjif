@@ -21,4 +21,8 @@ interface AssistantRepositoryInterface
     public function deleteByNims(array $nims);
 
     public function getAssistantAvailableSchedules($schedule_id);
+    
+    public function deletePreferencesByNim($nim);
+
+    public function storePreference($nim, $kodePraktikum);
 }

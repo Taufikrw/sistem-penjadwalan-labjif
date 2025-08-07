@@ -22,6 +22,8 @@ class Assistant extends Model
         'tahun_masuk',
         'status',
         'user_id',
+        'foto',
+        'nomor_telp',
     ];
 
     public function user()

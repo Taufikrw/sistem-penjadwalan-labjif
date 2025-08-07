@@ -22,7 +22,7 @@
             <hr class="text-[#F4F0EF]">
         </div>
         <div class="flex flex-col gap-2 text-[#929090]">
-            <x-nav-link route="{{ route('dashboard') }}" routeIs="dashboard">
+            <x-nav-link route="{{ route('dashboard') }}" :routeIs="['dashboard', 'assistant.edit-biodata']">
                 <x-heroicon-s-home class="w-5 h-5" />
                 <span class="menu-text">Dashboard</span>
             </x-nav-link>

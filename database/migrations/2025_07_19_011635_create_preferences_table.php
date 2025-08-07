@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('preferences', function (Blueprint $table) {
-            $table->uuid()->primary();
+            $table->uuid('id')->primary();
             $table->string('nim', 10);
             $table->string('kode_praktikum', 20);
 

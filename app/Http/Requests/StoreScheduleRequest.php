@@ -35,4 +35,18 @@ class StoreScheduleRequest extends FormRequest
             'end_time' => 'required|date_format:H:i|after:start_time',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'kode_praktikum' => 'Nama Praktikum',
+            'laboratorium_id' => 'Laboratorium',
+            'dosen' => 'Dosen',
+            'tahun_ajar' => 'Tahun Ajar',
+            'jenis_semester' => 'Jenis Semester',
+            'day' => 'Hari',
+            'start_time' => 'Waktu Mulai',
+            'end_time' => 'Waktu Selesai',
+        ];
+    }
 }

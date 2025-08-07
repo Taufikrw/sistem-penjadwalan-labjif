@@ -5,24 +5,30 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAssistantBulkDeleteRequest;
 use App\Http\Requests\StoreAssistantRequest;
 use App\Http\Requests\StoreAssistantScheduleRequest;
-use App\Http\Requests\StoreCourseScheduleRequest;
+use App\Http\Requests\StorePreferenceRequest;
 use App\Http\Requests\UpdateAssistantRequest;
+use App\Http\Requests\UpdateBiodataRequest;
 use App\Services\AssistantService;
+use App\Services\PracticumService;
 use App\Services\ScheduleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AssistantController extends Controller
 {
     protected $assistantService;
     protected $scheduleService;
+    protected $practicumService;
 
     public function __construct(
         AssistantService $assistantService,
-        ScheduleService $scheduleService
+        ScheduleService $scheduleService,
+        PracticumService $practicumService
     ) {
         $this->assistantService = $assistantService;
         $this->scheduleService = $scheduleService;
+        $this->practicumService = $practicumService;
     }
 
     public function index()
@@ -281,6 +287,85 @@ class AssistantController extends Controller
                 'status' => 'error',
                 'message' => 'Gagal mengambil data riwayat: ' . $e->getMessage()
             ]);
+        }
+    }
+
+    public function editBiodata()
+    {
+        $nim = Auth::user()->username;
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->view('errors.404', ['message' => 'Asisten tidak ditemukan'], 404);
+        }
+
+        return view('assistant.biodata', compact('assistant'));
+    }
+
+    public function updateBiodata(UpdateBiodataRequest $request)
+    {
+        $nim = Auth::user()->username;
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->view('errors.404', ['message' => 'Asisten tidak ditemukan'], 404);
+        }
+
+        $validated = $request->validated();
+
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
+            if (!empty($assistant->foto)) {
+                Storage::disk('public')->delete('assistants/' . $assistant->foto);
+            }
+            $pic = $request->file('foto');
+            $filename = $nim . '-profile.' . $pic->getClientOriginalExtension();
+            $pic->storeAs('assistants', $filename, 'public');
+            $validated['foto'] = $filename;
+        }
+
+        try {
+            $this->assistantService->updateAssistant($validated, $nim);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Biodata asisten berhasil diperbarui.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memperbarui biodata asisten: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function createPreference()
+    {
+        $nim = Auth::user()->username;
+        $data = $this->assistantService->getCreatePreferencePage($nim);
+
+        if (!$data) {
+            return response()->view('errors.404', ['message' => 'Asisten tidak ditemukan'], 404);
+        }
+
+        return view('preference.form', $data);
+    }
+
+    public function storePreference(StorePreferenceRequest $request)
+    {
+        $nim = Auth::user()->username;
+        $validated = $request->validated();
+
+        try {
+            $this->assistantService->storePreference($validated, $nim);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Preferensi berhasil disimpan.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menyimpan preferensi: ' . $e->getMessage(),
+            ], 500);
         }
     }
 }

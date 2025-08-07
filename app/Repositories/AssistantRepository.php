@@ -3,10 +3,10 @@
 namespace App\Repositories;
 
 use App\Models\Assistant;
+use App\Models\Preference;
 use App\Models\Schedule;
 use App\Models\User;
 use App\Repositories\Contracts\AssistantRepositoryInterface;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class AssistantRepository implements AssistantRepositoryInterface
@@ -106,8 +106,10 @@ class AssistantRepository implements AssistantRepositoryInterface
             'name' => $data['name'],
             'prodi' => $data['prodi'],
             'angkatan' => $data['angkatan'],
-            'tahun_masuk' => $data['tahun_masuk'],
-            'status' => $data['status'],
+            'tahun_masuk' => $data['tahun_masuk'] ?? $assistant->tahun_masuk,
+            'status' => $data['status'] ?? $assistant->status,
+            'nomor_telp' => $data['nomor_telp'] ?? $assistant->nomor_telp,
+            'foto' => $data['foto'] ?? $assistant->foto,
         ]);
 
         if (isset($data['password'])) {
@@ -248,5 +250,26 @@ class AssistantRepository implements AssistantRepositoryInterface
 
             return $assistant;
         })->values();
+    }
+
+    public function deletePreferencesByNim($nim)
+    {
+        Preference::where('nim', $nim)->delete();
+
+        return true;
+    }
+
+    public function storePreference($nim, $kodePraktikum)
+    {
+        $assistant = $this->getAssistantByNim($nim);
+
+        if (!$assistant) {
+            return null;
+        }
+
+        return Preference::create([
+            'nim' => $nim,
+            'kode_praktikum' => $kodePraktikum,
+        ]);
     }
 }

@@ -5,24 +5,27 @@ namespace App\Services;
 use App\Models\CourseSchedule;
 use App\Repositories\Contracts\AssistantRepositoryInterface;
 use App\Repositories\Contracts\CourseScheduleRepositoryInterface;
+use App\Repositories\Contracts\PracticumRepositoryInterface;
 use App\Repositories\Contracts\ScheduleRepositoryInterface;
-use Illuminate\Support\Facades\Hash;
 
 class AssistantService
 {
     protected $assistantRepository;
     protected $courseScheduleRepository;
     protected $scheduleRepository;
+    protected $practicumRepository;
 
     public function __construct(
         AssistantRepositoryInterface $assistantRepository, 
         CourseScheduleRepositoryInterface $courseScheduleRepository,
-        ScheduleRepositoryInterface $scheduleRepository
+        ScheduleRepositoryInterface $scheduleRepository,
+        PracticumRepositoryInterface $practicumRepository
     )
     {
         $this->assistantRepository = $assistantRepository;
         $this->courseScheduleRepository = $courseScheduleRepository;
         $this->scheduleRepository = $scheduleRepository;
+        $this->practicumRepository = $practicumRepository;
     }
 
     public function getAssistantsData($sortBy, $sortOrder, $search, $filters)
@@ -200,5 +203,39 @@ class AssistantService
     public function getAssistantHistory(string $nim)
     {
         return $this->scheduleRepository->getHistoryByNim($nim);
+    }
+
+    public function getCreatePreferencePage(string $nim)
+    {
+        $assistant = $this->assistantRepository->getAssistantByNim($nim);
+
+        if (!$assistant) {
+            return null;
+        }
+
+        $practicums = $this->practicumRepository->getAllPracticums(filters: ['for_prodi' => $assistant->prodi]);
+        $selectedPracticums = [];
+        foreach ($assistant->preferences as $preference) {
+            $selectedPracticums[] = $this->practicumRepository->getPracticumByKode($preference->kode_praktikum);
+        }
+
+        return compact('assistant', 'practicums', 'selectedPracticums');
+    }
+    
+    public function storePreference(array $data, string $nim)
+    {
+        $assistant = $this->assistantRepository->getAssistantByNim($nim);
+
+        if (!$assistant) {
+            return null;
+        }
+
+        // Delete existing preferences
+        $this->assistantRepository->deletePreferencesByNim($nim);
+        
+        // Store new preferences
+        foreach ($data['practicums'] as $kode_praktikum) {
+            $this->assistantRepository->storePreference($nim, $kode_praktikum);
+        }
     }
 }

@@ -1,13 +1,27 @@
 <x-layouts.app>
-    <x-slot name="title">Dashboard</x-slot>
+    @if (Auth::user()->role === 'assistant')
+        <x-slot name="title">Dashboard</x-slot>
+    @else
+        <x-slot name="title">Jadwal Praktikum</x-slot>
+    @endif
+
+    @if (Auth::user()->role === 'admin')
+        <x-slot:back_button>
+            <a href="{{ route('assistant.index') }}"
+                class="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors w-fit">
+                <x-heroicon-s-arrow-left class="w-4 h-4" />
+                Kembali
+            </a>
+        </x-slot:back_button>
+    @endif
 
     <div class="flex items-center rounded-lg bg-white px-10 py-6 gap-8">
-        <img src="{{ asset('assets/images/Avatar.svg') }}" alt="avatar" class="w-32 h-32 rounded-full">
+        <img src="{{ $assistant->foto ? asset('storage/assistants/' . $assistant->foto) : asset('assets/images/Avatar.svg') }}" alt="avatar" class="w-32 h-32 rounded-full">
         <div class="flex flex-col gap-6">
             <div class="text-2xl font-bold flex items-center">
                 <h2>Biodata</h2>
                 @if (Auth::user()->role === 'assistant')
-                    <a href="" class="hover:text-key-secondary transition duration-300">
+                    <a href="{{ route('assistant.edit-biodata') }}" class="hover:text-key-secondary transition duration-300">
                         <x-heroicon-s-pencil-square class="w-5 ml-4" />
                     </a>
                 @endif

@@ -102,4 +102,9 @@ Route::middleware(['auth', 'role:assistant'])->group(function () {
     Route::post('jadwal-kuliah/bulk-delete', [ScheduleController::class, 'bulkDeleteCourse'])->name('course-schedule.bulk-delete');
 
     Route::get('jadwal-praktikum', [ScheduleController::class, 'indexScheduleAssistant'])->name('schedule.index-assistant');
+
+    Route::get('edit-biodata', [AssistantController::class, 'editBiodata'])->name('assistant.edit-biodata');
+    Route::put('edit-biodata', [AssistantController::class, 'updateBiodata'])->name('assistant.update-biodata');
+    Route::get('preference/create', [AssistantController::class, 'createPreference'])->name('assistant.create-preference');
+    Route::post('preference/create', [AssistantController::class, 'storePreference'])->name('assistant.store-preference');
 });
