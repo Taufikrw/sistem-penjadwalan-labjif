@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <main class="flex min-h-screen bg-key-neutral-variant px-60 py-10">
+    <main class="flex min-h-screen justify-center items-center" style="background-image: url('{{ asset('assets/images/login-page.png') }}'); background-size: cover; background-position: center;">
         {{ $slot }}
     </main>
 

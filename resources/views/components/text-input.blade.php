@@ -3,7 +3,8 @@
 <div class="relative w-full">
     <input type="{{ $type }}" {{ $disabled ? 'disabled' : '' }} {!! $attributes->merge([
         'class' =>
-            'border rounded-xl py-2 px-4 pr-10 text-black border-[#C9C6C5] hover:border-[#929090] focus:outline-none focus:border-key-secondary input-component',
+            'border rounded-xl py-2 px-4 pr-10 text-black hover:border-[#929090] focus:outline-none focus:border-key-secondary input-component ' .
+            ($errors->has($attributes->get('name')) ? 'border-[#BA1A1A]' : 'border-[#C9C6C5]'),
     ]) !!}
         @if ($type === 'password') id="password-input-{{ $attributes->get('id', uniqid()) }}" @endif>
 

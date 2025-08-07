@@ -18,11 +18,11 @@ class AuthController extends Controller
 
         session()->regenerate();
         
-        if (Auth::user()->role === 'admin') {
-            return redirect()->route('dashboard')->with('success', 'Login successful!');
-        }
-
-        return redirect()->route('dashboard')->with('success', 'Login successful!');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Login successful!',
+            'redirect' => route('dashboard'),
+        ]);
     }
 
     public function destroy()

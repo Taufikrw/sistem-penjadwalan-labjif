@@ -41,4 +41,12 @@ class LoginRequest extends FormRequest
 
         return Auth::user();
     }
+
+    public function attributes()
+    {
+        return [
+            'username' => 'Nama Pengguna',
+            'password' => 'Kata Sandi',
+        ];
+    }
 }
