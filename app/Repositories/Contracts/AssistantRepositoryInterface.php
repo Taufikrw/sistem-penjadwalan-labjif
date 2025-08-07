@@ -25,4 +25,6 @@ interface AssistantRepositoryInterface
     public function deletePreferencesByNim($nim);
 
     public function storePreference($nim, $kodePraktikum);
+
+    public function getAssistantOverview($filterType = 'status');
 }

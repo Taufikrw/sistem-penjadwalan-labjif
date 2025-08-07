@@ -318,7 +318,7 @@
                         const to = pagination.to ?? 0;
                         const total = pagination.total ?? 0;
                         html += `<div class="text-[#535252] px-2">
-                            ${from} to ${to} Data dari ${total}
+                            ${from} hingga ${to} data dari ${total}
                         </div>`;
                     } else {
                         html += `<div></div>`;

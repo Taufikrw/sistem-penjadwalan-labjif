@@ -4,7 +4,7 @@ namespace App\Repositories\Contracts;
 
 interface ScheduleRepositoryInterface
 {   
-    public function getAllSchedules();
+    public function getAllSchedules($sortBy = 'start_time', $order = 'asc', $search = '', array $filters = [], $perPage = null);
 
     public function getScheduleById($id);
 

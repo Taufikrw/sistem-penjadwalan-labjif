@@ -16,12 +16,11 @@ class AssistantService
     protected $practicumRepository;
 
     public function __construct(
-        AssistantRepositoryInterface $assistantRepository, 
+        AssistantRepositoryInterface $assistantRepository,
         CourseScheduleRepositoryInterface $courseScheduleRepository,
         ScheduleRepositoryInterface $scheduleRepository,
         PracticumRepositoryInterface $practicumRepository
-    )
-    {
+    ) {
         $this->assistantRepository = $assistantRepository;
         $this->courseScheduleRepository = $courseScheduleRepository;
         $this->scheduleRepository = $scheduleRepository;
@@ -124,7 +123,6 @@ class AssistantService
         } else {
             $this->assistantRepository->storeAssistant($data);
         }
-        
     }
 
     public function updateAssistant(array $data, string $nim)
@@ -221,7 +219,7 @@ class AssistantService
 
         return compact('assistant', 'practicums', 'selectedPracticums');
     }
-    
+
     public function storePreference(array $data, string $nim)
     {
         $assistant = $this->assistantRepository->getAssistantByNim($nim);
@@ -232,10 +230,15 @@ class AssistantService
 
         // Delete existing preferences
         $this->assistantRepository->deletePreferencesByNim($nim);
-        
+
         // Store new preferences
         foreach ($data['practicums'] as $kode_praktikum) {
             $this->assistantRepository->storePreference($nim, $kode_praktikum);
         }
+    }
+
+    public function getAssistantOverview($filterType = 'status')
+    {
+        return $this->assistantRepository->getAssistantOverview($filterType);
     }
 }

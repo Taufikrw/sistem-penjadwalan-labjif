@@ -272,4 +272,55 @@ class AssistantRepository implements AssistantRepositoryInterface
             'kode_praktikum' => $kodePraktikum,
         ]);
     }
+
+    public function getAssistantOverview($filterType = 'status')
+    {
+        $data = [];
+
+        if ($filterType === 'prodi') {
+            $prodiList = Assistant::distinct()->pluck('prodi')->sort()->values();
+            $colors = ['#5771D2', '#91A7FF', '#DDE1FF'];
+            foreach ($prodiList as $index => $prodi) {
+                $data[] = [
+                    'label' => $prodi,
+                    'count' => Assistant::where('prodi', $prodi)->count(),
+                    'color' => $colors[$index % count($colors)],
+                ];
+            }
+        } elseif ($filterType === 'angkatan') {
+            $angkatanList = Assistant::distinct()->pluck('angkatan')->sort()->values();
+            $colors = ['#3D57B8', '#5771D2', '#728BEE', '#91A7FF', '#B7C4FF', '#DDE1FF'];
+            foreach ($angkatanList as $index => $angkatan) {
+                $data[] = [
+                    'label' => 'Tahun ' . $angkatan,
+                    'count' => Assistant::where('angkatan', $angkatan)->count(),
+                    'color' => $colors[$index % count($colors)],
+                ];
+            }
+        } else {
+            $data = [
+                [
+                    'label' => 'Aktif',
+                    'count' => Assistant::where('status', 'aktif')->count(),
+                    'color' => '#5771D2',
+                ],
+                [
+                    'label' => 'Non-Aktif',
+                    'count' => Assistant::where('status', 'non-aktif')->count(),
+                    'color' => '#91A7FF',
+                ],
+                [
+                    'label' => 'Selesai',
+                    'count' => Assistant::where('status', 'selesai')->count(),
+                    'color' => '#DDE1FF',
+                ],
+            ];
+        }
+
+        $total = array_sum(array_column($data, 'count'));
+        return [
+            'data' => $data,
+            'total' => $total,
+        ];
+    }
 }

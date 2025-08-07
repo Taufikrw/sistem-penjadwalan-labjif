@@ -4,6 +4,7 @@
     'placeholder' => 'Pilih salah satu',
     'id' => 'custom-select-' . \Illuminate\Support\Str::random(8),
     'selected' => null, // 1. Tambahkan prop 'selected' untuk menerima nilai yang sudah ada
+    'width' => 'w-full', // Tambahkan prop untuk lebar
 ])
 
 @php
@@ -21,7 +22,7 @@
     }
 @endphp
 
-<div class="relative w-full" id="{{ $containerId }}">
+<div class="relative {{ $width }}" id="{{ $containerId }}">
 
     <button type="button" id="{{ $id }}"
         class="relative w-full cursor-pointer rounded-xl border {{ $selected !== null && isset($options[$selected]) ? 'border-key-secondary' : 'border-[#C9C6C5]' }} bg-white py-2 px-4 text-left hover:border-[#929090] focus:border-key-secondary focus:outline-none"

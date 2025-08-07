@@ -91,7 +91,7 @@ class ScheduleService
     {
         $dayName = now()->locale('id')->translatedFormat('l');
 
-        return $this->scheduleRepository->getScheduleByDay($dayName, 8);
+        return $this->scheduleRepository->getAllSchedules(filters: ['day' => $dayName], perPage: 6);
     }
 
     public function getCourseSchedules($nim, $sortBy, $sortOrder, $search)

@@ -6,6 +6,7 @@ use App\Http\Controllers\FrontController;
 use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\PracticumController;
 use App\Http\Controllers\ScheduleController;
+use App\Models\Assistant;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['guest'])->group(function () {
@@ -90,6 +91,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('get-assistant-table', [AssistantController::class, 'assistantTable'])->name('api.assistant.table');
         Route::get('get-laboratorium-table', [LaboratoriumController::class, 'labsTable'])->name('api.laboratorium.table');
         Route::get('get-practicum-table', [PracticumController::class, 'practicumsTable'])->name('api.practicum.table');
+        Route::get('get-assistant-overview', [AssistantController::class, 'assistantOverview'])->name('api.assistant.overview');
     });
 });
 

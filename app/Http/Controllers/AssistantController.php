@@ -368,4 +368,12 @@ class AssistantController extends Controller
             ], 500);
         }
     }
+
+    public function assistantOverview(Request $request)
+    {
+        $filterType = $request->input('filterType', 'status');
+        $overview = $this->assistantService->getAssistantOverview($filterType);
+
+        return response()->json($overview);
+    }
 }
