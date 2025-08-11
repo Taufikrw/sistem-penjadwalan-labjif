@@ -91,7 +91,7 @@ class ScheduleService
     {
         $dayName = now()->locale('id')->translatedFormat('l');
 
-        return $this->scheduleRepository->getAllSchedules(filters: ['day' => $dayName], perPage: 6);
+        return $this->scheduleRepository->getAllSchedules(sortBy: ['start_time', 'practicum_name', 'name'], filters: ['day' => $dayName], perPage: 6);
     }
 
     public function getCourseSchedules($nim, $sortBy, $sortOrder, $search)
@@ -111,7 +111,7 @@ class ScheduleService
 
     public function getScheduleData($sortBy, $sortOrder, $search, $filters)
     {
-        return $this->scheduleRepository->getAllSchedules($sortBy, $sortOrder, $search, $filters, 8);
+        return $this->scheduleRepository->getAllSchedules([$sortBy], $sortOrder, $search, $filters, 8);
     }
 
     public function getNewestTahunAjaran()

@@ -1,51 +1,56 @@
-<div class="rounded-lg w-full overflow-x-auto px-4 bg-white">
-    <table class="w-full text-sm text-left rtl:text-right text-key-primary">
-        <thead class="border-b border-[#E5E2E1]">
-            <tr>
-                @if ($hasActions)
-                    <th scope="col" class="px-2 py-3 w-8">
-                        <div class="flex items-center justify-center h-full">
-                            <input type="checkbox" id="selectAllCheckboxes"
-                                class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer" />
+<div class="rounded-lg w-full bg-white px-4">
+
+    <div class="overflow-x-auto overflow-y-auto max-h-[75vh]">
+        <table class="w-full text-sm text-left rtl:text-right text-[#1E1E1E] border-separate border-spacing-0">
+            <thead class="text-key-primary">
+                <tr>
+                    @if ($hasActions)
+                        <th scope="col" class="px-2 py-3 w-8 sticky top-0 bg-white border-b border-[#E5E2E1]">
+                            <div class="flex items-center justify-center h-full">
+                                <input type="checkbox" id="selectAllCheckboxes"
+                                    class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer" />
+                            </div>
+                        </th>
+                    @endif
+                    @foreach ($columns as $column)
+                        <th scope="col" class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1]">
+                            <span
+                                class="flex items-center gap-1 font-extrabold {{ $column['sortable'] ? 'sortable cursor-pointer' : '' }}"
+                                data-field="{{ $column['field'] }}" data-sort-direction="">
+                                {{ $column['label'] }}
+                                @if ($column['sortable'])
+                                    <span class="sort-indicator flex flex-col ml-1 gap-[3px]">
+                                        <x-icon-sort-up class="text-[#4B57AC] sort-asc-icon" />
+                                        <x-icon-sort-down class="text-[#4B57AC] sort-desc-icon" />
+                                    </span>
+                                @endif
+                            </span>
+                        </th>
+                    @endforeach
+                    @if ($hasActions)
+                        <th scope="col" class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1]">
+                            <span class="flex items-center gap-1 font-extrabold">
+                                Aksi
+                            </span>
+                        </th>
+                    @endif
+                </tr>
+            </thead>
+            <tbody id="{{ $tableId }}-body">
+                <tr>
+                    <td colspan="{{ count($columns) + 1 + ($hasActions ? 1 : 0) }}"
+                        class="px-6 py-8 text-center text-neutral-50">
+                        <div class="flex justify-center items-center">
+                            <x-icon-spinner class="h-16 w-16 animate-spin" />
                         </div>
-                    </th>
-                @endif
-                @foreach ($columns as $column)
-                    <th scope="col" class="px-4 py-3">
-                        <span
-                            class="flex items-center gap-1 font-extrabold {{ $column['sortable'] ? 'sortable cursor-pointer' : '' }}"
-                            data-field="{{ $column['field'] }}" data-sort-direction="">
-                            {{ $column['label'] }}
-                            @if ($column['sortable'])
-                                <span class="sort-indicator flex flex-col ml-1 gap-[3px]">
-                                    <x-icon-sort-up class="text-[#4B57AC] sort-asc-icon" />
-                                    <x-icon-sort-down class="text-[#4B57AC] sort-desc-icon" />
-                                </span>
-                            @endif
-                        </span>
-                    </th>
-                @endforeach
-                @if ($hasActions)
-                    <th scope="col" class="px-4 py-3">
-                        <span class="flex items-center gap-1 font-extrabold">
-                            Aksi
-                        </span>
-                    </th>
-                @endif
-            </tr>
-        </thead>
-        <tbody id="{{ $tableId }}-body">
-            <tr>
-                <td colspan="{{ count($columns) + 1 + ($hasActions ? 1 : 0) }}"
-                    class="px-6 py-8 text-center text-neutral-50">
-                    <div class="flex justify-center items-center">
-                        <x-icon-spinner class="h-16 w-16 animate-spin" />
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <div id="pagination"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="pagination" class="px-4"></div>
+
 </div>
 
 @push('scripts')
@@ -115,11 +120,11 @@
                             `;
                         } else {
                             response.data.data.forEach(function(item) {
-                                rowsHtml += '<tr class="border-b border-[#E5E2E1]">';
+                                rowsHtml += '<tr>';
                                 if (hasActions) {
                                     if (primary === 'nim') {
                                         rowsHtml +=
-                                            `<td class="px-2 py-5">
+                                            `<td class="px-2 py-5 border-b border-[#E5E2E1]">
                                                 <div class="flex items-center justify-center h-full">
                                                     <input type="checkbox"
                                                         class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer"
@@ -128,7 +133,7 @@
                                             </td>`;
                                     } else if (primary === 'kode_praktikum') {
                                         rowsHtml +=
-                                            `<td class="px-2 py-5">
+                                            `<td class="px-2 py-5 border-b border-[#E5E2E1]">
                                                 <div class="flex items-center justify-center h-full">
                                                     <input type="checkbox"
                                                         class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer"
@@ -137,7 +142,7 @@
                                             </td>`;
                                     } else {
                                         rowsHtml +=
-                                            `<td class="px-2 py-5">
+                                            `<td class="px-2 py-5 border-b border-[#E5E2E1]">
                                                 <div class="flex items-center justify-center h-full">
                                                     <input type="checkbox"
                                                         class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer"
@@ -167,14 +172,14 @@
                                                 break;
                                         }
                                         rowsHtml +=
-                                            `<td class="px-4 py-4">
+                                            `<td class="px-4 py-4 border-b border-[#E5E2E1]">
                                                 <span class="inline-block px-3 py-1 text-xs font-semibold ${statusClass} rounded-full">
                                                     ${statusText}
                                                 </span>
                                             </td>`;
                                     } else if (column.field === 'jadwal_praktikum') {
                                         rowsHtml +=
-                                            `<td class="px-4 py-4">
+                                            `<td class="px-4 py-4 border-b border-[#E5E2E1]">
                                                 <a href="assistants/${item.nim}/detail-jadwal-praktikum"
                                                     class="flex items-center gap-2 hover:text-key-secondary w-fit">
                                                     <x-heroicon-o-eye class="w-4 h-4" />
@@ -183,7 +188,7 @@
                                             </td>`;
                                     } else if (column.field === 'jadwal_kuliah') {
                                         rowsHtml +=
-                                            `<td class="px-4 py-4">
+                                            `<td class="px-4 py-4 border-b border-[#E5E2E1]">
                                                 <a href="assistants/${item.nim}/detail-jadwal-kuliah"
                                                     class="flex items-center gap-2 hover:text-key-secondary w-fit">
                                                     <x-heroicon-o-eye class="w-4 h-4" />
@@ -191,7 +196,8 @@
                                                 </a>
                                             </td>`;
                                     } else if (column.field === 'assistant_names') {
-                                        rowsHtml += `<td class="px-4 py-2">`;
+                                        rowsHtml +=
+                                            `<td class="px-4 py-2 border-b border-[#E5E2E1]">`;
                                         if (item.assistant_schedules && item
                                             .assistant_schedules.length > 0) {
                                             item.assistant_schedules.forEach(function(
@@ -206,21 +212,21 @@
                                         rowsHtml += `</td>`;
                                     } else {
                                         rowsHtml +=
-                                            `<td class="px-4 py-4">
+                                            `<td class="px-4 py-4 border-b border-[#E5E2E1]">
                                                 ${item[column.field]}
                                             </td>`;
                                     }
                                 });
                                 if (hasActions) {
                                     if (primary === 'nim') {
-                                        rowsHtml += `<td class="px-4 py-4">
+                                        rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1]">
                                             <div class="flex items-center gap-2">
                                                 <button data-id="${item.nim}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
                                                 <button data-id="${item.nim}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
                                             </div>
                                         </td>`;
                                     } else if (primary === 'kode_praktikum') {
-                                        rowsHtml += `<td class="px-4 py-4">
+                                        rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1]">
                                             <div class="flex items-center gap-2">
                                                 <button data-id="${item.kode_praktikum}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
                                                 <button data-id="${item.kode_praktikum}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
@@ -228,7 +234,7 @@
                                         </td>`;
                                     } else {
                                         if (hasSetAssistant) {
-                                            rowsHtml += `<td class="px-4 py-4">
+                                            rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1]">
                                                 <div class="flex items-center gap-2">
                                                     <button data-id="${item.id}" class="btn-set-assistant"><x-heroicon-s-users class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
                                                     <button data-id="${item.id}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
@@ -236,7 +242,7 @@
                                                 </div>
                                             </td>`;
                                         } else {
-                                            rowsHtml += `<td class="px-4 py-4">
+                                            rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1]">
                                                 <div class="flex items-center gap-2">
                                                     <button data-id="${item.id}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
                                                     <button data-id="${item.id}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
@@ -317,7 +323,7 @@
                         const from = pagination.from ?? 0;
                         const to = pagination.to ?? 0;
                         const total = pagination.total ?? 0;
-                        html += `<div class="text-[#535252] px-2">
+                        html += `<div class="text-[#5A5A5A] px-2">
                             ${from} hingga ${to} data dari ${total}
                         </div>`;
                     } else {
@@ -330,7 +336,7 @@
                     // Previous
                     const prevDisabled = pagination.current_page === 1;
                     html += `<li>
-                        <button class="pagination-btn px-3 py-2 ml-0 leading-tight rounded-l-lg ${prevDisabled ? 'text-gray-300' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer'}"
+                        <button class="pagination-btn px-3 py-2 ml-0 leading-tight rounded-l-lg ${prevDisabled ? 'text-[#CDCDCD]' : 'text-[#5A5A5A] hover:text-[#434343] cursor-pointer'}"
                             data-page="${pagination.current_page - 1}" ${prevDisabled ? 'disabled' : ''}>
                             <x-heroicon-s-chevron-left class="w-5 h-5" />
                         </button>
@@ -348,7 +354,7 @@
                     for (let i = startPage; i <= endPage; i++) {
                         const isCurrent = i === pagination.current_page;
                         html += `<li>
-                            <button class="pagination-btn px-3 py-2 leading-tight rounded-lg ${isCurrent ? 'bg-key-tertiary text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer'}"
+                            <button class="pagination-btn px-3 py-2 leading-tight rounded-lg ${isCurrent ? 'bg-key-secondary text-white' : 'text-[#1E1E1E] hover:bg-[#29293A]/23 cursor-pointer'}"
                                 data-page="${i}" ${isCurrent ? 'disabled' : ''}>
                                 ${i}
                             </button>
@@ -358,7 +364,7 @@
                     // Next
                     const nextDisabled = pagination.current_page === pagination.last_page;
                     html += `<li>
-                        <button class="pagination-btn px-3 py-2 leading-tight rounded-r-lg ${nextDisabled ? 'text-gray-300' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer'}"
+                        <button class="pagination-btn px-3 py-2 leading-tight rounded-r-lg ${nextDisabled ? 'text-[#CDCDCD]' : 'text-[#5A5A5A] hover:text-[#434343] cursor-pointer'}"
                             data-page="${pagination.current_page + 1}" ${nextDisabled ? 'disabled' : ''}>
                             <x-heroicon-s-chevron-right class="w-5 h-5" />
                         </button>
@@ -557,8 +563,9 @@
 
             $('#setAssistantModal').find('#modalOverlay').on('click', function(e) {
                 if (e.target === this) {
-                    $('#setAssistantModal').find('#modalContent').removeClass('scale-100 opacity-100').addClass(
-                        'scale-95 opacity-0');
+                    $('#setAssistantModal').find('#modalContent').removeClass('scale-100 opacity-100')
+                        .addClass(
+                            'scale-95 opacity-0');
                     setTimeout(() => {
                         $('#setAssistantModal').addClass('hidden');
                     }, 300);

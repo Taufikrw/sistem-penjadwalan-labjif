@@ -31,7 +31,7 @@
         {{-- 3. Tampilkan teks dan kelas yang sudah ditentukan --}}
         <span class="block truncate font-medium {{ $displayClass }}" id="{{ $selectedTextId }}">{{ $displayText }}</span>
 
-        <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+        <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
             <x-heroicon-o-chevron-down id="{{ $arrowId }}-down"
                 class="h-4 w-4 text-gray-400 transition-all duration-200" />
             <x-heroicon-o-chevron-up id="{{ $arrowId }}-up"

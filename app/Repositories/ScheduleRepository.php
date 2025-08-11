@@ -7,13 +7,15 @@ use App\Models\AssistantSchedule;
 use App\Models\CourseSchedule;
 use App\Models\Schedule;
 use App\Repositories\Contracts\ScheduleRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class ScheduleRepository implements ScheduleRepositoryInterface
 {
-    public function getAllSchedules($sortBy = 'start_time', $order = 'asc', $search = '', array $filters = [], $perPage = null)
+    public function getAllSchedules($sortBy = ['start_time', 'practicum_name'], $order = 'asc', $search = '', array $filters = [], $perPage = null)
     {
-        $allowedSortColumns = ['day', 'start_time', 'name', 'course'];
-        $sortBy = in_array(strtolower($sortBy), $allowedSortColumns) ? strtolower($sortBy) : 'start_time';
+        $allowedSortColumns = ['day', 'practicum_name', 'start_time', 'name', 'course'];
+        $sortBy = array_filter($sortBy, fn($column) => in_array($column, $allowedSortColumns));
+        $sortBy = empty($sortBy) ? ['start_time'] : $sortBy;
         $order = in_array(strtolower($order), ['asc', 'desc']) ? strtolower($order) : 'asc';
 
         $query = Schedule::with(['assistantSchedules']);
@@ -21,6 +23,11 @@ class ScheduleRepository implements ScheduleRepositoryInterface
         foreach ((array) $sortBy as $column) {
             if ($column === 'day') {
                 $query->orderByRaw("CASE day WHEN 'Senin' THEN 1 WHEN 'Selasa' THEN 2 WHEN 'Rabu' THEN 3 WHEN 'Kamis' THEN 4 WHEN 'Jumat' THEN 5 WHEN 'Sabtu' THEN 6 WHEN 'Minggu' THEN 7 ELSE 8 END " . ($order === 'desc' ? 'DESC' : 'ASC'));
+            } elseif ($column === 'practicum_name') {
+                $query->orderBy(
+                    DB::raw('(SELECT name FROM practicums WHERE practicums.kode_praktikum = schedules.kode_praktikum)'),
+                    $order
+                );
             } else {
                 $query->orderBy($column, $order);
             }

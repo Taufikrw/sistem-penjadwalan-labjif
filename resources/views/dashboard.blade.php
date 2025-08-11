@@ -21,7 +21,7 @@
         ['label' => 'Lab', 'field' => 'laboratorium_name', 'sortable' => false],
         ['label' => 'Dosen', 'field' => 'dosen', 'sortable' => false],
         ['label' => 'Jam', 'field' => 'jam', 'sortable' => false],
-        ['label' => 'Asisten', 'field' => 'assistant_names', 'sortable' => false],
+        ['label' => 'Aslab', 'field' => 'assistant_names', 'sortable' => false],
     ]" :has-actions="false"
         table-id="today-schedule-table" has-assistant="true" btn-create-id="btn-create-today-schedule" />
 
