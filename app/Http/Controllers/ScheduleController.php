@@ -59,8 +59,12 @@ class ScheduleController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
+        $tahunAjar = $request->query('tahun_ajar');
+        $semester = $request->query('jenis_semester');
+        $dayForm = $request->query('day', 'Senin');
+        
         $schedule = $this->scheduleService->getScheduleDetails($id);
 
         if (!$schedule) {
@@ -70,9 +74,9 @@ class ScheduleController extends Controller
             ], 404);
         }
 
-        $data = $this->scheduleService->getScheduleCreatePage($schedule);
+        $data = $this->scheduleService->getScheduleCreatePage($semester);
 
-        return view('schedule.form', $data, compact('schedule'));
+        return view('schedule.form', $data, compact('schedule', 'tahunAjar', 'semester', 'dayForm'));
     }
 
     public function update(StoreScheduleRequest $request, $id)

@@ -36,7 +36,6 @@
         }
 
         window.openModal = function () {
-            window.initInputComponent();
             $(`#${modalId}`).removeClass('hidden');
             setTimeout(() => {
                 $('#modalContent').removeClass('scale-95 opacity-0').addClass('scale-100 opacity-100');

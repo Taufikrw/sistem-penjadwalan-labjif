@@ -81,7 +81,6 @@
                     },
                     success: function(response) {
                         modalBody.html(response);
-                        window.initInputComponent();
                         if (formId) {
                             const form = modalBody.find(`#${formId}`);
                             if (form.length) {

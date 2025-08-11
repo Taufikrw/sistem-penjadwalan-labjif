@@ -120,7 +120,6 @@
 
     <script type="module">
         $(document).ready(function() {
-            window.initInputComponent();
 
             $('#biodata-form').on('submit', function(e) {
                 e.preventDefault();

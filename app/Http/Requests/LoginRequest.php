@@ -35,7 +35,7 @@ class LoginRequest extends FormRequest
 
         if (!Auth::attempt($credentials)) {
             throw ValidationException::withMessages([
-                'validation' => 'Password dan username tidak sesuai.',
+                'validation' => 'Nama pengguna atau kata sandi salah.',
             ]);
         }
 

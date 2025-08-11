@@ -25,7 +25,7 @@
 <div class="relative {{ $width }}" id="{{ $containerId }}">
 
     <button type="button" id="{{ $id }}"
-        class="relative w-full cursor-pointer rounded-xl border {{ $selected !== null && isset($options[$selected]) ? 'border-key-secondary' : 'border-[#C9C6C5]' }} bg-white py-2 px-4 text-left hover:border-[#929090] focus:border-key-secondary focus:outline-none"
+        class="relative w-full cursor-pointer rounded-xl border border-[#C9C6C5] bg-white py-2 px-4 text-left hover:border-[#929090] focus:border-key-secondary focus:outline-none"
         aria-haspopup="listbox" aria-expanded="true">
 
         {{-- 3. Tampilkan teks dan kelas yang sudah ditentukan --}}
@@ -63,19 +63,17 @@
         const arrowDown = $('#{{ $arrowId }}-down');
         const arrowUp = $('#{{ $arrowId }}-up');
 
-        function updateBorder() {
-            if (hiddenInput.val() && {{ json_encode(array_key_exists($selected, $options)) }}) {
-                button.removeClass('border-[#C9C6C5]').addClass('border-key-secondary');
-            } else {
-                button.removeClass('border-key-secondary').addClass('border-[#C9C6C5]');
-            }
-        }
-
         button.on('click', function(e) {
             e.stopPropagation();
             optionsPanel.toggleClass('hidden');
             arrowDown.toggleClass('hidden');
             arrowUp.toggleClass('hidden');
+            // Border secondary hanya saat dropdown muncul
+            if (!optionsPanel.hasClass('hidden')) {
+                button.removeClass('border-[#C9C6C5]').addClass('border-key-secondary');
+            } else {
+                button.removeClass('border-key-secondary').addClass('border-[#C9C6C5]');
+            }
         });
 
         optionsPanel.find('.custom-option').on('click', function() {
@@ -86,7 +84,8 @@
             optionsPanel.addClass('hidden');
             arrowDown.removeClass('hidden');
             arrowUp.addClass('hidden');
-            button.removeClass('border-[#C9C6C5]').addClass('border-key-secondary');
+            // Kembalikan border ke warna awal setelah memilih
+            button.removeClass('border-key-secondary').addClass('border-[#C9C6C5]');
         });
 
         $(document).on('click', function(e) {
@@ -94,14 +93,9 @@
                 optionsPanel.addClass('hidden');
                 arrowDown.removeClass('hidden');
                 arrowUp.addClass('hidden');
+                // Kembalikan border ke warna awal jika klik di luar
+                button.removeClass('border-key-secondary').addClass('border-[#C9C6C5]');
             }
         });
-
-        // Initial border update
-        if (hiddenInput.val() && {{ json_encode(array_key_exists($selected, $options)) }}) {
-            button.removeClass('border-[#C9C6C5]').addClass('border-key-secondary');
-        } else {
-            button.removeClass('border-key-secondary').addClass('border-[#C9C6C5]');
-        }
     });
 </script>

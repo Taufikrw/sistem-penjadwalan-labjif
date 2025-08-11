@@ -71,16 +71,8 @@
                     },
                     success: function(response) {
                         if (response.status === 'success') {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: response.message,
-                                showConfirmButton: false,
-                                timer: 2000
-                            }).then(() => {
-                                window.location.href = response.redirect ||
-                                    '{{ route('dashboard') }}';
-                            });
+                            window.location.href = response.redirect ||
+                                '{{ route('dashboard') }}';
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -118,7 +110,7 @@
                                 $('#login-title').removeClass('mb-12').addClass('mb-4');
                                 $('#validation-error').removeClass('hidden');
                                 $('#validation-error-message').text(errors.validation[0])
-                            .show();
+                                    .show();
                             }
                         } else {
                             Swal.fire({

@@ -15,8 +15,8 @@
     <main class="flex">
         <x-sidebar />
 
-        <div class="flex-1 flex flex-col bg-[#F5FAFB]">
-            <div class="p-10 flex flex-col gap-6">
+        <div class="flex-1 flex flex-col bg-key-neutral">
+            <div class="py-10 px-14 flex flex-col gap-6">
                 {{ $back_button ?? '' }}
                 
                 <div class="flex flex-col gap-2 h-14 justify-between">

@@ -208,7 +208,6 @@
 
         function openModal() {
             resetWizard();
-            window.initInputComponent();
             $('#scheduleListModal').removeClass('hidden');
             setTimeout(() => {
                 $('#modalContent').removeClass('scale-95 opacity-0').addClass('scale-100 opacity-100');
