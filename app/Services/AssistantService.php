@@ -29,7 +29,7 @@ class AssistantService
 
     public function getAssistantsData($sortBy, $sortOrder, $search, $filters)
     {
-        return $this->assistantRepository->getAllAssistants($sortBy, $sortOrder, $search, $filters, 8);
+        return $this->assistantRepository->getAllAssistants([$sortBy], [$sortOrder], $search, $filters, 8);
     }
 
     public function getAssistantsDetails($nim)

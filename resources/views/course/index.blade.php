@@ -1,7 +1,12 @@
 <x-layouts.app>
     <x-slot:title>
         @if (isset($assistant))
-            Jadwal Kuliah - {{ $assistant->name }}
+            Jadwal Kuliah {{ $assistant->name }} - {{ $assistant->nim }}
+            @if ($assistant->final)
+                <x-heroicon-s-check-circle class="w-7 h-7 text-[#34C759]" />
+            @else
+                <x-heroicon-s-x-circle class="w-7 h-7 text-[#FF8D28]" />
+            @endif
         @else
             Jadwal Kuliah
         @endif
@@ -31,8 +36,8 @@
             <input type="text" placeholder="Cari..." id="search-course"
                 class="block w-full pl-10 pr-3 py-3 border border-[#C9C6C5] rounded-lg leading-5 placeholder-[#C9C6C5] focus:outline-none focus:ring-1 focus:ring-key-secondary sm:text-md">
         </div>
-        <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl"
-            type="button" id="btn-create-course" onclick="showDynamicModal()">
+        <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl" type="button"
+            id="btn-create-course" onclick="showDynamicModal()">
             <x-heroicon-s-plus class="w-5 h-5" />
             Tambah
         </x-button-primary>

@@ -15,11 +15,11 @@
                     @foreach ($columns as $column)
                         <th scope="col" class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1]">
                             <span
-                                class="flex items-center gap-1 font-extrabold {{ $column['sortable'] ? 'sortable cursor-pointer' : '' }}"
+                                class="flex items-center gap-1 font-bold {{ $column['sortable'] ? 'sortable cursor-pointer' : '' }}"
                                 data-field="{{ $column['field'] }}" data-sort-direction="">
                                 {{ $column['label'] }}
                                 @if ($column['sortable'])
-                                    <span class="sort-indicator flex flex-col ml-1 gap-[3px]">
+                                    <span class="sort-indicator flex flex-col ml-2 gap-[3px]">
                                         <x-icon-sort-up class="text-[#4B57AC] sort-asc-icon" />
                                         <x-icon-sort-down class="text-[#4B57AC] sort-desc-icon" />
                                     </span>
@@ -29,7 +29,7 @@
                     @endforeach
                     @if ($hasActions)
                         <th scope="col" class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1]">
-                            <span class="flex items-center gap-1 font-extrabold">
+                            <span class="flex items-center gap-1 font-bold">
                                 Aksi
                             </span>
                         </th>
@@ -106,6 +106,17 @@
                 $.ajax({
                     url: requestUrl,
                     method: 'GET',
+                    beforeSend: function() {
+                        $(`#${tableId}-body`).html(
+                            `<tr>
+                                <td colspan="${columns.length + 1 + (hasActions ? 1 : 0)}" class="px-6 py-8 text-center text-neutral-50">
+                                    <div class="flex justify-center items-center">
+                                        <x-icon-spinner class="h-16 w-16 animate-spin" />
+                                    </div>
+                                </td>
+                            </tr>`
+                        );
+                    },
                     success: function(response) {
                         let rowsHtml = '';
                         if (response.data.data.length === 0) {
@@ -179,19 +190,20 @@
                                             </td>`;
                                     } else if (column.field === 'jadwal_praktikum') {
                                         rowsHtml +=
-                                            `<td class="px-4 py-4 border-b border-[#E5E2E1]">
+                                            `<td class="px-4 py-2 border-b border-[#E5E2E1]">
                                                 <a href="assistants/${item.nim}/detail-jadwal-praktikum"
-                                                    class="flex items-center gap-2 hover:text-key-secondary w-fit">
-                                                    <x-heroicon-o-eye class="w-4 h-4" />
+                                                    class="flex items-center gap-2 text-key-primary w-fit px-3 py-0.5 rounded-xl hover:bg-[#F5F5F5]">
+                                                    <x-heroicon-s-eye class="w-4 h-4" />
                                                     Detail
                                                 </a>
                                             </td>`;
                                     } else if (column.field === 'jadwal_kuliah') {
+                                        console.log(item.final)
                                         rowsHtml +=
-                                            `<td class="px-4 py-4 border-b border-[#E5E2E1]">
+                                            `<td class="px-4 py-2 border-b border-[#E5E2E1]">
                                                 <a href="assistants/${item.nim}/detail-jadwal-kuliah"
-                                                    class="flex items-center gap-2 hover:text-key-secondary w-fit">
-                                                    <x-heroicon-o-eye class="w-4 h-4" />
+                                                    class="flex items-center gap-2 ${item.final ? 'text-key-primary' : 'text-[#899296]'} w-fit px-3 py-0.5 rounded-xl hover:bg-[#F5F5F5]">
+                                                    <x-heroicon-s-eye class="w-4 h-4" />
                                                     Detail
                                                 </a>
                                             </td>`;
@@ -376,6 +388,10 @@
                 $(`#pagination`).html(html);
             }
 
+            document.addEventListener('reload-table', function(event) {
+                loadTableData(currentPage);
+            });
+
             loadTableData();
 
             $(document).on('change', '#selectAllCheckboxes', function() {
@@ -450,14 +466,51 @@
                 const id = $(this).data('id');
                 const url = actionUrl + $(this).data('id');
                 Swal.fire({
-                    title: 'Konfirmasi Hapus',
-                    text: "Apakah Anda yakin ingin menghapus praktikum ini?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Hapus',
-                    cancelButtonText: 'Batal'
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    width: '430px',
+                    customClass: {
+                        popup: 'my-swal-popup'
+                    },
+                    html: `
+                        <div class="flex flex-col items-center justify-between h-full">
+                            <div class="mt-8">
+                                <div class="mb-4">
+                                    <x-heroicon-s-exclamation-triangle class="w-16 h-16 text-[#BA1A1A] mx-auto" />
+                                </div>
+                                <div class="font-bold text-key-primary text-lg mb-2">Hapus Data</div>
+                                <div class="text-black font-semibold mb-4">
+                                    Data ini akan dihapus dan tidak dapat dipulihkan!
+                                </div>
+                            </div>
+                            <div class="flex gap-2 justify-between w-full mt-8">
+                                <x-button-secondary id="swal-cancel-btn" type="button" class="rounded-xl py-3 px-6 text-sm">
+                                    Tidak, simpan saja
+                                </x-button-secondary>
+                                <x-button-danger id="swal-confirm-btn" type="button" class="rounded-xl py-3 px-6 text-sm">
+                                    Ya, Hapus
+                                </x-button-danger>
+                            </div>
+                        </div>
+                        <style>
+                            .my-swal-popup {
+                                min-height: 300px;
+                                max-height: 90vh;
+                                border-radius: 1.5rem !important;
+                                overflow-y: auto;
+                            }
+                        </style>
+                    `,
+                    didOpen: () => {
+                        $('#swal-cancel-btn').on('click',
+                            function() {
+                                Swal.close();
+                            });
+                        $('#swal-confirm-btn').on('click',
+                            function() {
+                                Swal.clickConfirm();
+                            });
+                    }
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
@@ -467,15 +520,35 @@
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
                             success: function(response) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Berhasil!',
-                                    text: response.message,
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                }).then(() => {
-                                    loadTableData();
-                                });
+                                const iconSVG = `
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12" cy="12" r="12" fill="#34D399"/>
+                                        <path d="M8.25 12.375L10.875 15L15.75 9.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                `;
+                                const avatarDataUri =
+                                    `data:image/svg+xml;base64,${btoa(iconSVG)}`;
+                                Toastify({
+                                        text: response
+                                            .message,
+                                        duration: 3000,
+                                        gravity: "top",
+                                        position: "right",
+                                        avatar: avatarDataUri,
+                                        style: {
+                                            background: "rgba(52, 199, 89, 0.2)",
+                                            color: "#208439",
+                                            borderRadius: "8px",
+                                            fontWeight: "500",
+                                            boxShadow: "none",
+                                            padding: "16px 24px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "8px",
+                                        },
+                                    })
+                                    .showToast();
+                                loadTableData(currentPage);
                             },
                             error: function(xhr, status, error) {
                                 Swal.fire({
@@ -507,14 +580,51 @@
                 }
 
                 Swal.fire({
-                    title: 'Konfirmasi Hapus',
-                    text: `Apakah Anda yakin ingin menghapus ${selectedIds.length} data yang dipilih?`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal'
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    width: '430px',
+                    customClass: {
+                        popup: 'my-swal-popup'
+                    },
+                    html: `
+                        <div class="flex flex-col items-center justify-between h-full">
+                            <div class="mt-8">
+                                <div class="mb-4">
+                                    <x-heroicon-s-exclamation-triangle class="w-16 h-16 text-[#BA1A1A] mx-auto" />
+                                </div>
+                                <div class="font-bold text-key-primary text-lg mb-2">Hapus Data</div>
+                                <div class="text-black font-semibold mb-4">
+                                    Data ini akan dihapus dan tidak dapat dipulihkan!
+                                </div>
+                            </div>
+                            <div class="flex gap-2 justify-between w-full mt-8">
+                                <x-button-secondary id="swal-cancel-btn" type="button" class="rounded-xl py-3 px-6 text-sm">
+                                    Tidak, simpan saja
+                                </x-button-secondary>
+                                <x-button-danger id="swal-confirm-btn" type="button" class="rounded-xl py-3 px-6 text-sm">
+                                    Ya, Hapus
+                                </x-button-danger>
+                            </div>
+                        </div>
+                        <style>
+                            .my-swal-popup {
+                                min-height: 300px;
+                                max-height: 90vh;
+                                border-radius: 1.5rem !important;
+                                overflow-y: auto;
+                            }
+                        </style>
+                    `,
+                    didOpen: () => {
+                        $('#swal-cancel-btn').on('click',
+                            function() {
+                                Swal.close();
+                            });
+                        $('#swal-confirm-btn').on('click',
+                            function() {
+                                Swal.clickConfirm();
+                            });
+                    }
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
@@ -527,17 +637,35 @@
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
                             success: function(response) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Berhasil!',
-                                    text: response.message,
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                }).then(() => {
-                                    loadTableData(
-                                        currentPage
-                                    ); // Muat ulang data di halaman saat ini
-                                });
+                                const iconSVG = `
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12" cy="12" r="12" fill="#34D399"/>
+                                        <path d="M8.25 12.375L10.875 15L15.75 9.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                `;
+                                const avatarDataUri =
+                                    `data:image/svg+xml;base64,${btoa(iconSVG)}`;
+                                Toastify({
+                                        text: response
+                                            .message,
+                                        duration: 3000,
+                                        gravity: "top",
+                                        position: "right",
+                                        avatar: avatarDataUri,
+                                        style: {
+                                            background: "rgba(52, 199, 89, 0.2)",
+                                            color: "#208439",
+                                            borderRadius: "8px",
+                                            fontWeight: "500",
+                                            boxShadow: "none",
+                                            padding: "16px 24px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "8px",
+                                        },
+                                    })
+                                    .showToast();
+                                loadTableData(currentPage);
                             },
                             error: function(xhr) {
                                 Swal.fire({

@@ -86,94 +86,188 @@
                             if (form.length) {
                                 form.on('submit', function(e) {
                                     e.preventDefault();
-                                    const formData = $(this).serialize();
-                                    $('.error-message').remove();
-                                    $('input, textarea').removeClass('border-[#BA1A1A]');
 
-                                    $.ajax({
-                                        url: form.attr('action'),
-                                        type: form.attr('method'),
-                                        data: formData,
-                                        headers: {
-                                            'X-CSRF-TOKEN': csrfToken
+                                    Swal.fire({
+                                        showCancelButton: false,
+                                        showConfirmButton: false,
+                                        width: '420px',
+                                        customClass: {
+                                            popup: 'my-swal-popup'
                                         },
-                                        beforeSend: function() {
-                                            form.find('button[type="submit"]')
-                                                .html(`
-                                                    <div class="flex justify-center items-center gap-2">
-                                                        <x-icon-spinner class="h-5 w-5 animate-spin" />
-                                                        Menyimpan...
+                                        html: `
+                                            <div class="flex flex-col items-center justify-between h-full">
+                                                <div class="mt-8">
+                                                    <div class="mb-4">
+                                                        <x-heroicon-s-exclamation-circle class="w-16 h-16 text-[#FF8D28] mx-auto" />
                                                     </div>
-                                                `).prop('disabled', true);
-                                        },
-                                        success: function(data) {
-                                            if (data.status === 'success') {
-                                                Swal.fire({
-                                                    icon: 'success',
-                                                    title: 'Berhasil!',
-                                                    text: data.message,
-                                                    showConfirmButton: false,
-                                                    timer: 2000
-                                                }).then(() => {
-                                                    window.location
-                                                        .reload();
-                                                });
-                                            } else {
-                                                Swal.fire({
-                                                    icon: 'error',
-                                                    title: 'Terjadi Kesalahan!',
-                                                    text: data
-                                                        .message ||
-                                                        'Maaf, terjadi kesalahan pada server. Silakan coba lagi.',
-                                                    showConfirmButton: true
-                                                });
-                                            }
-                                        },
-                                        error: function(xhr, status, error) {
-                                            form.find('button[type="submit"]')
-                                                .text('Kirim').prop('disabled',
-                                                    false).addClass('px-8');
+                                                    <div class="font-bold text-key-primary text-lg mb-2">Konfirmasi Data</div>
+                                                    <div class="text-black font-semibold mb-4">Apakah Anda yakin data sudah sesuai?</div>
+                                                </div>
+                                                <div class="flex gap-2 justify-between w-full">
+                                                    <x-button-secondary id="swal-cancel-btn" type="button" class="rounded-xl py-3 px-6 text-sm">Periksa kembali</x-button-secondary>
+                                                    <x-button-primary id="swal-confirm-btn" type="button" class="rounded-xl py-3 px-6 text-sm">Ya, Simpan</x-button-primary>
+                                                </div>
+                                            </div>
 
-                                            if (xhr.status === 422) {
-                                                let errors = xhr.responseJSON
-                                                    .errors;
-                                                $.each(errors, function(key,
-                                                    value) {
-                                                    let inputElement =
-                                                        $(
-                                                            `[name="${key}"]`
-                                                        );
-                                                    inputElement
+                                            <style>
+                                                .my-swal-popup {
+                                                    min-height: 300px;
+                                                    max-height: 90vh;
+                                                    border-radius: 1.5rem !important;
+                                                    overflow-y: auto;
+                                                }
+                                            </style>
+                                        `,
+                                        didOpen: () => {
+                                            $('#swal-cancel-btn').on('click',
+                                                function() {
+                                                    Swal.close();
+                                                });
+                                            $('#swal-confirm-btn').on('click',
+                                                function() {
+                                                    Swal.clickConfirm();
+                                                });
+                                        }
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            const formData = $(this).serialize();
+                                            $('.error-message').remove();
+                                            $('input, textarea').removeClass(
+                                                'border-[#BA1A1A]');
+
+                                            $.ajax({
+                                                url: form.attr('action'),
+                                                type: form.attr('method'),
+                                                data: formData,
+                                                headers: {
+                                                    'X-CSRF-TOKEN': csrfToken
+                                                },
+                                                beforeSend: function() {
+                                                    form.find(
+                                                            'button[type="submit"]'
+                                                        )
+                                                        .html(`
+                                                            <div class="flex justify-center items-center gap-2">
+                                                                <x-icon-spinner class="h-5 w-5 animate-spin" />
+                                                                Menyimpan...
+                                                            </div>
+                                                        `).prop('disabled', true);
+                                                },
+                                                success: function(data) {
+                                                    if (data.status ===
+                                                        'success') {
+                                                        const iconSVG = `
+                                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <circle cx="12" cy="12" r="12" fill="#34D399"/>
+                                                                <path d="M8.25 12.375L10.875 15L15.75 9.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                            </svg>
+                                                        `;
+                                                        const
+                                                            avatarDataUri =
+                                                            `data:image/svg+xml;base64,${btoa(iconSVG)}`;
+
+                                                        window
+                                                            .closeModal();
+                                                        setTimeout(
+                                                    () => {
+                                                            Toastify
+                                                                ({
+                                                                    text: data
+                                                                        .message,
+                                                                    duration: 3000,
+                                                                    gravity: "top",
+                                                                    position: "right",
+                                                                    avatar: avatarDataUri,
+                                                                    style: {
+                                                                        background: "rgba(52, 199, 89, 0.2)",
+                                                                        color: "#208439",
+                                                                        borderRadius: "8px",
+                                                                        fontWeight: "500",
+                                                                        boxShadow: "none",
+                                                                        padding: "16px 24px",
+                                                                        display: "flex",
+                                                                        alignItems: "center",
+                                                                        gap: "8px",
+                                                                    },
+                                                                })
+                                                                .showToast();
+                                                        }, 500);
+                                                        document
+                                                            .dispatchEvent(
+                                                                new CustomEvent(
+                                                                    'reload-table'
+                                                                ));
+                                                    } else {
+                                                        Swal.fire({
+                                                            icon: 'error',
+                                                            title: 'Terjadi Kesalahan!',
+                                                            text: data
+                                                                .message ||
+                                                                'Maaf, terjadi kesalahan pada server. Silakan coba lagi.',
+                                                            showConfirmButton: true
+                                                        });
+                                                    }
+                                                },
+                                                error: function(xhr, status,
+                                                    error) {
+                                                    form.find(
+                                                            'button[type="submit"]'
+                                                        )
+                                                        .text('Kirim')
+                                                        .prop(
+                                                            'disabled',
+                                                            false)
                                                         .addClass(
-                                                            'border-[#BA1A1A]'
-                                                        );
-                                                    inputElement
-                                                        .closest(
-                                                            '.relative')
-                                                        .after(
-                                                            `<p class="error-message text-[#BA1A1A] text-sm mt-1 font-semibold">${value[0]}</p>`
-                                                        );
-                                                });
-                                                Swal.fire({
-                                                    icon: 'error',
-                                                    title: 'Gagal Validasi!',
-                                                    text: xhr
-                                                        .responseJSON
-                                                        .message ||
-                                                        'Mohon periksa kembali input Anda.',
-                                                    showConfirmButton: true
-                                                });
-                                            } else {
-                                                Swal.fire({
-                                                    icon: 'error',
-                                                    title: 'Terjadi Kesalahan!',
-                                                    text: xhr
-                                                        .responseJSON
-                                                        .message ||
-                                                        'Maaf, terjadi kesalahan pada server. Silakan coba lagi.',
-                                                    showConfirmButton: true
-                                                });
-                                            }
+                                                            'px-8');
+
+                                                    if (xhr.status ===
+                                                        422) {
+                                                        let errors = xhr
+                                                            .responseJSON
+                                                            .errors;
+                                                        $.each(errors,
+                                                            function(
+                                                                key,
+                                                                value
+                                                            ) {
+                                                                let inputElement =
+                                                                    $(
+                                                                        `[name="${key}"]`
+                                                                    );
+                                                                inputElement
+                                                                    .addClass(
+                                                                        'border-[#BA1A1A]'
+                                                                    );
+                                                                inputElement
+                                                                    .closest(
+                                                                        '.relative'
+                                                                    )
+                                                                    .after(
+                                                                        `<p class="error-message text-[#BA1A1A] text-sm mt-1 font-semibold">${value[0]}</p>`
+                                                                    );
+                                                            });
+                                                        Swal.fire({
+                                                            icon: 'error',
+                                                            title: 'Gagal Validasi!',
+                                                            text: xhr
+                                                                .responseJSON
+                                                                .message ||
+                                                                'Mohon periksa kembali input Anda.',
+                                                            showConfirmButton: true
+                                                        });
+                                                    } else {
+                                                        Swal.fire({
+                                                            icon: 'error',
+                                                            title: 'Terjadi Kesalahan!',
+                                                            text: xhr
+                                                                .responseJSON
+                                                                .message ||
+                                                                'Maaf, terjadi kesalahan pada server. Silakan coba lagi.',
+                                                            showConfirmButton: true
+                                                        });
+                                                    }
+                                                }
+                                            });
                                         }
                                     });
                                 });

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Assistant extends Model
 {
     use SoftDeletes, HasFactory;
-    
+
     protected $primaryKey = 'nim';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -25,6 +25,8 @@ class Assistant extends Model
         'foto',
         'nomor_telp',
     ];
+
+    protected $appends = ['prodi_angkatan', 'final'];
 
     public function user()
     {
@@ -44,5 +46,24 @@ class Assistant extends Model
     public function preferences()
     {
         return $this->hasMany(Preference::class, 'nim', 'nim');
+    }
+
+    public function getProdiAngkatanAttribute()
+    {
+        $prodiCode = '';
+        if ($this->prodi === 'Informatika') {
+            $prodiCode = 'IF';
+        } elseif ($this->prodi === 'Sistem Informasi') {
+            $prodiCode = 'SI';
+        } else {
+            $prodiCode = $this->prodi;
+        }
+        return $prodiCode . '-' . substr($this->angkatan, -2);
+    }
+
+    public function getFinalAttribute()
+    {
+        return $this->courseSchedules()->count() > 0 &&
+            $this->courseSchedules()->where('is_final', false)->count() === 0;
     }
 }

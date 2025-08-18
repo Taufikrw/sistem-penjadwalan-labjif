@@ -4,7 +4,7 @@ namespace App\Repositories\Contracts;
 
 interface AssistantRepositoryInterface
 {
-    public function getAllAssistants($sortBy = 'updated_at', $order = 'desc', $search = '', array $filters = [], $perPage = null);
+    public function getAllAssistants($sortBy = ['status', 'tahun_masuk', 'nim', 'name', 'prodi_angkatan'], $order = ['asc', 'desc', 'asc', 'asc', 'asc'], $search = '', array $filters = [], $perPage = null);
 
     public function getAssistantByNim($nim);
 

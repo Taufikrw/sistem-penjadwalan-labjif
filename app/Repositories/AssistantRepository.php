@@ -11,13 +11,24 @@ use Illuminate\Validation\ValidationException;
 
 class AssistantRepository implements AssistantRepositoryInterface
 {
-    public function getAllAssistants($sortBy = 'updated_at', $order = 'desc', $search = '', array $filters = [], $perPage = null)
+    public function getAllAssistants($sortBy = ['status', 'tahun_masuk', 'nim', 'name', 'prodi_angkatan'], $order = ['asc', 'desc', 'asc', 'asc', 'asc'], $search = '', array $filters = [], $perPage = null)
     {
-        $allowedSortColumns = ['nim', 'name', 'prodi', 'angkatan', 'tahun_masuk', 'updated_at'];
-        $sortBy = in_array(strtolower($sortBy), $allowedSortColumns) ? strtolower($sortBy) : 'updated_at';
-        $order = in_array(strtolower($order), ['asc', 'desc']) ? strtolower($order) : 'desc';
+        $allowedSortColumns = ['nim', 'name', 'prodi_angkatan', 'tahun_masuk', 'updated_at', 'status'];
+        $sortBy = array_filter($sortBy, fn($column) => in_array($column, $allowedSortColumns));
+        $sortBy = empty($sortBy) ? ['status', 'tahun_masuk', 'nim', 'name', 'prodi_angkatan'] : $sortBy;
+        $order = array_filter($order, fn($column) => in_array($column, ['asc', 'desc']));
+        $order = empty($order) ? ['asc', 'desc', 'asc', 'asc', 'asc'] : $order;
 
-        $query = Assistant::with('user')->orderBy($sortBy, $order);
+        $query = Assistant::with('user');
+
+        foreach ((array) $sortBy as $i => $column) {
+            $currentOrder = $order[$i] ?? 'asc';
+            if ($column === 'prodi_angkatan') {
+                $query->orderBy('prodi', $currentOrder)->orderBy('angkatan', $currentOrder);
+            } else {
+                $query->orderBy($column, $currentOrder);
+            }
+        }
 
         if (!empty($search)) {
             $lowerSearch = strtolower($search);
