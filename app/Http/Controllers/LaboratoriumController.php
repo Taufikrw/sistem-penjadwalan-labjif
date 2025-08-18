@@ -23,8 +23,8 @@ class LaboratoriumController extends Controller
 
     public function labsTable(Request $request)
     {
-        $sortBy = $request->get('sort_by', 'updated_at');
-        $sortOrder = $request->get('sort_order', 'desc');
+        $sortBy = $request->get('sort_by', '');
+        $sortOrder = $request->get('sort_order', '');
         $search = $request->get('search', '');
     
         $filters = [

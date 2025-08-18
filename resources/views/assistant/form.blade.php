@@ -12,7 +12,7 @@
                 <x-heroicon-c-pencil-square class="w-5 h-5 bg-key-primary text-white rounded" />
                 <span>Edit Aslab</span>
             @else
-                <x-heroicon-s-plus class="w-5 h-5 bg-key-primary text-white rounded" />
+                <x-heroicon-c-plus class="w-5 h-5 bg-key-primary text-white rounded" />
                 <span>Tambah Aslab</span>
             @endisset
         </div>

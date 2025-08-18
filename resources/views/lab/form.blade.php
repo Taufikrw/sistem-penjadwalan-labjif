@@ -8,10 +8,10 @@
     <div id="title-hidden" class="hidden">
         <div class="flex gap-3 items-center">
             @isset($laboratorium)
-                <x-heroicon-s-pencil-square class="w-4 h-4" />
+                <x-heroicon-c-pencil-square class="w-5 h-5 bg-key-primary text-white rounded" />
                 <span>Edit Laboratorium</span>
             @else
-                <x-heroicon-s-plus class="w-4 h-4" />
+                <x-heroicon-c-plus class="w-5 h-5 bg-key-primary text-white rounded" />
                 <span>Tambah Laboratorium</span>
             @endisset
         </div>
@@ -19,19 +19,19 @@
 
     <div class="grid grid-cols-2 gap-4">
         <div>
-            <x-input-label for="name" class="mb-2 text-sm" value="Nama" />
+            <x-input-label for="name" class="mb-1 text-sm" value="Nama Laboratorium" />
             <x-text-input name="name" id="name" class="w-full" :value="old('name', isset($laboratorium) ? $laboratorium->name : '')"
                 placeholder="Masukkan nama laboratorium" required />
         </div>
 
         <div>
-            <x-input-label for="capacity" class="mb-2 text-sm" value="Kapasitas" />
+            <x-input-label for="capacity" class="mb-1 text-sm" value="Kapasitas" />
             <x-text-input name="capacity" id="capacity" class="w-full" :value="old('capacity', isset($laboratorium) ? $laboratorium->capacity : '')"
                 type="number" min="1" placeholder="Masukkan kapasitas laboratorium" required />
         </div>
 
         <div>
-            <x-input-label for="location" class="mb-2 text-sm" value="Lokasi" />
+            <x-input-label for="location" class="mb-1 text-sm" value="Lokasi" />
             <x-select-input id="location_select" name="location" :options="['Pattimura I' => 'Pattimura I', 'Pattimura II' => 'Pattimura II', 'Pattimura III' => 'Pattimura III']" placeholder="Pilih lokasi laboratorium"
                 :selected="isset($laboratorium) ? $laboratorium->location : null" />
         </div>

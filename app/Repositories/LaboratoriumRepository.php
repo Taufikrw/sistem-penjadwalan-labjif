@@ -7,13 +7,22 @@ use App\Repositories\Contracts\LaboratoriumRepositoryInterface;
 
 class LaboratoriumRepository implements LaboratoriumRepositoryInterface
 {
-    public function getAllLaboratoriums($sortBy = 'updated_at', $order = 'desc', $search = '', array $filters = [], $perPage = null)
+    public function getAllLaboratoriums($sortBy = ['location', 'name', 'capacity'], $order = 'desc', $search = '', array $filters = [], $perPage = null)
     {
         $allowedSortColumns = ['name', 'location', 'capacity', 'updated_at'];
-        $sortBy = in_array(strtolower($sortBy), $allowedSortColumns) ? strtolower($sortBy) : 'updated_at';
+        $sortBy = array_filter($sortBy, fn($column) => in_array($column, $allowedSortColumns));
+        $sortBy = empty($sortBy) ? ['location', 'name', 'capacity'] : $sortBy;
         $order = in_array(strtolower($order), ['asc', 'desc']) ? strtolower($order) : 'desc';
 
-        $query = Laboratorium::with('schedules')->orderBy($sortBy, $order);
+        $query = Laboratorium::with('schedules');
+
+        foreach ((array) $sortBy as $column) {
+            if ($column === 'capacity') {
+                $query->orderByRaw('CAST(capacity AS INTEGER) ' . $order);
+            } else {
+                $query->orderBy($column, $order);
+            }
+        }
 
         if (!empty($search)) {
             $lowerSearch = strtolower($search);
