@@ -15,7 +15,7 @@
         </x-slot:back_button>
     @endif
 
-    <div class="flex items-center rounded-lg bg-white px-10 py-6 gap-8">
+    <div class="flex items-center rounded-xl bg-white px-10 py-6 gap-8 border border-[#D9D9D9]">
         <img src="{{ $assistant->foto ? asset('storage/assistants/' . $assistant->foto) : asset('assets/images/Avatar.svg') }}" alt="avatar" class="w-32 h-32 rounded-full">
         <div class="flex flex-col gap-6">
             <div class="text-2xl font-bold flex items-center">
@@ -26,26 +26,26 @@
                     </a>
                 @endif
             </div>
-            <div class="flex gap-8">
+            <div class="flex gap-16">
                 <div class="flex flex-col">
-                    <span class="text-[#5A5A5A] font-light">NIM</span>
-                    <span class="text-lg">{{ $assistant->nim }}</span>
+                    <span class="text-[#5A5A5A] font-bold">NIM</span>
+                    <span class="text-lg font-bold">{{ $assistant->nim }}</span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-[#5A5A5A] font-light">Nama</span>
-                    <span class="text-lg">{{ $assistant->name }}</span>
+                    <span class="text-[#5A5A5A] font-bold">Nama</span>
+                    <span class="text-lg font-bold">{{ $assistant->name }}</span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-[#5A5A5A] font-light">Program Studi</span>
-                    <span class="text-lg">{{ $assistant->prodi }}</span>
+                    <span class="text-[#5A5A5A] font-bold">Program Studi</span>
+                    <span class="text-lg font-bold">{{ $assistant->prodi }}</span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-[#5A5A5A] font-light">Angkatan</span>
-                    <span class="text-lg">{{ $assistant->angkatan }}</span>
+                    <span class="text-[#5A5A5A] font-bold">Angkatan</span>
+                    <span class="text-lg font-bold">{{ $assistant->angkatan }}</span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-[#5A5A5A] font-light">Nomor Telepon</span>
-                    <span class="text-lg">{{ $assistant->nomor_telp ?? '-' }}</span>
+                    <span class="text-[#5A5A5A] font-bold">Nomor Telepon</span>
+                    <span class="text-lg font-bold">{{ $assistant->nomor_telp ?? '-' }}</span>
                 </div>
             </div>
         </div>
@@ -69,8 +69,8 @@
 
     <div id="contentSaatIni" class="tab-content" data-tab-name="contentSaatIni">
         <div class="rounded-lg w-full overflow-x-auto px-4 bg-white">
-            <table class="w-full text-sm text-left rtl:text-right text-key-primary">
-                <thead class="border-b border-[#E5E2E1]">
+            <table class="w-full text-sm text-left rtl:text-right text-[#1E1E1E]">
+                <thead class="border-b border-[#E5E2E1] text-key-primary">
                     <tr>
                         <th scope="col" class="px-4 py-3">
                             <span class="flex items-center gap-1 font-extrabold" data-field="practicum_name"
@@ -153,19 +153,19 @@
 
     <div id="contentRiwayat" class="tab-content hidden" data-tab-name="contentRiwayat">
         <div class="rounded-lg w-full overflow-x-auto px-4 bg-white">
-            <table class="w-full text-sm text-left rtl:text-right text-key-primary">
-                <thead class="border-b border-[#E5E2E1]">
+            <table class="w-full text-sm text-left rtl:text-right text-[#1E1E1E]">
+                <thead class="border-b border-[#E5E2E1] text-key-primary">
                     <tr>
-                        <th scope="col" class="px-4 py-3">
-                            <span class="flex items-center gap-1 font-extrabold" data-field="practicum_name"
-                                data-sort-direction="">
-                                Nama Praktikum
-                            </span>
-                        </th>
-                        <th scope="col" class="px-4 py-3">
+                        <th scope="col" class="px-4 py-3 w-1/6">
                             <span class="flex items-center gap-1 font-extrabold" data-field="tahun_ajar"
                                 data-sort-direction="">
                                 Tahun Ajaran
+                            </span>
+                        </th>
+                        <th scope="col" class="px-4 py-3 w-5/6">
+                            <span class="flex items-center gap-1 font-extrabold" data-field="practicum_name"
+                                data-sort-direction="">
+                                Nama Praktikum
                             </span>
                         </th>
                     </tr>
@@ -214,8 +214,8 @@
                             $.each(data.data, function(index, item) {
                                 let row = `
                                     <tr class="border-b border-[#E5E2E1]">
-                                        <td class="px-4 py-4">${item.name}</td>
                                         <td class="px-4 py-4">${item.tahun_ajar}</td>
+                                        <td class="px-4 py-4">${item.name}</td>
                                     </tr>
                                 `;
                                 tableId.append(row);

@@ -189,7 +189,13 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 
     public function getHistoryByNim($nim)
     {
-        return Schedule::selectRaw("DISTINCT practicums.name, CASE WHEN practicums.semester % 2 = 1 THEN CONCAT(tahun_ajar, '/', (tahun_ajar::int + 1)) ELSE CONCAT((tahun_ajar::int - 1), '/', tahun_ajar) END as tahun_ajar")
+        return Schedule::selectRaw("
+            DISTINCT practicums.name,
+            CASE 
+                WHEN practicums.semester % 2 = 1 THEN CONCAT('Gasal ', tahun_ajar, '/', (tahun_ajar::int + 1))
+                ELSE CONCAT('Genap ', (tahun_ajar::int - 1), '/', tahun_ajar)
+            END as tahun_ajar
+            ")
             ->join('practicums', 'practicums.kode_praktikum', '=', 'schedules.kode_praktikum')
             ->whereHas('assistantSchedules', function ($query) use ($nim) {
                 $query->where('nim', $nim);
