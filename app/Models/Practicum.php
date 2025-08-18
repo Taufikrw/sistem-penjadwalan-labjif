@@ -21,6 +21,8 @@ class Practicum extends Model
         'semester',
     ];
 
+    protected $appends = ['semester_romawi'];
+
     public function schedules()
     {
         return $this->hasMany(Schedule::class, 'kode_praktikum', 'kode_praktikum');
@@ -29,5 +31,21 @@ class Practicum extends Model
     public function preferences()
     {
         return $this->hasMany(Preference::class, 'kode_praktikum', 'kode_praktikum');
+    }
+
+    public function getSemesterRomawiAttribute()
+    {
+        $romawi = [
+            1 => 'I',
+            2 => 'II',
+            3 => 'III',
+            4 => 'IV',
+            5 => 'V',
+            6 => 'VI',
+            7 => 'VII',
+            8 => 'VIII',
+        ];
+
+        return $romawi[$this->semester] ?? null;
     }
 }

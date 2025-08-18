@@ -15,7 +15,7 @@ class PracticumService
 
     public function getPracticumData($sortBy, $sortOrder, $search, $filters)
     {
-        return $this->practicumRepository->getAllPracticums($sortBy, $sortOrder, $search, $filters, 8);
+        return $this->practicumRepository->getAllPracticums([$sortBy], $sortOrder, $search, $filters, 8);
     }
 
     public function storePracticum(array $data)

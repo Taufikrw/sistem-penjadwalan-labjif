@@ -4,7 +4,7 @@ namespace App\Repositories\Contracts;
 
 interface PracticumRepositoryInterface
 {
-    public function getAllPracticums($sortBy = 'updated_at', $sortOrder = 'desc', $search = '', array $filters = [], $perpage = null);
+    public function getAllPracticums($sortBy = ['kode_praktikum', 'name', 'semester_romawi', 'for_prodi'], $sortOrder = 'asc', $search = '', array $filters = [], $perpage = null);
 
     public function getPracticumByKode($kode_praktikum);
 

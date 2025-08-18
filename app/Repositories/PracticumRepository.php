@@ -7,13 +7,22 @@ use App\Repositories\Contracts\PracticumRepositoryInterface;
 
 class PracticumRepository implements PracticumRepositoryInterface
 {
-    public function getAllPracticums($sortBy = 'updated_at', $sortOrder = 'desc', $search = '', array $filters = [], $perpage = null)
+    public function getAllPracticums($sortBy = ['kode_praktikum', 'name', 'semester_romawi', 'for_prodi'], $sortOrder = 'asc', $search = '', array $filters = [], $perpage = null)
     {
-        $allowedSortColumns = ['kode_praktikum', 'name', 'semester', 'for_prodi', 'updated_at'];
-        $sortBy = in_array(strtolower($sortBy), $allowedSortColumns) ? strtolower($sortBy) : 'updated_at';
-        $sortOrder = in_array(strtolower($sortOrder), ['asc', 'desc']) ? strtolower($sortOrder) : 'desc';
+        $allowedSortColumns = ['kode_praktikum', 'name', 'semester_romawi', 'for_prodi', 'updated_at'];
+        $sortBy = array_filter($sortBy, fn($column) => in_array($column, $allowedSortColumns));
+        $sortBy = empty($sortBy) ? ['kode_praktikum', 'name', 'semester_romawi', 'for_prodi'] : $sortBy;
+        $sortOrder = in_array(strtolower($sortOrder), ['asc', 'desc']) ? strtolower($sortOrder) : 'asc';
         
-        $query = Practicum::with('schedules')->orderBy($sortBy, $sortOrder);
+        $query = Practicum::with('schedules');
+        
+        foreach ((array) $sortBy as $column) {
+            if ($column === 'semester_romawi') {
+                $query->orderBy('semester', $sortOrder);
+            } else {
+                $query->orderBy($column, $sortOrder);
+            }
+        }
 
         if (!empty($search)) {
             $lowerSearch = strtolower($search);

@@ -57,7 +57,7 @@ class ScheduleService
         }
 
         $practicums = $this->practicumRepository->getAllPracticums(
-            $sortBy = 'name',
+            $sortBy = ['name'],
             $sortOrder = 'asc',
             $search = '',
             $filters = ['semester' => $semesterFilters]
