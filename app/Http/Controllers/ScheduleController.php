@@ -452,7 +452,7 @@ class ScheduleController extends Controller
         } else {
             $tahunAjaran = $tahunAjar . '/' . ($tahunAjar + 1);
         }
-        $day = $request->query('day', 'Senin');
+        $day = $request->query('day', 'Semua');
 
         return view('schedule.show', compact('semester', 'tahunAjaran', 'tahunAjar', 'day'));
     }
@@ -460,11 +460,11 @@ class ScheduleController extends Controller
     public function scheduleTable(Request $request)
     {
         $sortBy = $request->get('sort_by', 'start_time');
-        $sortOrder = $request->get('sort_order', 'asc');
+        $sortOrder = $request->get('sort_order', 'desc');
         $search = $request->get('search', '');
 
         $filters = [
-            'day' => $request->get('day', ''),
+            'day' => ($request->get('day', '') !== 'Semua') ? $request->get('day', '') : null,
             'practicum_name' => $request->get('practicum_name', ''),
             'laboratorium_name' => $request->get('laboratorium_name', ''),
             'tahun_ajar' => $request->get('tahun_ajar', ''),
@@ -473,7 +473,6 @@ class ScheduleController extends Controller
         ];
 
         $filters = array_filter($filters);
-
 
         try {
             $schedules = $this->scheduleService->getScheduleData($sortBy, $sortOrder, $search, $filters);

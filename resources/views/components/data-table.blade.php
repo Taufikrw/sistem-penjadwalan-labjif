@@ -1,11 +1,10 @@
 <div class="rounded-lg w-full bg-white px-4">
-
     <div class="overflow-x-auto overflow-y-auto max-h-[75vh]">
         <table class="w-full text-sm text-left rtl:text-right text-[#1E1E1E] border-separate border-spacing-0">
             <thead class="text-key-primary">
                 <tr>
                     @if ($hasActions)
-                        <th scope="col" class="px-2 py-3 w-8 sticky top-0 bg-white border-b border-[#E5E2E1]">
+                        <th scope="col" class="px-2 py-3 w-8 sticky top-0 bg-white border-b border-[#E5E2E1] whitespace-nowrap">
                             <div class="flex items-center justify-center h-full">
                                 <input type="checkbox" id="selectAllCheckboxes"
                                     class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer" />
@@ -13,7 +12,7 @@
                         </th>
                     @endif
                     @foreach ($columns as $column)
-                        <th scope="col" class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1]">
+                        <th scope="col" class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1] whitespace-nowrap">
                             <span
                                 class="flex items-center gap-1 font-bold {{ $column['sortable'] ? 'sortable cursor-pointer' : '' }}"
                                 data-field="{{ $column['field'] }}" data-sort-direction="">
@@ -28,7 +27,7 @@
                         </th>
                     @endforeach
                     @if ($hasActions)
-                        <th scope="col" class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1]">
+                        <th scope="col" class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1] whitespace-nowrap">
                             <span class="flex items-center gap-1 font-bold">
                                 Aksi
                             </span>
@@ -183,14 +182,14 @@
                                                 break;
                                         }
                                         rowsHtml +=
-                                            `<td class="px-4 py-4 border-b border-[#E5E2E1]">
+                                            `<td class="px-4 py-4 border-b border-[#E5E2E1] whitespace-nowrap">
                                                 <span class="inline-block px-3 py-1 text-xs font-semibold ${statusClass} rounded-full">
                                                     ${statusText}
                                                 </span>
                                             </td>`;
                                     } else if (column.field === 'jadwal_praktikum') {
                                         rowsHtml +=
-                                            `<td class="px-4 py-2 border-b border-[#E5E2E1]">
+                                            `<td class="px-4 py-2 border-b border-[#E5E2E1] whitespace-nowrap">
                                                 <a href="assistants/${item.nim}/detail-jadwal-praktikum"
                                                     class="flex items-center gap-2 text-key-primary w-fit px-3 py-0.5 rounded-xl hover:bg-[#F5F5F5]">
                                                     <x-heroicon-s-eye class="w-4 h-4" />
@@ -198,9 +197,8 @@
                                                 </a>
                                             </td>`;
                                     } else if (column.field === 'jadwal_kuliah') {
-                                        console.log(item.final)
                                         rowsHtml +=
-                                            `<td class="px-4 py-2 border-b border-[#E5E2E1]">
+                                            `<td class="px-4 py-2 border-b border-[#E5E2E1] whitespace-nowrap">
                                                 <a href="assistants/${item.nim}/detail-jadwal-kuliah"
                                                     class="flex items-center gap-2 ${item.final ? 'text-key-primary' : 'text-[#899296]'} w-fit px-3 py-0.5 rounded-xl hover:bg-[#F5F5F5]">
                                                     <x-heroicon-s-eye class="w-4 h-4" />
@@ -209,7 +207,7 @@
                                             </td>`;
                                     } else if (column.field === 'assistant_names') {
                                         rowsHtml +=
-                                            `<td class="px-4 py-2 border-b border-[#E5E2E1]">`;
+                                            `<td class="px-4 py-2 border-b border-[#E5E2E1] whitespace-nowrap">`;
                                         if (item.assistant_schedules && item
                                             .assistant_schedules.length > 0) {
                                             item.assistant_schedules.forEach(function(
@@ -224,21 +222,21 @@
                                         rowsHtml += `</td>`;
                                     } else {
                                         rowsHtml +=
-                                            `<td class="px-4 py-4 border-b border-[#E5E2E1]">
+                                            `<td class="px-4 py-4 border-b border-[#E5E2E1] whitespace-nowrap">
                                                 ${item[column.field]}
                                             </td>`;
                                     }
                                 });
                                 if (hasActions) {
                                     if (primary === 'nim') {
-                                        rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1]">
+                                        rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1] whitespace-nowrap">
                                             <div class="flex items-center gap-2">
                                                 <button data-id="${item.nim}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
                                                 <button data-id="${item.nim}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
                                             </div>
                                         </td>`;
                                     } else if (primary === 'kode_praktikum') {
-                                        rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1]">
+                                        rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1] whitespace-nowrap">
                                             <div class="flex items-center gap-2">
                                                 <button data-id="${item.kode_praktikum}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
                                                 <button data-id="${item.kode_praktikum}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
@@ -246,7 +244,7 @@
                                         </td>`;
                                     } else {
                                         if (hasSetAssistant) {
-                                            rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1]">
+                                            rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1] whitespace-nowrap">
                                                 <div class="flex items-center gap-2">
                                                     <button data-id="${item.id}" class="btn-set-assistant"><x-heroicon-s-users class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
                                                     <button data-id="${item.id}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
@@ -254,7 +252,7 @@
                                                 </div>
                                             </td>`;
                                         } else {
-                                            rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1]">
+                                            rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1] whitespace-nowrap">
                                                 <div class="flex items-center gap-2">
                                                     <button data-id="${item.id}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
                                                     <button data-id="${item.id}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
@@ -703,7 +701,6 @@
             $(document).on('click', '.btn-set-assistant', function() {
                 const scheduleId = $(this).data('id');
                 const url = actionUrl + 'set-assistant/' + scheduleId;
-                console.log('Set Assistant URL:', url);
 
                 $('#setAssistantModal').removeClass('hidden');
                 setTimeout(() => {
@@ -725,7 +722,6 @@
                         `);
                     },
                     success: function(response) {
-                        console.log(response);
                         $('#setAssistantModal').find('.modal-body').html(response);
                     },
                     error: function(xhr, status, error) {

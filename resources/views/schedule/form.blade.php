@@ -8,10 +8,10 @@
     <div id="title-hidden" class="hidden">
         <div class="flex gap-3 items-center">
             @isset($schedule)
-                <x-heroicon-s-pencil-square class="w-4 h-4" />
+                <x-heroicon-c-pencil-square class="w-5 h-5 bg-key-primary text-white rounded" />
                 <span>Edit Jadwal Praktikum</span>
             @else
-                <x-heroicon-s-plus class="w-4 h-4" />
+                <x-heroicon-c-plus class="w-5 h-5 bg-key-primary text-white rounded" />
                 <span>Tambah Jadwal Praktikum</span>
             @endisset
         </div>

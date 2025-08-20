@@ -29,7 +29,7 @@
     $(document).ready(function () {
         const modalId = '{{ $modalId }}';
         window.closeModal = function () {
-            $('#modalContent').removeClass('scale-100 opacity-100').addClass('scale-95 opacity-0');
+            $(`#${modalId} #modalContent`).removeClass('scale-100 opacity-100').addClass('scale-95 opacity-0');
             setTimeout(() => {
                 $(`#${modalId}`).addClass('hidden');
             }, 300);
@@ -38,7 +38,7 @@
         window.openModal = function () {
             $(`#${modalId}`).removeClass('hidden');
             setTimeout(() => {
-                $('#modalContent').removeClass('scale-95 opacity-0').addClass('scale-100 opacity-100');
+                $(`#${modalId} #modalContent`).removeClass('scale-95 opacity-0').addClass('scale-100 opacity-100');
             }, 10);
         }
     
@@ -46,7 +46,7 @@
             window.closeModal();
         });
     
-        $('#modalOverlay').on('click', function(e) {
+        $(`#${modalId} #modalOverlay`).on('click', function(e) {
             if (e.target === this) {
                 window.closeModal();
             }
