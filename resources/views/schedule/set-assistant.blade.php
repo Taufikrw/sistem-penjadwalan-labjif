@@ -217,10 +217,23 @@
             updateSortIndicatorsSetAssistant();
 
             const rows = $('#set-assistant-body tr').toArray().sort((a, b) => {
-                const aText = $(a).find(`td[data-field="${field}"]`).text().toLowerCase();
-                const bText = $(b).find(`td[data-field="${field}"]`).text().toLowerCase();
-                return currentSortOrder === 'asc' ? aText.localeCompare(bText) : bText
-                    .localeCompare(aText);
+                let aValue, bValue;
+
+                if (field === 'preference_asisten') {
+                    // Check if the icon is check-circle (preferred) or x-circle (not preferred)
+                    const aHasCheck = $(a).find('td[data-field="preference_asisten"] svg')
+                        .hasClass('text-green-500');
+                    const bHasCheck = $(b).find('td[data-field="preference_asisten"] svg')
+                        .hasClass('text-green-500');
+                    aValue = aHasCheck ? 1 : 0;
+                    bValue = bHasCheck ? 1 : 0;
+                    return currentSortOrder === 'asc' ? aValue - bValue : bValue - aValue;
+                } else {
+                    aValue = $(a).find(`td[data-field="${field}"]`).text().toLowerCase();
+                    bValue = $(b).find(`td[data-field="${field}"]`).text().toLowerCase();
+                    return currentSortOrder === 'asc' ? aValue.localeCompare(bValue) : bValue
+                        .localeCompare(aValue);
+                }
             });
 
             $('#set-assistant-body').empty().append(rows);

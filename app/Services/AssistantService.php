@@ -43,6 +43,17 @@ class AssistantService
         return $assistant;
     }
 
+    public function getPreferencesByNim($nim)
+    {
+        $assistant = $this->assistantRepository->getAssistantByNim($nim);
+
+        if (!$assistant) {
+            return null;
+        }
+
+        return $assistant->preferences->pluck('practicum.name')->filter()->values();
+    }
+
     public function getAssistantDetail($nim)
     {
         return $this->assistantRepository->getAssistantByNim($nim);

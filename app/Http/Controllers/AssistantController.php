@@ -302,6 +302,24 @@ class AssistantController extends Controller
         return view('assistant.biodata', compact('assistant'));
     }
 
+    public function preferenceTable() {
+        $nim = Auth::user()->username;
+        $preferences = $this->assistantService->getPreferencesByNim($nim);
+
+        if (!$preferences) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Preferensi tidak ditemukan',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $preferences,
+            'message' => 'Preferensi berhasil diambil.',
+        ]);
+    }
+
     public function updateBiodata(UpdateBiodataRequest $request)
     {
         $nim = Auth::user()->username;

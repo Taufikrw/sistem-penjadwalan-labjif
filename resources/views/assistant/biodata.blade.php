@@ -9,9 +9,9 @@
         </a>
     </x-slot:back_button>
 
-    <div class="flex gap-6 w-full">
+    <div class="flex gap-8 w-full">
         <form action="{{ route('assistant.update-biodata') }}" method="POST" enctype="multipart/form-data"
-            id="biodata-form">
+            id="biodata-form" class="w-3/5">
             @csrf
             @method('PUT')
 
@@ -83,35 +83,35 @@
                 </div>
             </div>
         </form>
-        <div class="rounded-lg px-4 bg-white w-1/3 h-fit">
+        <div class="rounded-lg px-4 bg-white w-2/5 h-fit flex flex-col" style="max-height: 60vh;">
             <table class="w-full text-sm text-left rtl:text-right text-key-primary">
-                <thead class="border-b border-[#E5E2E1]">
+                <thead class="border-b border-[#E5E2E1] sticky top-0 bg-white z-10">
                     <tr>
                         <th scope="col" class="px-4 py-3">
                             <span class="flex items-center gap-2 font-extrabold" data-field="preference"
                                 data-sort-direction="">
                                 Preferensi
-                                <x-heroicon-s-pencil-square class="w-4 h-4 text-key-primary cursor-pointer hover:text-key-secondary"
+                                <x-heroicon-s-pencil-square
+                                    class="w-4 h-4 text-key-tertiary cursor-pointer hover:text-key-secondary"
                                     onclick="showDynamicModal()" />
                             </span>
                         </th>
                     </tr>
                 </thead>
-                <tbody id="schedule-table-body">
-                    @forelse ($assistant->preferences as $item)
-                        <tr class="border-b border-[#E5E2E1]">
-                            <td class="px-4 py-4">{{ $item->practicum->name }}</td>
-                        </tr>
-                    @empty
+            </table>
+            <div class="overflow-y-auto flex-1">
+                <table class="w-full text-sm text-left rtl:text-right text-key-primary">
+                    <tbody id="schedule-table-body">
                         <tr>
-                            <td colspan="6" class="py-8 text-center font-medium">
-                                <x-icon-no-data class="w-70 mx-auto" />
-                                <span class="font-bold">Tidak ada data.</span>
+                            <td colspan="1" class="px-6 py-8 text-center text-neutral-50">
+                                <div class="flex justify-center items-center">
+                                    <x-icon-spinner class="h-16 w-16 animate-spin" />
+                                </div>
                             </td>
                         </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -120,6 +120,61 @@
 
     <script type="module">
         $(document).ready(function() {
+            function loadPreferencesTable() {
+                const tableId = $('#schedule-table-body');
+                $.ajax({
+                    url: "{{ route('api.preference.table') }}",
+                    type: 'GET',
+                    beforeSend: function() {
+                        tableId.empty();
+                        tableId.append(`
+                            <tr>
+                                <td colspan="1" class="px-6 py-8 text-center text-neutral-50">
+                                    <div class="flex justify-center items-center">
+                                        <x-icon-spinner class="h-16 w-16 animate-spin" />
+                                    </div>
+                                </td>
+                            </tr>
+                        `);
+                    },
+                    success: function(response) {
+                        tableId.empty();
+                        if (response.data.length > 0) {
+                            $.each(response.data, function(index, item) {
+                                let row = `
+                                    <tr class="border-b border-[#E5E2E1]">
+                                        <td class="px-4 py-4 text-[#1E1E1E]">${item}</td>
+                                    </tr>
+                                `;
+                                tableId.append(row);
+                            });
+                        } else {
+                            tableId.html(`
+                                <tr>
+                                    <td colspan="2" class="py-8 text-center font-medium">
+                                        <x-icon-no-data class="w-70 mx-auto" />
+                                        <span class="font-bold">Tidak ada data.</span>
+                                    </td>
+                                </tr>
+                            `);
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal memuat data',
+                            text: xhr.responseJSON.message ||
+                                'Terjadi kesalahan saat memuat data preferensi.',
+                        });
+                    }
+                });
+            }
+
+            loadPreferencesTable();
+
+            document.addEventListener('reload-table', function() {
+                loadPreferencesTable();
+            });
 
             $('#biodata-form').on('submit', function(e) {
                 e.preventDefault();

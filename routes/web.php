@@ -37,7 +37,7 @@ Route::middleware(['auth', 'role:admin,assistant'])->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('assistants', [AssistantController::class, 'index'])->name('assistant.index');
-    
+
     Route::get('assistants/create', [AssistantController::class, 'create'])->name('assistant.create');
     Route::post('assistants/create', [AssistantController::class, 'store'])->name('assistant.store');
 
@@ -65,7 +65,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('labs', [LaboratoriumController::class, 'index'])->name('lab.index');
     Route::get('labs/create', [LaboratoriumController::class, 'create'])->name('lab.create');
     Route::post('labs/create', [LaboratoriumController::class, 'store'])->name('lab.store');
-    
+
     Route::get('labs/{id}', [LaboratoriumController::class, 'edit'])->name('lab.edit');
     Route::put('labs/{id}', [LaboratoriumController::class, 'update'])->name('lab.update');
     Route::delete('labs/{id}', [LaboratoriumController::class, 'destroy'])->name('lab.delete');
@@ -109,4 +109,8 @@ Route::middleware(['auth', 'role:assistant'])->group(function () {
     Route::put('edit-biodata', [AssistantController::class, 'updateBiodata'])->name('assistant.update-biodata');
     Route::get('preference/create', [AssistantController::class, 'createPreference'])->name('assistant.create-preference');
     Route::post('preference/create', [AssistantController::class, 'storePreference'])->name('assistant.store-preference');
+
+    Route::prefix('api')->group(function () {
+        Route::get('get-preference-table', [AssistantController::class, 'preferenceTable'])->name('api.preference.table');
+    });
 });

@@ -21,7 +21,7 @@
             <div class="text-2xl font-bold flex items-center">
                 <h2>Biodata</h2>
                 @if (Auth::user()->role === 'assistant')
-                    <a href="{{ route('assistant.edit-biodata') }}" class="hover:text-key-secondary transition duration-300">
+                    <a href="{{ route('assistant.edit-biodata') }}" class="hover:text-key-secondary text-key-tertiary transition duration-300">
                         <x-heroicon-s-pencil-square class="w-5 ml-4" />
                     </a>
                 @endif
