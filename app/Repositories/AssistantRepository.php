@@ -24,7 +24,7 @@ class AssistantRepository implements AssistantRepositoryInterface
         foreach ((array) $sortBy as $i => $column) {
             $currentOrder = $order[$i] ?? 'asc';
             if ($column === 'prodi_angkatan') {
-                $query->orderBy('prodi', $currentOrder)->orderBy('angkatan', $currentOrder);
+                $query->orderBy('angkatan', $currentOrder)->orderBy('prodi', $currentOrder);
             } else {
                 $query->orderBy($column, $currentOrder);
             }

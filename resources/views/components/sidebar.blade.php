@@ -21,7 +21,7 @@
         </button>
 
         <div id="menu-links" class="flex flex-col gap-2 text-white">
-            <x-nav-link route="{{ route('dashboard') }}" :routeIs="['dashboard', 'assistant.edit-biodata']">
+            <x-nav-link route="{{ route('dashboard') }}" :routeIs="['dashboard', 'assistant.edit-biodata', 'assistant.show']">
                 <x-heroicon-s-home class="w-5 h-5" />
                 <span class="menu-text transition-opacity duration-150">Dashboard</span>
             </x-nav-link>

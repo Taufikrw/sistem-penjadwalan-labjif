@@ -103,6 +103,17 @@ class AssistantController extends Controller
         return view('assistant.show-schedule', $data);
     }
 
+    public function show(string $nim)
+    {
+        $data = $this->assistantService->getAssistantWithSchedule($nim);
+
+        if (!$data) {
+            return response()->view('errors.404', ['message' => 'Assistant not found'], 404);
+        }
+
+        return view('assistant.show-schedule', $data);
+    }
+
     public function create()
     {
         return view('assistant.form');
@@ -302,7 +313,8 @@ class AssistantController extends Controller
         return view('assistant.biodata', compact('assistant'));
     }
 
-    public function preferenceTable() {
+    public function preferenceTable()
+    {
         $nim = Auth::user()->username;
         $preferences = $this->assistantService->getPreferencesByNim($nim);
 

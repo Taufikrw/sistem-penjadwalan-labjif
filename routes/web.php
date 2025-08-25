@@ -6,7 +6,6 @@ use App\Http\Controllers\FrontController;
 use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\PracticumController;
 use App\Http\Controllers\ScheduleController;
-use App\Models\Assistant;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['guest'])->group(function () {
@@ -25,6 +24,8 @@ Route::middleware(['auth', 'role:admin,assistant'])->group(function () {
 
     Route::post('course/create', [ScheduleController::class, 'storeCourse'])->name('course.store');
     Route::put('course/{id}', [ScheduleController::class, 'updateCourse'])->name('course.update');
+
+    Route::post('course/{nim}/finalize', [ScheduleController::class, 'finalizeCourse'])->name('course.finalize');
 
     Route::prefix('api')->group(function () {
         Route::get('get-course-table/{nim}', [ScheduleController::class, 'courseTable'])->name('api.course-schedules.table');
@@ -104,6 +105,7 @@ Route::middleware(['auth', 'role:assistant'])->group(function () {
     Route::post('jadwal-kuliah/bulk-delete', [ScheduleController::class, 'bulkDeleteCourse'])->name('course-schedule.bulk-delete');
 
     Route::get('jadwal-praktikum', [ScheduleController::class, 'indexScheduleAssistant'])->name('schedule.index-assistant');
+    Route::get('{nim}/detail-jadwal-praktikum', [AssistantController::class, 'show'])->name('assistant.show');
 
     Route::get('edit-biodata', [AssistantController::class, 'editBiodata'])->name('assistant.edit-biodata');
     Route::put('edit-biodata', [AssistantController::class, 'updateBiodata'])->name('assistant.update-biodata');

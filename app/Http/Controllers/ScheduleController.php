@@ -168,7 +168,12 @@ class ScheduleController extends Controller
 
     public function indexCourse()
     {
-        return view('course.index');
+        $assistant = $this->assistantService->getAssistantDetail(Auth::user()->username);
+
+        if (!$assistant) {
+            return response()->view('errors.404', ['message' => 'Asisten tidak ditemukan'], 404);
+        }
+        return view('course.index', compact('assistant'));
     }
 
     public function indexCourseSchedule(string $nim)
@@ -345,6 +350,32 @@ class ScheduleController extends Controller
         }
     }
 
+    public function finalizeCourse(string $nim) {
+        $assistant = $this->assistantService->getAssistantsDetails($nim);
+
+        if (!$assistant) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Asisten tidak ditemukan',
+            ], 404);
+        }
+
+        try {   
+            $data = $this->assistantService->finalizeCourseSchedule($nim);
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $data,
+                'message' => 'Jadwal kuliah berhasil difinalisasi.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memfinalisasi jadwal kuliah: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function destroyCourseLaboran(string $nim, string $id)
     {
         $assistant = $this->assistantService->getAssistantsDetails($nim);
@@ -499,7 +530,7 @@ class ScheduleController extends Controller
         } else {
             $tahunAjaran = $tahunAjar . '/' . ($tahunAjar + 1);
         }
-        $day = $request->query('day', 'Senin');
+        $day = $request->query('day', 'Semua');
 
         return view('schedule.show', compact('semester', 'tahunAjaran', 'tahunAjar', 'day'));
     }

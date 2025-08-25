@@ -312,11 +312,13 @@
                 const checkedCount = $('.form-checkbox[name="selected[]"]:checked').length;
                 if (checkedCount > 0) {
                     $(`#${btnCreateId}`).addClass('hidden');
+                    $('#btn-finalize-course').addClass('hidden');
                     $('#deleted-info').removeClass('hidden');
                     $('#deleted-info').addClass('flex');
                     $('#selected-info').removeClass('hidden').text(`${checkedCount} Dipilih`);
                 } else {
                     $(`#${btnCreateId}`).removeClass('hidden');
+                    $('#btn-finalize-course').removeClass('hidden');
                     $('#deleted-info').addClass('hidden');
                     $('#deleted-info').removeClass('flex');
                     $('#selected-info').addClass('hidden').text('0 Dipilih');

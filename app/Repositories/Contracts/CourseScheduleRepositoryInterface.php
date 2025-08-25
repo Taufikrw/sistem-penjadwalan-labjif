@@ -14,5 +14,7 @@ interface CourseScheduleRepositoryInterface
 
     public function updateCourseSchedule($id, array $data);
 
+    public function finalizeCourseSchedule(string $nim);
+
     public function deleteCourseSchedule($id);
 }

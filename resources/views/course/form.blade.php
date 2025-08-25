@@ -25,25 +25,19 @@
 
     <div class="grid grid-cols-2 gap-4">
         <div class="col-span-2">
-            <x-input-label for="course" class="mb-2 text-sm" value="Mata Kuliah" />
+            <x-input-label for="course" class="mb-1 text-sm" value="Mata Kuliah" />
             <x-text-input name="course" id="course" class="w-full" :value="old('course', isset($courseItem) ? $courseItem->course : '')"
                 placeholder="Masukkan nama mata kuliah" required />
         </div>
 
-        <div class="col-span-2">
-            <x-input-label for="name" class="mb-2 text-sm" value="Kelas" />
+        <div>
+            <x-input-label for="name" class="mb-1 text-sm" value="Kelas" />
             <x-text-input name="name" id="name" class="w-full" :value="old('name', isset($courseItem) ? $courseItem->name : '')"
                 placeholder="Masukkan nama kelas (IF/SI-X)" required />
         </div>
 
         <div>
-            <x-input-label for="tahun_ajar" class="mb-2 text-sm" value="Tahun Ajaran" />
-            <x-text-input name="tahun_ajar" id="tahun_ajar" class="w-full" :value="old('tahun_ajar', isset($courseItem) ? $courseItem->tahun_ajar : now()->year)" type="number"
-                min="2021" placeholder="Masukkan tahun ajar" required />
-        </div>
-
-        <div>
-            <x-input-label for="day" class="mb-2 text-sm" value="Hari" />
+            <x-input-label for="day" class="mb-1 text-sm" value="Hari" />
             <x-select-input id="day" name="day" :options="collect(App\Enums\Day::cases())
                 ->mapWithKeys(fn($day) => [$day->value => $day->value])
                 ->toArray()" placeholder="Pilih hari" :selected="old('day', isset($courseItem) ? $courseItem->day->value : null)"
@@ -51,12 +45,12 @@
         </div>
 
         <div>
-            <x-input-label for="start_time" class="mb-2 text-sm" value="Jam Mulai" />
+            <x-input-label for="start_time" class="mb-1 text-sm" value="Jam Mulai" />
             <x-text-input type="time" name="start_time" id="start_time" class="w-full" :value="old('start_time', isset($courseItem) ? $courseItem->start_time->format('H:i') : '')" required />
         </div>
 
         <div>
-            <x-input-label for="end_time" class="mb-2 text-sm" value="Jam Selesai" />
+            <x-input-label for="end_time" class="mb-1 text-sm" value="Jam Selesai" />
             <x-text-input type="time" name="end_time" id="end_time" class="w-full" :value="old('end_time', isset($courseItem) ? $courseItem->end_time->format('H:i') : '')" required />
         </div>
 

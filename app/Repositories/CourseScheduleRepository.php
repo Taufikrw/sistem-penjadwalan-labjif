@@ -19,9 +19,7 @@ class CourseScheduleRepository implements CourseScheduleRepositoryInterface
 
     public function getCourseScheduleByNim($nim, $sortBy = ['day', 'start_time'], $order = 'asc')
     {
-        $currentYear = date('Y');
-        $query = CourseSchedule::with('assistant')->where('owner', $nim)
-            ->where('tahun_ajar', $currentYear);
+        $query = CourseSchedule::with('assistant')->where('owner', $nim);
 
         foreach ((array) $sortBy as $column) {
             if ($column === 'day') {
@@ -49,6 +47,13 @@ class CourseScheduleRepository implements CourseScheduleRepositoryInterface
         }
 
         return null;
+    }
+
+    public function finalizeCourseSchedule(string $nim)
+    {
+        return CourseSchedule::where('owner', $nim)->update([
+            'is_final' => true
+        ]);
     }
 
     public function deleteCourseSchedule($id)
