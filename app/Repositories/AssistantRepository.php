@@ -187,7 +187,7 @@ class AssistantRepository implements AssistantRepositoryInterface
             $minDiff = 4;
         }
 
-        return $assistants->filter(function ($assistant) use ($day, $start, $end, $forProdi, $tahunAjar, $minDiff, $semester, $kodePraktikum) {
+        return $assistants->filter(function ($assistant) use ($day, $start, $end, $forProdi, $tahunAjar, $minDiff, $semester, $kodePraktikum, $jenisSemester, $schedule_id) {
             // Hanya asisten yang is_final-nya true
             if (!$assistant->is_final) {
                 return false;
@@ -239,6 +239,12 @@ class AssistantRepository implements AssistantRepositoryInterface
                 }
             }
 
+            // Cek apakah asisten sudah ditetapkan di jadwal praktikum yang dipilih
+            $alreadyAssignedToThisSchedule = $assistant->assistantSchedules
+                ->where('schedule_id', $schedule_id)
+                ->isNotEmpty();
+
+            // Cek bentrok dengan jadwal kuliah
             foreach ($assistant->courseSchedules as $courseSchedule) {
                 if (
                     $courseSchedule->day === $day &&
@@ -248,9 +254,36 @@ class AssistantRepository implements AssistantRepositoryInterface
                         ($courseSchedule->start_time >= $start && $courseSchedule->end_time <= $end)
                     )
                 ) {
+                    // Jika sudah ditetapkan di jadwal ini, tetap tersedia
+                    if ($alreadyAssignedToThisSchedule) {
+                        continue;
+                    }
                     return false;
                 }
             }
+
+            // Cek bentrok dengan jadwal asisten (sudah mengajar di jam yang sama)
+            foreach ($assistant->assistantSchedules as $assistantSchedule) {
+                if (
+                    $assistantSchedule->schedule &&
+                    $assistantSchedule->schedule->id != $schedule_id && // skip jadwal ini
+                    $assistantSchedule->schedule->day === $day &&
+                    $assistantSchedule->schedule->tahun_ajar == $tahunAjar &&
+                    $assistantSchedule->schedule->jenis_semester == $jenisSemester &&
+                    (
+                        ($assistantSchedule->schedule->start_time <= $start && $assistantSchedule->schedule->end_time > $start) ||
+                        ($assistantSchedule->schedule->start_time < $end && $assistantSchedule->schedule->end_time >= $end) ||
+                        ($assistantSchedule->schedule->start_time >= $start && $assistantSchedule->schedule->end_time <= $end)
+                    )
+                ) {
+                    // Jika sudah ditetapkan di jadwal ini, tetap tersedia
+                    if ($alreadyAssignedToThisSchedule) {
+                        continue;
+                    }
+                    return false;
+                }
+            }
+
             return true;
         })->map(function ($assistant) use ($tahunAjar, $jenisSemester, $schedule) {
             $jumlahKelas = $assistant->assistantSchedules
