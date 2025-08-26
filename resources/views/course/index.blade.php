@@ -2,7 +2,7 @@
     <x-slot:title>
         @if (Auth::user()->role === 'admin')
             Jadwal Kuliah {{ $assistant->name }} - {{ $assistant->nim }}
-            @if ($assistant->final)
+            @if ($assistant->is_final)
                 <x-heroicon-s-check-circle class="w-7 h-7 text-[#34C759]" />
             @else
                 <x-heroicon-s-x-circle class="w-7 h-7 text-[#FF8D28]" />
@@ -36,34 +36,36 @@
             <input type="text" placeholder="Cari..." id="search-course"
                 class="block w-full pl-10 pr-3 py-3 border border-[#C9C6C5] rounded-lg leading-5 placeholder-[#C9C6C5] focus:outline-none focus:ring-1 focus:ring-key-secondary sm:text-md">
         </div>
-        @if (!$assistant->final)
-            <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4">
+            @if (!$assistant->is_final && Auth::user()->role === 'assistant')
                 <button
                     class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl bg-[#1E49F0] hover:bg-[#0031C5] text-white font-bold focus:outline-none cursor-pointer transition-colors duration-300"
                     type="button" id="btn-finalize-course">
                     <x-heroicon-s-check-circle class="w-5 h-5" />
                     Finalisasi
                 </button>
+            @endif
+            @if (Auth::user()->role === 'admin' || !$assistant->is_final)
                 <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl"
                     type="button" id="btn-create-course" onclick="showDynamicModal()">
                     <x-heroicon-s-plus class="w-5 h-5" />
                     Tambah
                 </x-button-primary>
+            @endif
+        </div>
+        <div id="deleted-info" class="items-center gap-6 hidden">
+            <div id="selected-info" class="text-key-primary font-bold">
+                0 Dipilih
             </div>
-            <div id="deleted-info" class="items-center gap-6 hidden">
-                <div id="selected-info" class="text-key-primary font-bold">
-                    0 Dipilih
-                </div>
-                <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl"
-                    type="button" id="btn-bulk-delete">
-                    <x-heroicon-s-trash class="w-5 h-5" />
-                    Hapus
-                </x-button-primary>
-            </div>
-        @endif
+            <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl"
+                type="button" id="btn-bulk-delete">
+                <x-heroicon-s-trash class="w-5 h-5" />
+                Hapus
+            </x-button-primary>
+        </div>
     </div>
 
-    @if ($assistant->final)
+    @if ($assistant->is_final && Auth::user()->role === 'assistant')
         <x-data-table
             url="{{ isset($assistant) ? route('api.course-schedules.table', $assistant->nim) : route('api.course-schedules.table', Auth::user()->username) }}"
             action-url="{{ Auth::user()->role === 'admin' ? '/course/' . $assistant->nim . '/' : '/jadwal-kuliah/' }}"
@@ -156,7 +158,8 @@
                             error: function(xhr) {
                                 Swal.fire(
                                     'Gagal!',
-                                    xhr.responseJSON.message || 'Terjadi kesalahan saat finalisasi jadwal.',
+                                    xhr.responseJSON.message ||
+                                    'Terjadi kesalahan saat finalisasi jadwal.',
                                     'error'
                                 );
                             }

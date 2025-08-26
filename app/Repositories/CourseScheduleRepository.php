@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Assistant;
 use App\Models\CourseSchedule;
 use App\Repositories\Contracts\CourseScheduleRepositoryInterface;
 
@@ -51,7 +52,7 @@ class CourseScheduleRepository implements CourseScheduleRepositoryInterface
 
     public function finalizeCourseSchedule(string $nim)
     {
-        return CourseSchedule::where('owner', $nim)->update([
+        return Assistant::where('nim', $nim)->update([
             'is_final' => true
         ]);
     }

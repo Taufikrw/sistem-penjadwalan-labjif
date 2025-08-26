@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('foto')->nullable();
             $table->string('nomor_telp', 15)->nullable();
             $table->string('status', 10)->default('aktif');
+            $table->boolean('is_final')->default(false);
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->softDeletes();

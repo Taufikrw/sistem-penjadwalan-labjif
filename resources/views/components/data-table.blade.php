@@ -200,7 +200,7 @@
                                         rowsHtml +=
                                             `<td class="px-4 py-2 border-b border-[#E5E2E1] whitespace-nowrap">
                                                 <a href="assistants/${item.nim}/detail-jadwal-kuliah"
-                                                    class="flex items-center gap-2 ${item.final ? 'text-key-primary' : 'text-[#899296]'} w-fit px-3 py-0.5 rounded-xl hover:bg-[#F5F5F5]">
+                                                    class="flex items-center gap-2 ${item.is_final ? 'text-key-primary' : 'text-[#899296]'} w-fit px-3 py-0.5 rounded-xl hover:bg-[#F5F5F5]">
                                                     <x-heroicon-s-eye class="w-4 h-4" />
                                                     Detail
                                                 </a>

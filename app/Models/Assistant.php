@@ -24,9 +24,10 @@ class Assistant extends Model
         'user_id',
         'foto',
         'nomor_telp',
+        'is_final',
     ];
 
-    protected $appends = ['prodi_angkatan', 'final'];
+    protected $appends = ['prodi_angkatan'];
 
     public function user()
     {
@@ -59,11 +60,5 @@ class Assistant extends Model
             $prodiCode = $this->prodi;
         }
         return $prodiCode . '-' . substr($this->angkatan, -2);
-    }
-
-    public function getFinalAttribute()
-    {
-        return $this->courseSchedules()->count() > 0 &&
-            $this->courseSchedules()->where('is_final', false)->count() === 0;
     }
 }

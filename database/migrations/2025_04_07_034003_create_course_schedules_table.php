@@ -19,8 +19,6 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->string('owner', 10);
-            $table->string('tahun_ajar', 4);
-            $table->boolean('is_final')->default(false);
 
             $table->foreign('owner')->references('nim')->on('assistants')->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();

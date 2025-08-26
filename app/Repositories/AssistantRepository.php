@@ -188,6 +188,15 @@ class AssistantRepository implements AssistantRepositoryInterface
         }
 
         return $assistants->filter(function ($assistant) use ($day, $start, $end, $forProdi, $tahunAjar, $minDiff, $semester, $kodePraktikum) {
+            // Hanya asisten yang is_final-nya true
+            if (!$assistant->is_final) {
+                return false;
+            }
+
+            if ($assistant->status !== 'aktif') {
+                return false;
+            }
+
             // Jika kode praktikum 124210241, tidak perlu cek prodi dan angkatan 2023 prodi informatika termasuk true
             if ($kodePraktikum == '124210241') {
                 if (
