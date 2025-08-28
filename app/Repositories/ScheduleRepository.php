@@ -62,8 +62,10 @@ class ScheduleRepository implements ScheduleRepositoryInterface
                 $query->whereHas('laboratorium', function ($q) use ($lowerValue) {
                     $q->whereRaw('LOWER(laboratoriums.name) LIKE ?', ["%{$lowerValue}%"]);
                 });
-            } elseif (in_array($key, ['day', 'tahun_ajar', 'jenis_semester', 'start_time'])) {
+            } elseif (in_array($key, ['tahun_ajar', 'jenis_semester', 'start_time'])) {
                 $query->whereRaw("LOWER({$key}) LIKE ?", ["%{$lowerValue}%"]);
+            } elseif ($key === 'day') {
+                $query->where($key, 'ILIKE', "%{$value}%");
             }
         }
 
@@ -160,13 +162,18 @@ class ScheduleRepository implements ScheduleRepositoryInterface
         ]);
     }
 
-    public function getEmptyAssistantSchedules()
+    public function getEmptyAssistantSchedules(array $filters = [])
     {
-        return Schedule::with('practicum', 'room')
-            ->whereNotIn('id', function ($query) {
-                $query->select('schedule_id')->from('assistant_schedules');
-            })
-            ->get();
+        $query = Schedule::with(['practicum', 'laboratorium'])
+            ->whereDoesntHave('assistantSchedules');
+
+        foreach ($filters as $key => $value) {
+            if (in_array($key, ['tahun_ajar', 'jenis_semester'])) {
+                $query->where($key, 'ILIKE', "%{$value}%");
+            }
+        }
+
+        return $query->orderBy('created_at', 'asc')->get();
     }
 
     public function deleteAssistantsByScheduleId($scheduleId)
@@ -214,9 +221,9 @@ class ScheduleRepository implements ScheduleRepositoryInterface
         if (!empty($search)) {
             $lowerSearch = strtolower($search);
             $query->where(function ($q) use ($lowerSearch) {
-                $q->whereRaw('LOWER(name) LIKE ?', ["%{$lowerSearch}%"])
-                    ->orWhereRaw('LOWER(CAST(course AS TEXT)) LIKE ?', ["%{$lowerSearch}%"])
-                    ->orWhereRaw('LOWER(day) LIKE ?', ["%{$lowerSearch}%"])
+                $q->where('name', 'ILIKE', "%{$lowerSearch}%")
+                    ->orWhere('course', 'ILIKE', "%{$lowerSearch}%")
+                    ->orWhere('day', 'ILIKE', "%{$lowerSearch}%") // <--- Corrected line
                     ->orWhereRaw('LOWER(CAST(start_time AS TEXT)) LIKE ?', ["%{$lowerSearch}%"])
                     ->orWhereRaw('LOWER(CAST(end_time AS TEXT)) LIKE ?', ["%{$lowerSearch}%"]);
             });

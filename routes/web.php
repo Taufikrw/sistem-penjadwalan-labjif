@@ -87,6 +87,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('schedule/edit-assistant/{id}', [AssistantController::class, 'editAssistant'])->name('schedule.edit-assistant');
     Route::put('schedule/edit-assistant/{id}', [AssistantController::class, 'updateAssistant'])->name('schedule.update-assistant');
 
+    Route::post('/admin/schedules/generate-assistants', [ScheduleController::class, 'generateAssistants'])->name('schedules.generateAssistants');
+
     Route::prefix('api')->group(function () {
         Route::get('get-today-schedules', [ScheduleController::class, 'todaySchedule'])->name('api.today-schedules');
         Route::get('get-assistant-table', [AssistantController::class, 'assistantTable'])->name('api.assistant.table');

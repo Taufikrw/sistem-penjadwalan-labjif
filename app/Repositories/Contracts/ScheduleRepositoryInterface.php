@@ -24,7 +24,7 @@ interface ScheduleRepositoryInterface
 
     public function updateAssistantSchedule($scheduleId, $nim);
 
-    public function getEmptyAssistantSchedules();
+    public function getEmptyAssistantSchedules(array $filters = []);
 
     public function deleteAssistantsByScheduleId($scheduleId);
 

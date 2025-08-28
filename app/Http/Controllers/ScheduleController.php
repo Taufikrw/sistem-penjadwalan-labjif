@@ -7,19 +7,23 @@ use App\Http\Requests\StoreCourseScheduleRequest;
 use App\Http\Requests\StoreScheduleBulkDeleteRequest;
 use App\Http\Requests\StoreScheduleRequest;
 use App\Services\AssistantService;
+use App\Services\GeneticAlgorithmService;
 use App\Services\ScheduleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ScheduleController extends Controller
 {
     protected $scheduleService;
     protected $assistantService;
+    protected $gaService;
 
-    public function __construct(ScheduleService $scheduleService, AssistantService $assistantService)
+    public function __construct(ScheduleService $scheduleService, AssistantService $assistantService, GeneticAlgorithmService $gaService)
     {
         $this->scheduleService = $scheduleService;
         $this->assistantService = $assistantService;
+        $this->gaService = $gaService;
     }
 
     public function index()
@@ -35,7 +39,7 @@ class ScheduleController extends Controller
         $tahunAjar = $request->query('tahun_ajar');
         $semester = $request->query('jenis_semester');
         $dayForm = $request->query('day', 'Senin');
-        
+
         $data = $this->scheduleService->getScheduleCreatePage($semester);
 
         return view('schedule.form', $data, compact('tahunAjar', 'semester', 'dayForm'));
@@ -64,7 +68,7 @@ class ScheduleController extends Controller
         $tahunAjar = $request->query('tahun_ajar');
         $semester = $request->query('jenis_semester');
         $dayForm = $request->query('day', 'Senin');
-        
+
         $schedule = $this->scheduleService->getScheduleDetails($id);
 
         if (!$schedule) {
@@ -350,7 +354,8 @@ class ScheduleController extends Controller
         }
     }
 
-    public function finalizeCourse(string $nim) {
+    public function finalizeCourse(string $nim)
+    {
         $assistant = $this->assistantService->getAssistantsDetails($nim);
 
         if (!$assistant) {
@@ -360,7 +365,7 @@ class ScheduleController extends Controller
             ], 404);
         }
 
-        try {   
+        try {
             $data = $this->assistantService->finalizeCourseSchedule($nim);
 
             return response()->json([
@@ -521,7 +526,8 @@ class ScheduleController extends Controller
         }
     }
 
-    public function indexScheduleAssistant(Request $request) {
+    public function indexScheduleAssistant(Request $request)
+    {
         $schedule = $this->scheduleService->getNewestTahunAjaran();
         $semester = $schedule ? $schedule->jenis_semester : null;
         $tahunAjar = $schedule ? $schedule->tahun_ajar : null;
@@ -533,5 +539,81 @@ class ScheduleController extends Controller
         $day = $request->query('day', 'Semua');
 
         return view('schedule.show', compact('semester', 'tahunAjaran', 'tahunAjar', 'day'));
+    }
+
+    public function generateAssistants(Request $request)
+    {
+        ini_set('max_execution_time', 600);
+
+        $filters = [
+            'tahun_ajar' => $request->input('tahun_ajar'),
+            'jenis_semester' => $request->input('jenis_semester')
+        ];
+
+        try {
+            // Panggil GA service untuk mendapatkan solusi
+            $solution = $this->gaService->generateAssistantSchedule(array_filter($filters));
+
+            if (!$solution) {
+                throw new \Exception('Algoritma Genetika tidak menghasilkan solusi.');
+            }
+
+            // Simpan solusi (baik sempurna maupun parsial)
+            $result = $this->saveSolution($solution);
+
+            // Kirim respons berdasarkan hasil penyimpanan
+            if ($result['clash_count'] > 0) {
+                return response()->json([
+                    'status' => 'warning', // Gunakan status 'warning' untuk di-handle frontend
+                    'message' => "Sebanyak {$result['saved_count']} jadwal berhasil disimpan. Namun {$result['clash_count']} jadwal dilewati karena bentrok.",
+                    'data' => $solution,
+                ]);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Jadwal asisten berhasil digenerate dan disimpan tanpa ada bentrokan!',
+                'data' => $solution,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Menyimpan solusi (sempurna atau parsial) yang sudah final ke database.
+     * @return array Informasi tentang hasil penyimpanan
+     */
+    private function saveSolution(array $solution): array
+    {
+        // Data penugasan yang akan disimpan (bisa sempurna atau parsial)
+        $assignmentsToSave = $solution['assignments'];
+        $clashingIds = [];
+
+        // Jika ada bentrok, filter penugasan yang akan disimpan
+        if ($solution['clashes'] > 0) {
+            $clashingIds = $solution['clashing_schedule_ids'];
+            $assignmentsToSave = array_filter($assignmentsToSave, function ($assignment) use ($clashingIds) {
+                return !in_array($assignment['schedule_id'], $clashingIds);
+            });
+        }
+
+        DB::transaction(function () use ($assignmentsToSave) {
+            // Simpan hanya penugasan yang baru dan tidak bentrok
+            foreach ($assignmentsToSave as $assignment) {
+                $this->scheduleService->assignAssistantsToSchedule(
+                    $assignment['schedule_id'],
+                    $assignment['assistant_nims']
+                );
+            }
+        });
+
+        return [
+            'saved_count' => count($assignmentsToSave),
+            'clash_count' => count($clashingIds)
+        ];
     }
 }

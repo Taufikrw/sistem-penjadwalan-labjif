@@ -152,8 +152,7 @@
                             tableId.html(`
                                 <tr>
                                     <td colspan="2" class="py-8 text-center font-medium">
-                                        <x-icon-no-data class="w-70 mx-auto" />
-                                        <span class="font-bold">Tidak ada data.</span>
+                                        <x-icon-no-data class="w-60 mx-auto" />
                                     </td>
                                 </tr>
                             `);

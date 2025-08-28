@@ -27,4 +27,6 @@ interface AssistantRepositoryInterface
     public function storePreference($nim, $kodePraktikum);
 
     public function getAssistantOverview($filterType = 'status');
+
+    public function getAssistantsByNims(array $nims);
 }

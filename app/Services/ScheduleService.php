@@ -118,4 +118,18 @@ class ScheduleService
     {
         return $this->scheduleRepository->getNewestTahunAjaran();
     }
+
+    public function clearAssistantAssignments(array $scheduleIds): void
+    {
+        foreach ($scheduleIds as $id) {
+            $this->scheduleRepository->deleteAssistantsByScheduleId($id);
+        }
+    }
+
+    public function assignAssistantsToSchedule(string $scheduleId, array $assistantNims): void
+    {
+        foreach ($assistantNims as $nim) {
+            $this->scheduleRepository->setAssistantSchedule($scheduleId, $nim);
+        }
+    }
 }

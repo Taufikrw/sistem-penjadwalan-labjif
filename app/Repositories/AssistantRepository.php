@@ -376,4 +376,9 @@ class AssistantRepository implements AssistantRepositoryInterface
             'total' => $total,
         ];
     }
+
+    public function getAssistantsByNims(array $nims)
+    {
+        return Assistant::whereIn('nim', $nims)->get();
+    }
 }

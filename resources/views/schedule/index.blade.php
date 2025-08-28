@@ -332,7 +332,7 @@
                         cardContainer.append(`
                                 <div
                                     class="rounded-xl bg-white cols-span-1 md:col-span-2 lg:col-span-5 p-4 flex flex-col py-12 justify-center items-center">
-                                    <x-icon-no-data class="w-70 mx-auto" />
+                                    <x-icon-no-data class="w-60 mx-auto" />
                                     <span class="font-bold text-sm text-key-primary">Tidak ada data</span>
                                 </div>
                             `);
