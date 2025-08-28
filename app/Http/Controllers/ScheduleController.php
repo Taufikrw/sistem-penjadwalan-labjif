@@ -543,7 +543,7 @@ class ScheduleController extends Controller
 
     public function generateAssistants(Request $request)
     {
-        ini_set('max_execution_time', 600);
+        ini_set('max_execution_time', 1800);
 
         $filters = [
             'tahun_ajar' => $request->input('tahun_ajar'),
