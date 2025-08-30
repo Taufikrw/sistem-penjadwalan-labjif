@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Log;
 class GeneticAlgorithmService
 {
     protected const CLASH_PENALTY = 1000;
-    protected const PREFERENCE_BONUS = 10;
-    protected const DISTRIBUTION_PENALTY = 150;
+    protected const PREFERENCE_BONUS = 20;
+    protected const DISTRIBUTION_PENALTY = 50;
 
     protected $assistantRepository;
     protected $scheduleRepository;
@@ -49,18 +49,16 @@ class GeneticAlgorithmService
         }
 
         $population = $this->initializePopulation();
-        $bestSolution = null;
-        $bestFitnessScore = PHP_INT_MAX;
-        $bestFitnessResult = ['count' => PHP_INT_MAX, 'clashing_ids' => []];
+        $bestSolution = $population[0];
+        $bestFitnessScore = 0;
 
         for ($generation = 0; $generation < $this->maxGenerations; $generation++) {
-            $fitnessResults = [];
+            $fitnessScores = [];
             foreach ($population as $index => $individual) {
                 $fitnessScore = $this->calculateFitness($individual);
                 $fitnessScores[$index] = $fitnessScore;
 
-                // --- PERUBAHAN UTAMA: Bandingkan fitness score, bukan hanya count ---
-                if ($fitnessScore < $bestFitnessScore) {
+                if ($fitnessScore > $bestFitnessScore) {
                     $bestFitnessScore = $fitnessScore;
                     $bestSolution = $individual;
                 }
@@ -77,10 +75,10 @@ class GeneticAlgorithmService
             $population = $newPopulation;
         }
 
-        Log::warning("Max generations reached. Mengembalikan solusi terbaik yang ditemukan.", ['clashes' => $bestFitnessResult['count']]);
-        $finalClashInfo = $this->getClashInfo($bestSolution);
+        Log::warning("Max generations reached. Mengembalikan solusi terbaik yang ditemukan.", ['fitness_score' => $bestFitnessScore]);
 
-        return $this->formatSolution($bestSolution, $finalClashInfo);
+        $finalClashInfo = $this->getClashInfo($bestSolution);
+        return $this->formatSolution($bestSolution, $finalClashInfo, $bestFitnessScore);
     }
 
     private function prepareInitialData(array $filters): void
@@ -151,31 +149,31 @@ class GeneticAlgorithmService
         if (!empty($assistantClassCounts)) {
             $classCounts = array_values($assistantClassCounts);
             $count = count($classCounts);
-            // Hitung rata-rata (mean)
             $mean = array_sum($classCounts) / $count;
-            // Hitung varians
-            $variance = array_sum(array_map(function ($x) use ($mean) {
-                return pow($x - $mean, 2);
-            }, $classCounts)) / $count;
-            // Standar deviasi adalah akar dari varians
-            $stdDev = sqrt($variance);
-            $distributionPenalty = $stdDev;
+            $variance = array_sum(array_map(fn($x) => pow($x - $mean, 2), $classCounts)) / $count;
+            $distributionPenalty = sqrt($variance);
         }
 
-        // 5. Terapkan formula fitness yang baru
-        return ($clashCount * self::CLASH_PENALTY)
+        // Hitung total skor penalti terlebih dahulu
+        $totalPenaltyScore = ($clashCount * self::CLASH_PENALTY)
             - ($preferenceMatches * self::PREFERENCE_BONUS)
             + ($distributionPenalty * self::DISTRIBUTION_PENALTY);
+
+        // Pastikan skor penalti tidak negatif
+        $nonNegativePenalty = max(0, $totalPenaltyScore);
+
+        // Terapkan rumus maksimasi
+        return 1 / (1 + $nonNegativePenalty);
     }
 
     private function selection(array $population, array $fitnessScores): array
     {
         $bestIndividual = null;
-        $bestFitness = PHP_INT_MAX;
+        $bestFitness = -1;
         for ($i = 0; $i < $this->tournamentSize; $i++) {
             $randomIndex = array_rand($population);
             // Bandingkan skor fitness, bukan 'count'
-            if ($fitnessScores[$randomIndex] < $bestFitness) {
+            if ($fitnessScores[$randomIndex] > $bestFitness) {
                 $bestFitness = $fitnessScores[$randomIndex];
                 $bestIndividual = $population[$randomIndex];
             }
@@ -206,9 +204,10 @@ class GeneticAlgorithmService
         }
     }
 
-    private function formatSolution(array $individual, array $clashInfo): array
+    private function formatSolution(array $individual, array $clashInfo, float $fitnessScore): array
     {
         $formatted = [
+            'fitness_score' => $fitnessScore,
             'clashes' => $clashInfo['count'],
             'clashing_schedule_ids' => $clashInfo['clashing_ids'],
             'assignments' => []
