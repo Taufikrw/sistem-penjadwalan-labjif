@@ -132,4 +132,26 @@ class ScheduleService
             $this->scheduleRepository->setAssistantSchedule($scheduleId, $nim);
         }
     }
+
+    public function getFilterSchedules(string $semester = '')
+    {
+        $semesterFilters = [];
+        if (strtolower($semester) === 'genap') {
+            $semesterFilters = [2, 4, 6];
+        } else if (strtolower($semester) === 'ganjil') {
+            $semesterFilters = [1, 3, 5];
+        } else {
+            $semesterFilters = [1, 2, 3, 4, 5, 6];
+        }
+
+        $practicums = $this->practicumRepository->getAllPracticums(
+            $sortBy = ['name'],
+            $sortOrder = 'asc',
+            $search = '',
+            $filters = ['semester' => $semesterFilters]
+        );
+        $labs = $this->laboratoriumRepository->getAllLaboratoriums();
+
+        return compact('practicums', 'labs');
+    }
 }

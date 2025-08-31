@@ -490,7 +490,16 @@ class ScheduleController extends Controller
         }
         $day = $request->query('day', 'Semua');
 
-        return view('schedule.show', compact('semester', 'tahunAjaran', 'tahunAjar', 'day'));
+        $data = $this->scheduleService->getFilterSchedules($semester);
+        $filtersData = [
+            'day' => $day,
+            'tahun_ajar' => $tahunAjar,
+            'jenis_semester' => $semester,
+            'practicums' => $data['practicums'],
+            'labs' => $data['labs'],
+        ];
+
+        return view('schedule.show', compact('semester', 'tahunAjaran', 'tahunAjar', 'day'), ['filters' => $filtersData]);
     }
 
     public function scheduleTable(Request $request)
@@ -506,9 +515,13 @@ class ScheduleController extends Controller
             'tahun_ajar' => $request->get('tahun_ajar', ''),
             'jenis_semester' => $request->get('jenis_semester', ''),
             'start_time' => $request->get('start_time', ''),
+            'end_time' => $request->get('end_time', ''),
+            'assistant_count' => $request->get('assistant_count', ''),
         ];
 
-        $filters = array_filter($filters);
+        $filters = array_filter($filters, function ($value) {
+            return $value !== null && $value !== '';
+        });
 
         try {
             $schedules = $this->scheduleService->getScheduleData($sortBy, $sortOrder, $search, $filters);

@@ -4,7 +4,8 @@
             <thead class="text-key-primary">
                 <tr>
                     @if ($hasActions)
-                        <th scope="col" class="px-2 py-3 w-8 sticky top-0 bg-white border-b border-[#E5E2E1] whitespace-nowrap">
+                        <th scope="col"
+                            class="px-2 py-3 w-8 sticky top-0 bg-white border-b border-[#E5E2E1] whitespace-nowrap">
                             <div class="flex items-center justify-center h-full">
                                 <input type="checkbox" id="selectAllCheckboxes"
                                     class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer" />
@@ -12,7 +13,8 @@
                         </th>
                     @endif
                     @foreach ($columns as $column)
-                        <th scope="col" class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1] whitespace-nowrap">
+                        <th scope="col"
+                            class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1] whitespace-nowrap">
                             <span
                                 class="flex items-center gap-1 font-bold {{ $column['sortable'] ? 'sortable cursor-pointer' : '' }}"
                                 data-field="{{ $column['field'] }}" data-sort-direction="">
@@ -27,7 +29,8 @@
                         </th>
                     @endforeach
                     @if ($hasActions)
-                        <th scope="col" class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1] whitespace-nowrap">
+                        <th scope="col"
+                            class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1] whitespace-nowrap">
                             <span class="flex items-center gap-1 font-bold">
                                 Aksi
                             </span>
@@ -387,6 +390,32 @@
                 $(`#pagination`).html(html);
             }
 
+            function checkFilterActive() {
+                // Cek apakah ada filter aktif
+                let hasActiveFilter = false;
+                // Cek hidden input (select2)
+                $('#filter-container').find('input[type="hidden"]').each(function() {
+                    if ($(this).val()) hasActiveFilter = true;
+                });
+                // Cek radio/checkbox
+                $('#filter-container').find('input[type="checkbox"]:checked, input[type="radio"]:checked')
+                    .each(function() {
+                        hasActiveFilter = true;
+                    });
+                // Cek input time
+                $('#filter-container').find('input[type="time"]').each(function() {
+                    if ($(this).val()) hasActiveFilter = true;
+                });
+
+                if (!$('#filter-container').hasClass('hidden') || hasActiveFilter) {
+                    $('#btn-filter-toggle').addClass('border-key-secondary').removeClass(
+                        'border-transparent');
+                } else {
+                    $('#btn-filter-toggle').removeClass('border-key-secondary').addClass(
+                        'border-transparent');
+                }
+            }
+
             document.addEventListener('reload-table', function(event) {
                 loadTableData(currentPage);
             });
@@ -732,6 +761,115 @@
                         );
                     }
                 });
+            });
+
+            $('#btn-filter-toggle').on('click', function() {
+                $('#filter-container').toggleClass('hidden');
+                checkFilterActive();
+            });
+
+            $('#btn-filter-close').on('click', function() {
+                $('#filter-container').addClass('hidden');
+                checkFilterActive();
+            });
+
+            $('#btn-filter-apply').on('click', function() {
+                // 1. Kumpulkan semua nilai filter
+                currentFilters = {
+                    day: '{{ $filters['day'] ?? '' }}',
+                    jenis_semester: '{{ $filters['jenis_semester'] ?? '' }}',
+                    tahun_ajar: '{{ $filters['tahun_ajar'] ?? '' }}',
+                };
+
+                // Filter untuk Jadwal
+                if ($('#hidden-filter-practicum').length) {
+                    currentFilters.practicum_name = $('#hidden-filter-practicum').val();
+                }
+                if ($('#hidden-filter-lab').length) {
+                    currentFilters.laboratorium_name = $('#hidden-filter-lab').val();
+                }
+                if ($('input[name="assistant_count"]:checked').length) {
+                    currentFilters.assistant_count = $('input[name="assistant_count"]:checked').val();
+                }
+                if ($('#filter-start-time').length) {
+                    currentFilters.start_time = $('#filter-start-time').val();
+                }
+                if ($('#filter-end-time').length) {
+                    currentFilters.end_time = $('#filter-end-time').val();
+                }
+                if ($('#filter-day').length) {
+                    currentFilters.day = $('#filter-day').val();
+                }
+                if ($('#filter-jenis-semester').length) {
+                    currentFilters.jenis_semester = $('#filter-jenis-semester').val();
+                }
+                if ($('#filter-tahun-ajar').length) {
+                    currentFilters.tahun_ajar = $('#filter-tahun-ajar').val();
+                }
+
+                // Filter untuk Asisten
+                if ($('input[name="prodi[]"]:checked').length > 0) {
+                    currentFilters.prodi = $('input[name="prodi[]"]:checked').map(function() {
+                        return $(this).val();
+                    }).get();
+                }
+                if ($('#filter-year').length) {
+                    currentFilters.class_year = $('#filter-year').val();
+                }
+                if ($('input[name="status"]:checked').length) {
+                    currentFilters.status = $('input[name="status"]:checked').val();
+                }
+
+                let activeCount = 0;
+                if (currentFilters.practicum_name) activeCount++;
+                if (currentFilters.laboratorium_name) activeCount++;
+                if (currentFilters.assistant_count) activeCount++;
+                if (currentFilters.start_time) activeCount++;
+                if (currentFilters.end_time) activeCount++;
+
+                if (activeCount > 0) {
+                    $('#filter-badge').text(activeCount).removeClass('hidden');
+                } else {
+                    $('#filter-badge').addClass('hidden');
+                }
+
+                // 2. Muat ulang data tabel dengan filter baru
+                loadTableData(1); // Selalu kembali ke halaman 1 setelah filter
+
+                // 3. Tutup panel filter
+                $('#filter-container').addClass('hidden');
+            });
+
+            // Tombol "Reset"
+            $('#btn-filter-reset').on('click', function() {
+                // 1. Hapus semua nilai di form filter
+                $('#filter-container').find('input[type="checkbox"], input[type="radio"]').prop('checked',
+                    false);
+                $('#filter-container').find('input[type="time"]').val('');
+                $('#filter-container').find('input[type="hidden"]').each(function() {
+                    $(this).val('').trigger('change');
+                    // Cari span untuk teks select dan kembalikan ke placeholder
+                    const container = $(this).closest('div[id^="container-"]');
+                    const selectedText = container.find('span[id^="selected-text-"]');
+                    const placeholder = selectedText.data('placeholder') || 'Pilih salah satu';
+                    selectedText.text(placeholder).removeClass('text-gray-900').addClass(
+                        'text-gray-500');
+                });
+
+                // 2. Kosongkan objek filter
+                currentFilters = {
+                    day: '{{ $filters['day'] ?? '' }}',
+                    jenis_semester: '{{ $filters['jenis_semester'] ?? '' }}',
+                    tahun_ajar: '{{ $filters['tahun_ajar'] ?? '' }}',
+                };
+
+                // 3. Muat ulang tabel
+                loadTableData(1);
+
+                // 4. Tutup panel filter
+                $('#filter-container').addClass('hidden');
+                $('#filter-badge').addClass('hidden');
+                $('#btn-filter-toggle').removeClass('border-key-secondary').addClass('border-transparent');
             });
         });
     </script>

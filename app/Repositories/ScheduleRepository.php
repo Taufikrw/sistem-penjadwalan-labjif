@@ -62,10 +62,24 @@ class ScheduleRepository implements ScheduleRepositoryInterface
                 $query->whereHas('laboratorium', function ($q) use ($lowerValue) {
                     $q->whereRaw('LOWER(laboratoriums.name) LIKE ?', ["%{$lowerValue}%"]);
                 });
-            } elseif (in_array($key, ['tahun_ajar', 'jenis_semester', 'start_time'])) {
+            } elseif (in_array($key, ['tahun_ajar', 'jenis_semester'])) {
                 $query->whereRaw("LOWER({$key}) LIKE ?", ["%{$lowerValue}%"]);
             } elseif ($key === 'day') {
                 $query->where($key, 'ILIKE', "%{$value}%");
+            } elseif ($key === 'start_time') {
+                // Filter schedules where start_time >= $value
+                $query->where('start_time', '>=', $value);
+            } elseif ($key === 'end_time') {
+                // Filter schedules where end_time <= $value
+                $query->where('end_time', '<=', $value);
+            } elseif ($key === 'assistant_count') {
+                if ($value !== '' && !is_null($value)) {
+                    if ($value == 0) {
+                        $query->whereDoesntHave('assistantSchedules');
+                    } elseif (is_numeric($value) && $value > 0) {
+                        $query->has('assistantSchedules', '=', (int)$value);
+                    }
+                }
             }
         }
 
