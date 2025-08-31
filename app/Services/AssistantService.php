@@ -244,4 +244,12 @@ class AssistantService
     {
         return $this->assistantRepository->getAssistantOverview($filterType);
     }
+
+    public function getFilterAssistantOptions()
+    {
+        $angkatan = $this->assistantRepository->getUniqueAngkatan();
+        $tahun_masuk = $this->assistantRepository->getUniqueTahunMasuk();
+
+        return compact('angkatan', 'tahun_masuk');
+    }
 }

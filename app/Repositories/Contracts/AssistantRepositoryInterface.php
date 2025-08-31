@@ -29,4 +29,8 @@ interface AssistantRepositoryInterface
     public function getAssistantOverview($filterType = 'status');
 
     public function getAssistantsByNims(array $nims);
+
+    public function getUniqueAngkatan();
+
+    public function getUniqueTahunMasuk();
 }

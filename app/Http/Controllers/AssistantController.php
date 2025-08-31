@@ -33,7 +33,13 @@ class AssistantController extends Controller
 
     public function index()
     {
-        return view('assistant.index');
+        $data = $this->assistantService->getFilterAssistantOptions();
+        $filtersData = [
+            'angkatan' => $data['angkatan'],
+            'tahun_masuk' => $data['tahun_masuk'],
+        ];
+
+        return view('assistant.index', ['filters' => $filtersData]);
     }
 
     public function assistantTable(Request $request)
@@ -47,6 +53,7 @@ class AssistantController extends Controller
             'prodi' => $request->get('prodi', ''),
             'angkatan' => $request->get('angkatan', ''),
             'tahun_masuk' => $request->get('tahun_masuk', ''),
+            'course' => $request->get('course', ''),
         ];
 
         $filters = array_filter($filters);

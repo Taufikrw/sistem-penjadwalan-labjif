@@ -808,16 +808,20 @@
                 }
 
                 // Filter untuk Asisten
-                if ($('input[name="prodi[]"]:checked').length > 0) {
-                    currentFilters.prodi = $('input[name="prodi[]"]:checked').map(function() {
-                        return $(this).val();
-                    }).get();
+                if ($('input[name="prodi"]:checked').length > 0) {
+                    currentFilters.prodi = $('input[name="prodi"]:checked').val();
                 }
-                if ($('#filter-year').length) {
-                    currentFilters.class_year = $('#filter-year').val();
+                if ($('#hidden-filter-angkatan').length) {
+                    currentFilters.angkatan = $('#hidden-filter-angkatan').val();
+                }
+                if ($('#hidden-filter-tahun-masuk').length) {
+                    currentFilters.tahun_masuk = $('#hidden-filter-tahun-masuk').val();
                 }
                 if ($('input[name="status"]:checked').length) {
                     currentFilters.status = $('input[name="status"]:checked').val();
+                }
+                if ($('input[name="course"]:checked').length) {
+                    currentFilters.course = $('input[name="course"]:checked').val();
                 }
 
                 let activeCount = 0;
@@ -826,6 +830,11 @@
                 if (currentFilters.assistant_count) activeCount++;
                 if (currentFilters.start_time) activeCount++;
                 if (currentFilters.end_time) activeCount++;
+                if (currentFilters.prodi) activeCount++;
+                if (currentFilters.angkatan) activeCount++;
+                if (currentFilters.tahun_masuk) activeCount++;
+                if (currentFilters.status) activeCount++;
+                if (currentFilters.course) activeCount++;
 
                 if (activeCount > 0) {
                     $('#filter-badge').text(activeCount).removeClass('hidden');

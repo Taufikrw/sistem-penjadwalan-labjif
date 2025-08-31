@@ -42,9 +42,22 @@ class AssistantRepository implements AssistantRepositoryInterface
         }
 
         foreach ($filters as $key => $value) {
-            if (in_array($key, ['status', 'prodi', 'angkatan', 'tahun_masuk'])) {
+            if ($key === 'status') {
                 $lowerValue = strtolower($value);
-                $query->whereRaw("LOWER({$key}) LIKE ?", ["%{$lowerValue}%"]);
+                if ($lowerValue === 'aktif') {
+                    // Hanya status 'aktif' saja
+                    $query->where('status', 'aktif');
+                } else {
+                    // Status lain, tetap gunakan LIKE
+                    $query->whereRaw("LOWER(status) LIKE ?", ["%{$lowerValue}%"]);
+                }
+            } elseif ($key === 'prodi') {
+                $lowerValue = strtolower($value);
+                $query->whereRaw("LOWER(prodi) LIKE ?", ["%{$lowerValue}%"]);
+            } elseif (in_array($key, ['angkatan', 'tahun_masuk'])) {
+                $query->whereRaw("CAST({$key} AS TEXT) LIKE ?", ["%{$value}%"]);
+            } elseif ($key === 'course') {
+                $query->where('is_final', $value);
             }
         }
 
@@ -380,5 +393,15 @@ class AssistantRepository implements AssistantRepositoryInterface
     public function getAssistantsByNims(array $nims)
     {
         return Assistant::whereIn('nim', $nims)->get();
+    }
+
+    public function getUniqueAngkatan()
+    {
+        return Assistant::distinct()->orderBy('angkatan', 'desc')->pluck('angkatan')->toArray();
+    }
+
+    public function getUniqueTahunMasuk()
+    {
+        return Assistant::distinct()->orderBy('tahun_masuk', 'desc')->pluck('tahun_masuk')->toArray();
     }
 }

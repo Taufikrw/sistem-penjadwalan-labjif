@@ -7,11 +7,9 @@
 
     <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
-            <x-button-secondary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl" type="button"
-                id="btn-filter-assistant" onclick="">
-                <x-heroicon-s-funnel class="w-4 h-4" />
-                Filter
-            </x-button-secondary>
+            <div class="relative">
+                <x-filter type="assistant" :filters="$filters ?? []" />
+            </div>
             <div class="relative w-full md:w-80 bg-white">
                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-[#C9C6C5]" fill="currentColor" viewBox="0 0 20 20">
