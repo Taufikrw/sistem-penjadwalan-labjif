@@ -551,7 +551,16 @@ class ScheduleController extends Controller
         }
         $day = $request->query('day', 'Semua');
 
-        return view('schedule.show', compact('semester', 'tahunAjaran', 'tahunAjar', 'day'));
+        $data = $this->scheduleService->getFilterSchedules($semester);
+        $filtersData = [
+            'day' => $day,
+            'tahun_ajar' => $tahunAjar,
+            'jenis_semester' => $semester,
+            'practicums' => $data['practicums'],
+            'labs' => $data['labs'],
+        ];
+
+        return view('schedule.show', compact('semester', 'tahunAjaran', 'tahunAjar', 'day'), ['filters' => $filtersData]);
     }
 
     public function generateAssistants(Request $request)
