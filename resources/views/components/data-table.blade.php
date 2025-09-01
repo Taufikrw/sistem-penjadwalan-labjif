@@ -315,12 +315,14 @@
                 if (checkedCount > 0) {
                     $(`#${btnCreateId}`).addClass('hidden');
                     $('#btn-finalize-course').addClass('hidden');
+                    $('#btn-generate-schedule').addClass('hidden');
                     $('#deleted-info').removeClass('hidden');
                     $('#deleted-info').addClass('flex');
                     $('#selected-info').removeClass('hidden').text(`${checkedCount} Dipilih`);
                 } else {
                     $(`#${btnCreateId}`).removeClass('hidden');
                     $('#btn-finalize-course').removeClass('hidden');
+                    $('#btn-generate-schedule').removeClass('hidden');
                     $('#deleted-info').addClass('hidden');
                     $('#deleted-info').removeClass('flex');
                     $('#selected-info').addClass('hidden').text('0 Dipilih');
@@ -409,10 +411,10 @@
 
                 if (!$('#filter-container').hasClass('hidden') || hasActiveFilter) {
                     $('#btn-filter-toggle').addClass('border-key-secondary').removeClass(
-                        'border-transparent');
+                        'border-[#D9D9D9]');
                 } else {
                     $('#btn-filter-toggle').removeClass('border-key-secondary').addClass(
-                        'border-transparent');
+                        'border-[#D9D9D9]');
                 }
             }
 
@@ -878,7 +880,7 @@
                 // 4. Tutup panel filter
                 $('#filter-container').addClass('hidden');
                 $('#filter-badge').addClass('hidden');
-                $('#btn-filter-toggle').removeClass('border-key-secondary').addClass('border-transparent');
+                $('#btn-filter-toggle').removeClass('border-key-secondary').addClass('border-[#D9D9D9]');
             });
         });
     </script>

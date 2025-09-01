@@ -1,6 +1,6 @@
 <div>
     <x-button-secondary
-        class="flex justify-between items-center px-4 py-2 text-md gap-3 rounded-xl border border-transparent"
+        class="flex justify-between items-center px-4 h-full text-md gap-3 rounded-xl border border-[#D9D9D9]"
         type="button" id="btn-filter-toggle">
         <div class="flex items-center gap-2">
             <x-heroicon-s-funnel class="w-4 h-4" />
