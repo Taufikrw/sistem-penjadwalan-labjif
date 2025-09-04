@@ -219,7 +219,7 @@
                                             });
                                         } else {
                                             rowsHtml +=
-                                                `<span class="block">Tidak ada asisten</span>`;
+                                                `<span class="block">-</span>`;
                                         }
                                         rowsHtml += `</td>`;
                                     } else {
@@ -233,31 +233,31 @@
                                     if (primary === 'nim') {
                                         rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1] whitespace-nowrap">
                                             <div class="flex items-center gap-2">
-                                                <button data-id="${item.nim}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
-                                                <button data-id="${item.nim}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                                <button data-id="${item.nim}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-key-tertiary hover:text-key-secondary cursor-pointer" /></button>
+                                                <button data-id="${item.nim}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-key-tertiary hover:text-key-secondary cursor-pointer" /></button>
                                             </div>
                                         </td>`;
                                     } else if (primary === 'kode_praktikum') {
                                         rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1] whitespace-nowrap">
                                             <div class="flex items-center gap-2">
-                                                <button data-id="${item.kode_praktikum}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
-                                                <button data-id="${item.kode_praktikum}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                                <button data-id="${item.kode_praktikum}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-key-tertiary hover:text-key-secondary cursor-pointer" /></button>
+                                                <button data-id="${item.kode_praktikum}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-key-tertiary hover:text-key-secondary cursor-pointer" /></button>
                                             </div>
                                         </td>`;
                                     } else {
                                         if (hasSetAssistant) {
                                             rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1] whitespace-nowrap">
                                                 <div class="flex items-center gap-2">
-                                                    <button data-id="${item.id}" class="btn-set-assistant"><x-heroicon-s-users class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
-                                                    <button data-id="${item.id}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
-                                                    <button data-id="${item.id}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                                    <button data-id="${item.id}" class="btn-set-assistant"><x-heroicon-s-users class="w-5 h-5 text-key-tertiary hover:text-key-secondary cursor-pointer" /></button>
+                                                    <button data-id="${item.id}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-key-tertiary hover:text-key-secondary cursor-pointer" /></button>
+                                                    <button data-id="${item.id}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-key-tertiary hover:text-key-secondary cursor-pointer" /></button>
                                                 </div>
                                             </td>`;
                                         } else {
                                             rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1] whitespace-nowrap">
                                                 <div class="flex items-center gap-2">
-                                                    <button data-id="${item.id}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
-                                                    <button data-id="${item.id}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-[#BCC2FF] hover:text-key-secondary cursor-pointer" /></button>
+                                                    <button data-id="${item.id}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-key-tertiary hover:text-key-secondary cursor-pointer" /></button>
+                                                    <button data-id="${item.id}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-key-tertiary hover:text-key-secondary cursor-pointer" /></button>
                                                 </div>
                                             </td>`;
                                         }
@@ -339,7 +339,7 @@
                         const from = pagination.from ?? 0;
                         const to = pagination.to ?? 0;
                         const total = pagination.total ?? 0;
-                        html += `<div class="text-[#5A5A5A] px-2">
+                        html += `<div class="text-[#5A5A5A] font-semibold px-2">
                             ${from} hingga ${to} data dari ${total}
                         </div>`;
                     } else {

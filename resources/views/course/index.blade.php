@@ -35,7 +35,7 @@
         <div class="flex items-center gap-4">
             @if (!$assistant->is_final && Auth::user()->role === 'assistant')
                 <button
-                    class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl bg-[#1E49F0] hover:bg-[#0031C5] text-white font-bold focus:outline-none cursor-pointer transition-colors duration-300"
+                    class="flex justify-between items-center px-5 py-2.5 text-md gap-2 rounded-xl border-2 border-key-tertiary hover:bg-key-secondary hover:text-white text-key-tertiary font-bold focus:outline-none cursor-pointer transition-colors duration-300"
                     type="button" id="btn-finalize-course">
                     <x-heroicon-s-check-circle class="w-5 h-5" />
                     Finalisasi
@@ -68,7 +68,7 @@
             :columns="[
                 ['label' => 'Hari', 'field' => 'day', 'sortable' => true],
                 ['label' => 'Mata Kuliah', 'field' => 'course', 'sortable' => true],
-                ['label' => 'Kelas', 'field' => 'name', 'sortable' => true],
+                ['label' => 'Kelas', 'field' => 'class_name', 'sortable' => true],
                 ['label' => 'Jam', 'field' => 'jam', 'sortable' => true],
             ]" :has-actions="false" table-id="laboratorium-table" search-input-id="search-course"
             btn-create-id="btn-create-course" />
@@ -79,7 +79,7 @@
             :columns="[
                 ['label' => 'Hari', 'field' => 'day', 'sortable' => true],
                 ['label' => 'Mata Kuliah', 'field' => 'course', 'sortable' => true],
-                ['label' => 'Kelas', 'field' => 'name', 'sortable' => true],
+                ['label' => 'Kelas', 'field' => 'class_name', 'sortable' => true],
                 ['label' => 'Jam', 'field' => 'jam', 'sortable' => true],
             ]" :has-actions="true" table-id="laboratorium-table" search-input-id="search-course"
             btn-create-id="btn-create-course" />
@@ -143,11 +143,47 @@
                                 _token: $('meta[name="csrf-token"]').attr('content')
                             },
                             success: function(response) {
-                                Swal.fire(
-                                    'Berhasil!',
-                                    response.message,
-                                    'success'
-                                ).then(() => {
+                                Swal.fire({
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    width: '430px',
+                                    customClass: {
+                                        popup: 'my-swal-popup'
+                                    },
+                                    html: `
+                                        <div class="flex flex-col items-center justify-between h-full">
+                                            <div class="mt-8">
+                                                <div class="mb-4">
+                                                    <x-heroicon-s-check-circle class="w-16 h-16 text-green-400 mx-auto" />
+                                                </div>
+                                                <div class="font-bold text-key-primary text-lg mb-2">Finalisasi Berhasil!</div>
+                                                <div class="text-black font-semibold mb-4">
+                                                    ${response.message}
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-center w-full mt-6">
+                                                <x-button-primary id="swal-confirm-btn" type="button" class="rounded-xl py-3 px-6 text-sm">
+                                                    Oke
+                                                </x-button-primary>
+                                            </div>
+                                        </div>
+                                        <style>
+                                            .my-swal-popup {
+                                                min-height: 200px;
+                                                max-height: 90vh;
+                                                border-radius: 1.5rem !important;
+                                                overflow-y: auto;
+                                            }
+                                        </style>
+                                    `,
+                                    didOpen: () => {
+                                        $('#swal-confirm-btn').on(
+                                            'click',
+                                            function() {
+                                                Swal.clickConfirm();
+                                            });
+                                    }
+                                }).then(() => {
                                     location.reload();
                                 });
                             },

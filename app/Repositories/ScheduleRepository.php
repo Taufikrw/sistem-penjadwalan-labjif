@@ -13,9 +13,9 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 {
     public function getAllSchedules($sortBy = ['start_time', 'practicum_name'], $order = 'asc', $search = '', array $filters = [], $perPage = null)
     {
-        $allowedSortColumns = ['day', 'practicum_name', 'start_time', 'name', 'course', 'created_at'];
+        $allowedSortColumns = ['day', 'practicum_name', 'start_time', 'name', 'course', 'jam'];
         $sortBy = array_filter($sortBy, fn($column) => in_array($column, $allowedSortColumns));
-        $sortBy = empty($sortBy) ? ['start_time'] : $sortBy;
+        $sortBy = empty($sortBy) ? ['day', 'start_time', 'laboratorium_name'] : $sortBy;
         $order = in_array(strtolower($order), ['asc', 'desc']) ? strtolower($order) : 'asc';
 
         $query = Schedule::with(['assistantSchedules']);
@@ -28,6 +28,13 @@ class ScheduleRepository implements ScheduleRepositoryInterface
                     DB::raw('(SELECT name FROM practicums WHERE practicums.kode_praktikum = schedules.kode_praktikum)'),
                     $order
                 );
+            } elseif ($column === 'laboratorium_name') {
+                $query->orderBy(
+                    DB::raw('(SELECT name FROM laboratoriums WHERE laboratoriums.id = schedules.laboratorium_id)'),
+                    $order
+                );
+            } elseif ($column === 'jam') {
+                $query->orderBy('start_time', $order);
             } else {
                 $query->orderBy($column, $order);
             }
@@ -226,7 +233,7 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 
     public function getCourseSchedulesByNim($nim, $sortBy = 'day', $order = 'asc', $search = '', $perPage = null)
     {
-        $allowedSortColumns = ['start_time', 'name', 'course'];
+        $allowedSortColumns = ['jam', 'class_name', 'course'];
         $sortBy = in_array(strtolower($sortBy), $allowedSortColumns) ? strtolower($sortBy) : 'day';
         $order = in_array(strtolower($order), ['asc', 'desc']) ? strtolower($order) : 'asc';
 
@@ -246,6 +253,10 @@ class ScheduleRepository implements ScheduleRepositoryInterface
         foreach ((array) $sortBy as $column) {
             if ($column === 'day') {
                 $query->orderByRaw("CASE day WHEN 'Senin' THEN 1 WHEN 'Selasa' THEN 2 WHEN 'Rabu' THEN 3 WHEN 'Kamis' THEN 4 WHEN 'Jumat' THEN 5 WHEN 'Sabtu' THEN 6 WHEN 'Minggu' THEN 7 ELSE 8 END " . ($order === 'desc' ? 'DESC' : 'ASC'));
+            } else if ($column === 'class_name') {
+                $query->orderBy('name', $order);
+            } elseif ($column === 'jam') {
+                $query->orderBy('start_time', $order);
             } else {
                 $query->orderBy($column, $order);
             }

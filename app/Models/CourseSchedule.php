@@ -28,7 +28,7 @@ class CourseSchedule extends Model
         'end_time' => 'datetime:H:i',
     ];
 
-    protected $appends = ['jam'];
+    protected $appends = ['jam', 'class_name'];
 
     public function assistant()
     {
@@ -38,5 +38,17 @@ class CourseSchedule extends Model
     public function getJamAttribute()
     {
         return $this->start_time->format('H:i A') . ' - ' . $this->end_time->format('H:i A');
+    }
+
+    public function getClassNameAttribute()
+    {
+        $prodi = $this->assistant ? $this->assistant->prodi : null;
+        if ($prodi === 'Sistem Informasi') {
+            return 'SI-' . $this->name;
+        } elseif ($prodi === 'Informatika') {
+            return 'IF-' . $this->name;
+        } else {
+            return $this->name;
+        }
     }
 }

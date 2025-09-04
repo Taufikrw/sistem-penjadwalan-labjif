@@ -371,7 +371,7 @@ class ScheduleController extends Controller
             return response()->json([
                 'status' => 'success',
                 'data' => $data,
-                'message' => 'Jadwal kuliah berhasil difinalisasi.',
+                'message' => 'Jadwal kuliah Anda sudah tersimpan dan tidak dapat diubah lagi.',
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -504,8 +504,8 @@ class ScheduleController extends Controller
 
     public function scheduleTable(Request $request)
     {
-        $sortBy = $request->get('sort_by', 'start_time');
-        $sortOrder = $request->get('sort_order', 'desc');
+        $sortBy = $request->get('sort_by', '');
+        $sortOrder = $request->get('sort_order', '');
         $search = $request->get('search', '');
 
         $filters = [
