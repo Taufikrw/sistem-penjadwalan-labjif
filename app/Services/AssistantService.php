@@ -71,7 +71,7 @@ class AssistantService
 
         return compact('assistant', 'schedules');
     }
-    
+
     public function getCourseDetails($id)
     {
         $course = $this->courseScheduleRepository->getCourseScheduleById($id);
@@ -223,6 +223,11 @@ class AssistantService
         return compact('assistant', 'practicums', 'selectedPracticums');
     }
 
+    public function getPracticumByKode(string $kode_praktikum)
+    {
+        return $this->practicumRepository->getPracticumByKode($kode_praktikum);
+    }
+
     public function storePreference(array $data, string $nim)
     {
         $assistant = $this->assistantRepository->getAssistantByNim($nim);
@@ -251,5 +256,17 @@ class AssistantService
         $tahun_masuk = $this->assistantRepository->getUniqueTahunMasuk();
 
         return compact('angkatan', 'tahun_masuk');
+    }
+
+    public function updateBiodataAndPreferences(array $data, string $nim)
+    {
+        $this->assistantRepository->updateAssistant($nim, $data);
+        $this->assistantRepository->deletePreferencesByNim($nim);
+
+        if (!empty($data['practicums'])) {
+            foreach ($data['practicums'] as $kode_praktikum) {
+                $this->assistantRepository->storePreference($nim, $kode_praktikum);
+            }
+        }
     }
 }

@@ -9,25 +9,21 @@
         </a>
     </x-slot:back_button>
 
-    <div class="flex gap-8 w-full">
-        <form action="{{ route('assistant.update-biodata') }}" method="POST" enctype="multipart/form-data"
-            id="biodata-form" class="w-3/5">
-            @csrf
-            @method('PUT')
+    <x-slot:header_actions>
+        <x-button-primary form="biodata-form" class="rounded-xl px-6" type="submit" id="btn-submit-biodata">
+            Simpan
+        </x-button-primary>
+    </x-slot:header_actions>
 
-            <div class="rounded-lg bg-white flex-1 py-10 px-8">
+    <form action="{{ route('assistant.update-biodata') }}" method="POST" enctype="multipart/form-data" id="biodata-form">
+        @csrf
+        @method('PUT')
+        <div class="flex gap-8 w-full">
+            <div class="rounded-lg bg-white w-3/5 py-16 px-8 border border-[#D9D9D9]">
                 <div class="grid grid-cols-2 gap-4">
                     <div class="col-span-2 mb-4">
                         <img src="{{ $assistant->foto ? asset('storage/assistants/' . $assistant->foto) : asset('assets/images/Avatar.svg') }}"
-                            alt="avatar" class="mx-auto rounded-full w-48 h-48 object-cover">
-                    </div>
-                    <div>
-                        <x-input-label for="name" class="mb-1 text-sm" value="Nama" />
-                        <x-text-input name="name" id="name" class="w-full" :value="old('name', $assistant->name)"
-                            placeholder="Masukkan nama" required />
-                        @error('name')
-                            <span class="text-red-500 text-xs">{{ $message }}</span>
-                        @enderror
+                            alt="avatar" class="mx-auto rounded-full w-40 h-40 object-cover">
                     </div>
                     <div>
                         <x-input-label for="nim" class="mb-1 text-sm" value="NIM" />
@@ -39,8 +35,8 @@
                     </div>
                     <div>
                         <x-input-label for="prodi" class="mb-1 text-sm" value="Program Studi" />
-                        <x-select-input id="prodi_select" name="prodi" :options="['Sistem Informasi' => 'Sistem Informasi', 'Informatika' => 'Informatika']" placeholder="Pilih prodi"
-                            :selected="$assistant->prodi" />
+                        <x-text-input name="prodi" id="prodi" class="w-full" :value="old('prodi', $assistant->prodi)"
+                            placeholder="Masukkan prodi" disabled />
                         @error('prodi')
                             <span class="text-red-500 text-xs">{{ $message }}</span>
                         @enderror
@@ -48,8 +44,16 @@
                     <div>
                         <x-input-label for="angkatan" class="mb-1 text-sm" value="Angkatan" />
                         <x-text-input name="angkatan" id="angkatan" class="w-full" type="number" :value="old('angkatan', $assistant->angkatan)"
-                            placeholder="Masukkan angkatan" required />
+                            placeholder="Masukkan angkatan" disabled />
                         @error('angkatan')
+                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div>
+                        <x-input-label for="name" class="mb-1 text-sm" value="Nama" />
+                        <x-text-input name="name" id="name" class="w-full" :value="old('name', $assistant->name)"
+                            placeholder="Masukkan nama" required />
+                        @error('name')
                             <span class="text-red-500 text-xs">{{ $message }}</span>
                         @enderror
                     </div>
@@ -70,109 +74,153 @@
                         @enderror
                     </div>
                 </div>
-
-                <div class="mt-8 flex justify-between items-center w-full">
-                    <a href="{{ route('dashboard') }}">
-                        <x-button-secondary class="rounded-xl py-3 px-6" type="button" id="btn-cancel-biodata">
-                            Batal
-                        </x-button-secondary>
-                    </a>
-                    <x-button-primary class="rounded-xl py-3 px-6" type="submit" id="btn-submit-biodata">
-                        Simpan
-                    </x-button-primary>
+            </div>
+            <div class="rounded-lg px-4 bg-white w-2/5 h-fit flex flex-col border border-[#D9D9D9]"
+                style="max-height: 60vh;">
+                <table class="w-full text-sm text-left rtl:text-right text-key-primary">
+                    <thead class="border-b border-[#E5E2E1] sticky top-0 bg-white z-10">
+                        <tr>
+                            <th scope="col" class="px-4 py-3">
+                                <div class="flex justify-between gap-2 mt-2" data-field="preference"
+                                    data-sort-direction="">
+                                    <div class="flex flex-col gap-1">
+                                        <span class="font-bold">
+                                            Preferensi Mata Kuliah
+                                        </span>
+                                        <span class="text-[#757575] font-medium">
+                                            Pilih mata kuliah yang ingin kamu ajar
+                                        </span>
+                                    </div>
+                                    <x-heroicon-s-squares-plus
+                                        class="w-6 h-6 text-key-tertiary cursor-pointer hover:text-key-secondary"
+                                        id="open-preference-modal-btn" />
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+                <div class="overflow-y-auto flex-1">
+                    <table class="w-full text-sm text-left rtl:text-right text-key-primary">
+                        <tbody id="preference-display-list">
+                            @forelse ($selectedPracticums as $preference)
+                                <tr data-kode="{{ $preference->kode_praktikum }}" class="border-b border-[#E5E2E1]">
+                                    <td class="px-4 py-4 text-[#1E1E1E]">{{ $preference->name }}</td>
+                                </tr>
+                            @empty
+                                <tr id="no-preference-row">
+                                    <td class="px-4 py-8 text-center text-gray-500">Belum ada preferensi.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div id="hidden-practicums-container">
+                    @foreach ($selectedPracticums as $preference)
+                        <input type="hidden" name="practicums[]" value="{{ $preference->kode_praktikum }}">
+                    @endforeach
                 </div>
             </div>
-        </form>
-        <div class="rounded-lg px-4 bg-white w-2/5 h-fit flex flex-col" style="max-height: 60vh;">
-            <table class="w-full text-sm text-left rtl:text-right text-key-primary">
-                <thead class="border-b border-[#E5E2E1] sticky top-0 bg-white z-10">
-                    <tr>
-                        <th scope="col" class="px-4 py-3">
-                            <span class="flex items-center gap-2 font-extrabold" data-field="preference"
-                                data-sort-direction="">
-                                Preferensi
-                                <x-heroicon-s-pencil-square
-                                    class="w-4 h-4 text-key-tertiary cursor-pointer hover:text-key-secondary"
-                                    onclick="showDynamicModal()" />
-                            </span>
-                        </th>
-                    </tr>
-                </thead>
-            </table>
-            <div class="overflow-y-auto flex-1">
-                <table class="w-full text-sm text-left rtl:text-right text-key-primary">
-                    <tbody id="schedule-table-body">
-                        <tr>
-                            <td colspan="1" class="px-6 py-8 text-center text-neutral-50">
-                                <div class="flex justify-center items-center">
-                                    <x-icon-spinner class="h-16 w-16 animate-spin" />
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        </div>
+    </form>
+
+    <div id="preference-modal-container"
+        class="fixed inset-0 z-50 hidden overflow-y-auto transition-opacity duration-300 ease-in-out">
+        <div id="modalOverlay"
+            class="flex items-center justify-center min-h-screen bg-gray-900/75 transition-opacity duration-300 ease-in-out">
+            <div class="relative bg-white rounded-3xl shadow-xl max-w-2xl w-full p-8 transform transition-all duration-300 sm:my-8 sm:align-middle sm:w-full scale-95 opacity-0"
+                id="modalContent">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-key-primary font-bold text-xl" id="title"></h3>
+                    <button id="closeModalBtn"
+                        class="text-[#929090] hover:text-[#535252] focus:outline-none cursor-pointer">
+                        <x-heroicon-s-x-mark class="w-6 h-6" />
+                    </button>
+                </div>
+
+                <hr class="border-[#F4F0EF] mb-4">
+
+                <div id="preference-modal-content">
+                </div>
             </div>
         </div>
     </div>
 
-    <x-form-modal modal-id="preferenceModal" ajax-url="{{ route('assistant.create-preference') }}"
-        form-id="preference-form" />
-
     <script type="module">
         $(document).ready(function() {
-            function loadPreferencesTable() {
-                const tableId = $('#schedule-table-body');
-                $.ajax({
-                    url: "{{ route('api.preference.table') }}",
-                    type: 'GET',
-                    beforeSend: function() {
-                        tableId.empty();
-                        tableId.append(`
-                            <tr>
-                                <td colspan="1" class="px-6 py-8 text-center text-neutral-50">
-                                    <div class="flex justify-center items-center">
-                                        <x-icon-spinner class="h-16 w-16 animate-spin" />
-                                    </div>
-                                </td>
-                            </tr>
-                        `);
-                    },
-                    success: function(response) {
-                        tableId.empty();
-                        if (response.data.length > 0) {
-                            $.each(response.data, function(index, item) {
-                                let row = `
-                                    <tr class="border-b border-[#E5E2E1]">
-                                        <td class="px-4 py-4 text-[#1E1E1E]">${item}</td>
-                                    </tr>
-                                `;
-                                tableId.append(row);
-                            });
-                        } else {
-                            tableId.html(`
-                                <tr>
-                                    <td colspan="2" class="py-8 text-center font-medium">
-                                        <x-icon-no-data class="w-60 mx-auto" />
-                                    </td>
-                                </tr>
-                            `);
-                        }
-                    },
-                    error: function(xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal memuat data',
-                            text: xhr.responseJSON.message ||
-                                'Terjadi kesalahan saat memuat data preferensi.',
-                        });
-                    }
-                });
+            function openModal() {
+                $('#preference-modal-container').removeClass('hidden');
+                setTimeout(() => {
+                    $('#modalContent').removeClass('scale-95 opacity-0').addClass(
+                        'scale-100 opacity-100');
+                }, 10);
+            }
+            window.closeModalPref = function() {
+                $('#modalContent').removeClass('scale-100 opacity-100').addClass('scale-95 opacity-0');
+                setTimeout(() => {
+                    $('#preference-modal-container').addClass('hidden');
+                }, 300);
             }
 
-            loadPreferencesTable();
+            $('#closeModalBtn').on('click', function() {
+                closeModalPref();
+            });
 
-            document.addEventListener('reload-table', function() {
-                loadPreferencesTable();
+            $('#modalOverlay').on('click', function(e) {
+                if (e.target === this) {
+                    closeModalPref();
+                }
+            });
+
+            // 1. Logika untuk MEMBUKA modal
+            $('#open-preference-modal-btn').on('click', function() {
+                const currentlySelected = $('#biodata-form input[name="practicums[]"]').map(function() {
+                    return $(this).val();
+                }).get();
+
+                $.ajax({
+                    url: "{{ route('assistant.create-preference') }}",
+                    type: 'GET',
+                    data: {
+                        selected: currentlySelected
+                    },
+                    beforeSend: function() {
+                        $('#preference-modal-content').html(
+                            '<div class="p-8 text-center">Memuat...</div>');
+                        openModal();
+                    },
+                    success: function(response) {
+                        $('#preference-modal-content').html(response);
+                    },
+                    error: function() {
+                        alert('Gagal memuat data. Silakan coba lagi.');
+                        closeModal();
+                    }
+                });
+            });
+
+            $(document).on('click', '#btn-apply-preference', function() {
+                $('#preference-display-list, #hidden-practicums-container').empty();
+                let hasSelection = false;
+
+                $('#modal-preference-form input[type="checkbox"]:checked').each(function() {
+                    hasSelection = true;
+                    const code = $(this).val();
+                    const name = $(this).data('name');
+
+                    $('#preference-display-list').append(`
+                        <tr class="border-b border-[#E5E2E1]" data-kode="${code}"><td class="px-4 py-4">${name}</td></tr>
+                    `);
+                    $('#hidden-practicums-container').append(`
+                        <input type="hidden" name="practicums[]" value="${code}">
+                    `);
+                });
+
+                if (!hasSelection) {
+                    $('#preference-display-list').html(`
+                        <tr id="no-preference-row"><td class="px-4 py-8 text-center text-gray-500">Belum ada preferensi.</td></tr>
+                    `);
+                }
+                closeModalPref();
             });
 
             $('#biodata-form').on('submit', function(e) {

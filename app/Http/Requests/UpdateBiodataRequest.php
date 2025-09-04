@@ -23,10 +23,11 @@ class UpdateBiodataRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:50',
-            'prodi' => 'required|string|in:Informatika,Sistem Informasi',
-            'angkatan' => 'required|integer|min:2020|max:' . date('Y'),
             'nomor_telp' => ['nullable', 'string', 'max:15', 'regex:/^(\+62|0)[0-9]{8,14}$/'],
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+
+            'practicums'   => 'nullable|array',
+            'practicums.*' => 'string|exists:practicums,kode_praktikum',
         ];
     }
 
@@ -34,8 +35,6 @@ class UpdateBiodataRequest extends FormRequest
     {
         return [
             'name' => 'Nama',
-            'prodi' => 'Program Studi',
-            'angkatan' => 'Angkatan',
             'nomor_telp' => 'Nomor Telepon',
             'foto' => 'Foto',
         ];

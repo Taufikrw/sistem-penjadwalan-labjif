@@ -317,7 +317,9 @@ class AssistantController extends Controller
             return response()->view('errors.404', ['message' => 'Asisten tidak ditemukan'], 404);
         }
 
-        return view('assistant.biodata', compact('assistant'));
+        $data = $this->assistantService->getCreatePreferencePage($nim);
+
+        return view('assistant.biodata', compact('assistant'), $data);
     }
 
     public function preferenceTable()
@@ -362,7 +364,7 @@ class AssistantController extends Controller
         }
 
         try {
-            $this->assistantService->updateAssistant($validated, $nim);
+            $this->assistantService->updateBiodataAndPreferences($validated, $nim);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Biodata asisten berhasil diperbarui.',
@@ -375,13 +377,32 @@ class AssistantController extends Controller
         }
     }
 
-    public function createPreference()
+    public function createPreference(Request $request)
     {
         $nim = Auth::user()->username;
         $data = $this->assistantService->getCreatePreferencePage($nim);
 
         if (!$data) {
             return response()->view('errors.404', ['message' => 'Asisten tidak ditemukan'], 404);
+        }
+
+        if ($request->has('selected')) {
+
+            // Ambil array kode preferensi sementara dari request
+            $selectedCodes = $request->input('selected', []);
+
+            // Karena service Anda mengembalikan objek lengkap, kita juga harus begitu agar konsisten.
+            // Asumsi Anda punya PracticumRepository untuk mengambil data praktikum berdasarkan kodenya.
+            $selectedPracticumsFromRequest = [];
+            foreach ($selectedCodes as $code) {
+                $practicum = $this->assistantService->getPracticumByKode($code);
+                if ($practicum) {
+                    $selectedPracticumsFromRequest[] = $practicum;
+                }
+            }
+
+            // 4. TIMPA data 'selectedPracticums' dari service dengan data baru dari request
+            $data['selectedPracticums'] = $selectedPracticumsFromRequest;
         }
 
         return view('preference.form', $data);

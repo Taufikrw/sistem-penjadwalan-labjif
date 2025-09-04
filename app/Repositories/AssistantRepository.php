@@ -128,8 +128,8 @@ class AssistantRepository implements AssistantRepositoryInterface
 
         $assistant->update([
             'name' => $data['name'],
-            'prodi' => $data['prodi'],
-            'angkatan' => $data['angkatan'],
+            'prodi' => $data['prodi'] ?? $assistant->prodi,
+            'angkatan' => $data['angkatan'] ?? $assistant->angkatan,
             'tahun_masuk' => $data['tahun_masuk'] ?? $assistant->tahun_masuk,
             'status' => $data['status'] ?? $assistant->status,
             'nomor_telp' => $data['nomor_telp'] ?? $assistant->nomor_telp,
@@ -320,7 +320,7 @@ class AssistantRepository implements AssistantRepositoryInterface
 
     public function deletePreferencesByNim($nim)
     {
-        Preference::where('nim', $nim)->delete();
+        Preference::where('nim', $nim)->forceDelete();
 
         return true;
     }

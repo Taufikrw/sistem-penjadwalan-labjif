@@ -1,4 +1,4 @@
-<form id="preference-form" action="{{ route('assistant.store-preference') }}" method="POST">
+<form id="modal-preference-form">
     @csrf
     <div id="title-hidden" class="hidden">
         <div class="flex gap-3 items-center">
@@ -37,8 +37,9 @@
                                     <input type="checkbox"
                                         class="form-checkbox rounded text-key-secondary accent-key-secondary cursor-pointer"
                                         name="practicums[]" value="{{ $practicum->kode_praktikum }}"
+                                        data-name="{{ $practicum->name }}"
                                         id="practicum-{{ $practicum->kode_praktikum }}"
-                                        @if (in_array($practicum->kode_praktikum, array_column($selectedPracticums, 'kode_praktikum'))) checked @endif />
+                                        @if (in_array($practicum->kode_praktikum, array_column($selectedPracticums, 'kode_praktikum'))) checked @endif>
                                 </div>
                             </td>
                             <td class="px-4 py-4 border-b border-[#E5E2E1]" data-field="kode_praktikum">
@@ -56,7 +57,7 @@
             onclick="closeModal()">
             Batal
         </x-button-secondary>
-        <x-button-primary class="rounded-xl py-3 px-6" type="submit" id="btn-submit-preference">
+        <x-button-primary class="rounded-xl py-3 px-6" type="button" id="btn-apply-preference">
             Simpan
         </x-button-primary>
     </div>

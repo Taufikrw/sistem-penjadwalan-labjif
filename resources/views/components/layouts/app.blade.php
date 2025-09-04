@@ -20,7 +20,10 @@
                 {{ $back_button ?? '' }}
 
                 <div class="flex flex-col gap-2 h-14 justify-between">
-                    <h1 class="text-3xl font-bold flex items-center gap-2">{{ $title ?? '' }}</h1>
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-3xl font-bold flex items-center gap-2">{{ $title ?? '' }}</h1>
+                        {{ $header_actions ?? '' }}
+                    </div>
                     <hr class="border-[#F4F0EF]">
                 </div>
 
