@@ -32,6 +32,7 @@ Route::middleware(['auth', 'role:admin,assistant'])->group(function () {
         Route::get('get-year-schedule-list', [ScheduleController::class, 'yearScheduleList'])->name('api.year-schedule.list');
         Route::get('get-schedule-table', [ScheduleController::class, 'scheduleTable'])->name('api.schedule.table');
         Route::get('get-history-table/{nim}', [AssistantController::class, 'historyTable'])->name('api.history.table');
+        Route::get('get-current-schedule-table', [ScheduleController::class, 'currentScheduleTable'])->name('api.current-schedule.table');
     });
 });
 

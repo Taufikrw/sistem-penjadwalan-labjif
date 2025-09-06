@@ -517,6 +517,7 @@ class ScheduleController extends Controller
             'start_time' => $request->get('start_time', ''),
             'end_time' => $request->get('end_time', ''),
             'assistant_count' => $request->get('assistant_count', ''),
+            'assistant_nim' => $request->get('assistant_nim', ''),
         ];
 
         $filters = array_filter($filters, function ($value) {
@@ -525,6 +526,35 @@ class ScheduleController extends Controller
 
         try {
             $schedules = $this->scheduleService->getScheduleData($sortBy, $sortOrder, $search, $filters);
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $schedules,
+                'message' => 'Schedules retrieved successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve schedules: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function currentScheduleTable(Request $request)
+    {
+        $schedule = $this->scheduleService->getNewestTahunAjaran();
+        $filters = [
+            'tahun_ajar' => $schedule ? $schedule->tahun_ajar : null,
+            'jenis_semester' => $schedule ? $schedule->jenis_semester : null,
+            'assistant_nim' => $request->get('assistant_nim', ''),
+        ];
+
+        $filters = array_filter($filters, function ($value) {
+            return $value !== null && $value !== '';
+        });
+
+        try {
+            $schedules = $this->scheduleService->getCurrentScheduleData(filters: $filters);
 
             return response()->json([
                 'status' => 'success',

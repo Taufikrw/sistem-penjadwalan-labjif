@@ -87,6 +87,12 @@ class ScheduleRepository implements ScheduleRepositoryInterface
                         $query->has('assistantSchedules', '=', (int)$value);
                     }
                 }
+            } elseif ($key === 'assistant_nim') {
+                if (!empty($value)) {
+                    $query->whereHas('assistantSchedules', function ($q) use ($value) {
+                        $q->where('nim', $value);
+                    });
+                }
             }
         }
 
@@ -102,14 +108,20 @@ class ScheduleRepository implements ScheduleRepositoryInterface
         return Schedule::with(['practicum', 'laboratorium', 'assistantSchedules'])->where('id', $id)->first();
     }
 
-    public function getSchedulesByNim($nim)
+    public function getSchedulesByNim($nim, $perPage = null)
     {
         $currentYear = date('Y');
-        return Schedule::with(['practicum', 'laboratorium', 'assistantSchedules'])
+        $query = Schedule::with(['practicum', 'laboratorium', 'assistantSchedules'])
             ->where('tahun_ajar', $currentYear)
             ->whereHas('assistantSchedules', function ($query) use ($nim) {
                 $query->where('nim', $nim);
-            })->get();
+            });
+
+        if ($perPage) {
+            return $query->paginate($perPage);
+        }
+
+        return $query->get();
     }
 
     public function createSchedule(array $data)
@@ -215,10 +227,10 @@ class ScheduleRepository implements ScheduleRepositoryInterface
         return $query->get();
     }
 
-    public function getHistoryByNim($nim)
+    public function getHistoryByNim($nim, $perPage = null)
     {
-        return Schedule::selectRaw("
-            DISTINCT practicums.name,
+        $query = Schedule::selectRaw("
+            practicums.name,
             CASE 
                 WHEN practicums.semester % 2 = 1 THEN CONCAT('Gasal ', tahun_ajar, '/', (tahun_ajar::int + 1))
                 ELSE CONCAT('Genap ', (tahun_ajar::int - 1), '/', tahun_ajar)
@@ -228,7 +240,12 @@ class ScheduleRepository implements ScheduleRepositoryInterface
             ->whereHas('assistantSchedules', function ($query) use ($nim) {
                 $query->where('nim', $nim);
             })
-            ->get();
+            ->distinct();
+
+        if ($perPage) {
+            return $query->paginate($perPage);
+        }
+        return $query->get();
     }
 
     public function getCourseSchedulesByNim($nim, $sortBy = 'day', $order = 'asc', $search = '', $perPage = null)

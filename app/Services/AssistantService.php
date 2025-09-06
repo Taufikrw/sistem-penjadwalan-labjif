@@ -67,9 +67,7 @@ class AssistantService
             return null;
         }
 
-        $schedules = $this->scheduleRepository->getSchedulesByNim($nim);
-
-        return compact('assistant', 'schedules');
+        return compact('assistant');
     }
 
     public function getCourseDetails($id)
@@ -203,7 +201,7 @@ class AssistantService
 
     public function getAssistantHistory(string $nim)
     {
-        return $this->scheduleRepository->getHistoryByNim($nim);
+        return $this->scheduleRepository->getHistoryByNim($nim, 5);
     }
 
     public function getCreatePreferencePage(string $nim)

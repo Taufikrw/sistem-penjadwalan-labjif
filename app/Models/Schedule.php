@@ -30,7 +30,7 @@ class Schedule extends Model
         'end_time' => 'datetime:H:i',
     ];
 
-    protected $appends = ['laboratorium_name', 'practicum_name', 'jam', 'assistant_names'];
+    protected $appends = ['laboratorium_name', 'practicum_name', 'jam', 'assistant_names', 'partner_name'];
 
     public function practicum()
     {
@@ -71,5 +71,16 @@ class Schedule extends Model
     public function getJamAttribute()
     {
         return $this->start_time->format('H:i A') . ' - ' . $this->end_time->format('H:i A');
+    }
+
+    public function getPartnerNameAttribute()
+    {
+        if ($this->assistantSchedules->isEmpty()) {
+            return 'Tidak ada partner';
+        }
+
+        return $this->assistantSchedules->map(function ($assistantSchedule) {
+            return $assistantSchedule->assistant->name ?? 'Partner tidak ditemukan';
+        })->implode(', ');
     }
 }

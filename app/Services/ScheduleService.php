@@ -114,6 +114,11 @@ class ScheduleService
         return $this->scheduleRepository->getAllSchedules(sortBy: [$sortBy], order: $sortOrder, search: $search, filters: $filters, perPage: 8);
     }
 
+    public function getCurrentScheduleData($filters)
+    {
+        return $this->scheduleRepository->getAllSchedules(sortBy: [], order: null, search: null, filters: $filters, perPage: 5);
+    }
+
     public function getNewestTahunAjaran()
     {
         return $this->scheduleRepository->getNewestTahunAjaran();

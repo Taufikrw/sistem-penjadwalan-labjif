@@ -8,7 +8,7 @@ interface ScheduleRepositoryInterface
 
     public function getScheduleById($id);
 
-    public function getSchedulesByNim($nim);
+    public function getSchedulesByNim($nim, $perPage = null);
 
     public function createSchedule(array $data);
 
@@ -30,7 +30,7 @@ interface ScheduleRepositoryInterface
 
     public function getScheduleByDay($day);
 
-    public function getHistoryByNim($nim);
+    public function getHistoryByNim($nim, $perPage = null);
 
     public function getCourseSchedulesByNim($nim, $sortBy = 'day', $order = 'asc', $search = '', $perPage = null);
     

@@ -70,6 +70,7 @@
             const bulkDeleteUrl = actionUrl + 'bulk-delete';
             const hasSetAssistant = {{ $hasSetAssistant ? 'true' : 'false' }};
             const filters = @json($filters);
+            const hasDetailLink = {{ $hasDetailLink ? 'true' : 'false' }};
 
             let currentSortBy = '';
             let currentSortOrder = '';
@@ -220,6 +221,33 @@
                                         } else {
                                             rowsHtml +=
                                                 `<span class="block">-</span>`;
+                                        }
+                                        rowsHtml += `</td>`;
+                                    } else if (column.field === 'partner_name') {
+                                        let partners = [];
+                                        if (item.assistant_schedules && item.assistant_schedules.length > 0 && filters['assistant_nim']) {
+                                            partners = item.assistant_schedules.filter(function(asst) {
+                                                return asst.assistant && asst.assistant.nim !== filters['assistant_nim'];
+                                            });
+                                        }
+                                        rowsHtml += `<td class="px-4 py-2 border-b border-[#E5E2E1] whitespace-nowrap">`;
+                                        if (partners.length === 0) {
+                                            rowsHtml += `-`;
+                                        } else {
+                                            partners.forEach(function(partner) {
+                                                if (partner.assistant && partner.assistant.name && partner.assistant.nim) {
+                                                    rowsHtml += `<div class="flex items-center gap-2">
+                                                        ${partner.assistant.name}
+                                                        ${hasDetailLink ? `
+                                                        <a href="${partner.assistant.nim}/detail-jadwal-praktikum" title="Lihat detail asisten">
+                                                            <x-heroicon-s-eye class="inline w-4 h-4 text-gray-400" />
+                                                        </a>
+                                                        ` : ''}
+                                                    </div>`;
+                                                } else {
+                                                    rowsHtml += `<div class="flex items-center gap-2">-</div>`;
+                                                }
+                                            });
                                         }
                                         rowsHtml += `</td>`;
                                     } else {

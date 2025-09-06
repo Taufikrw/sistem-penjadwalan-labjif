@@ -84,94 +84,18 @@
     @endif
 
     <div id="contentSaatIni" class="tab-content" data-tab-name="contentSaatIni">
-        <div class="rounded-lg w-full overflow-x-auto px-4 bg-white">
-            <table class="w-full text-sm text-left rtl:text-right text-[#1E1E1E]">
-                <thead class="border-b border-[#E5E2E1] text-key-primary">
-                    <tr>
-                        <th scope="col" class="px-4 py-3">
-                            <span class="flex items-center gap-1 font-extrabold" data-field="practicum_name"
-                                data-sort-direction="">
-                                Mata Kuliah
-                            </span>
-                        </th>
-                        <th scope="col" class="px-4 py-3">
-                            <span class="flex items-center gap-1 font-extrabold" data-field="tahun_ajar"
-                                data-sort-direction="">
-                                Kelas
-                            </span>
-                        </th>
-                        <th scope="col" class="px-4 py-3">
-                            <span class="flex items-center gap-1 font-extrabold" data-field="tahun_ajar"
-                                data-sort-direction="">
-                                Partner
-                            </span>
-                        </th>
-                        <th scope="col" class="px-4 py-3">
-                            <span class="flex items-center gap-1 font-extrabold" data-field="tahun_ajar"
-                                data-sort-direction="">
-                                Lab
-                            </span>
-                        </th>
-                        <th scope="col" class="px-4 py-3">
-                            <span class="flex items-center gap-1 font-extrabold" data-field="tahun_ajar"
-                                data-sort-direction="">
-                                Jadwal Kuliah
-                            </span>
-                        </th>
-                        <th scope="col" class="px-4 py-3">
-                            <span class="flex items-center gap-1 font-extrabold" data-field="tahun_ajar"
-                                data-sort-direction="">
-                                Dosen
-                            </span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="schedule-table-body">
-                    @forelse ($schedules as $item)
-                        <tr class="border-b border-[#E5E2E1]">
-                            <td class="px-4 py-4">{{ $item->practicum->name }}</td>
-                            <td class="px-4 py-4">{{ $item->name }}</td>
-                            <td class="px-4 py-4">
-                                @php
-                                    $partners = $item->assistantSchedules->filter(function ($assistantSchedule) use (
-                                        $assistant,
-                                    ) {
-                                        return $assistantSchedule->assistant->nim !== $assistant->nim;
-                                    });
-                                @endphp
-
-                                @if ($partners->isEmpty())
-                                    Tidak ada
-                                @else
-                                    @foreach ($partners as $partner)
-                                        <div class="flex items-center gap-2">
-                                            {{ $partner->assistant->name }}
-                                            @if (Auth::user()->username === $assistant->nim)
-                                                <a href="{{ route('assistant.show', $partner->assistant->nim) }}"
-                                                    title="Lihat detail asisten">
-                                                    <x-heroicon-s-eye class="inline w-4 h-4 text-gray-400" />
-                                                </a>
-                                            @endif
-                                        </div>
-                                    @endforeach
-                                @endif
-                            </td>
-                            <td class="px-4 py-4">{{ $item->laboratorium->name }}</td>
-                            <td class="px-4 py-4">{{ $item->day }}
-                                {{ $item->start_time->format('h:i A') }} - {{ $item->end_time->format('h:i A') }}
-                            </td>
-                            <td class="px-4 py-4">{{ $item->dosen }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="py-8 text-center font-medium">
-                                <x-icon-no-data class="w-60 mx-auto" />
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+        <x-data-table url="{{ route('api.current-schedule.table') }}" :filters="['assistant_nim' => $assistant->nim]" action-url="schedule/"
+            :columns="[
+                ['label' => 'Mata Kuliah', 'field' => 'practicum_name', 'sortable' => false],
+                ['label' => 'Kelas', 'field' => 'name', 'sortable' => false],
+                ['label' => 'Lab', 'field' => 'laboratorium_name', 'sortable' => false],
+                ['label' => 'Dosen', 'field' => 'dosen', 'sortable' => false],
+                ['label' => 'Hari', 'field' => 'day', 'sortable' => false],
+                ['label' => 'Jam', 'field' => 'jam', 'sortable' => false],
+                ['label' => 'Partner', 'field' => 'partner_name', 'sortable' => false],
+            ]" :has-actions="false"
+            has-detail-link="{{ Auth::user()->username === $assistant->nim ? true : false }}" table-id="schedule-table"
+            search-input-id="search-schedule" btn-create-id="btn-create-schedule" :has-setAssistant="true" />
     </div>
 
     @if (
@@ -207,6 +131,7 @@
                     </tbody>
                 </table>
             </div>
+            <div id="paginationRiwayat" class="px-4"></div>
         </div>
     @endif
 
@@ -215,10 +140,65 @@
             const $tabButtons = $('.tab-button');
             const $tabContents = $('.tab-content');
             let nim = "{{ $assistant->nim }}";
+            let currentPageRiwayat = 1;
 
-            function loadHistoryTable() {
+            function renderPagination(pagination, containerId) {
+                let html = '';
+                const container = $(`#${containerId}`);
+                container.empty(); // Kosongkan pagination sebelumnya
+
+                if (pagination.last_page > 1 || pagination.total > 0) {
+                    html += `<div class="flex justify-between items-center text-xs mt-4 mb-6">`;
+                    if (pagination.total > 0) {
+                        html += `<div class="text-[#5A5A5A] font-semibold px-2">
+                            ${pagination.from ?? 0} hingga ${pagination.to ?? 0} data dari ${pagination.total}
+                        </div>`;
+                    } else {
+                        html += `<div></div>`;
+                    }
+                    html += `<nav><ul class="inline-flex space-x-1 items-center">`;
+
+                    const prevDisabled = pagination.current_page === 1;
+                    html += `<li>
+                        <button class="pagination-btn px-3 py-2 ml-0 leading-tight rounded-l-lg ${prevDisabled ? 'text-[#CDCDCD]' : 'text-[#5A5A5A] hover:text-[#434343] cursor-pointer'}"
+                            data-page="${pagination.current_page - 1}" ${prevDisabled ? 'disabled' : ''}>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                    </li>`;
+
+                    let startPage = Math.max(1, pagination.current_page - 1);
+                    let endPage = Math.min(pagination.last_page, startPage + 3);
+                    if (endPage - startPage < 3) {
+                        startPage = Math.max(1, endPage - 3);
+                    }
+
+                    for (let i = startPage; i <= endPage; i++) {
+                        const isCurrent = i === pagination.current_page;
+                        html += `<li>
+                            <button class="pagination-btn px-3 py-2 leading-tight rounded-lg ${isCurrent ? 'bg-key-secondary text-white' : 'text-[#1E1E1E] hover:bg-[#29293A]/23 cursor-pointer'}"
+                                data-page="${i}" ${isCurrent ? 'disabled' : ''}>
+                                ${i}
+                            </button>
+                        </li>`;
+                    }
+
+                    const nextDisabled = pagination.current_page === pagination.last_page;
+                    html += `<li>
+                        <button class="pagination-btn px-3 py-2 leading-tight rounded-r-lg ${nextDisabled ? 'text-[#CDCDCD]' : 'text-[#5A5A5A] hover:text-[#434343] cursor-pointer'}"
+                            data-page="${pagination.current_page + 1}" ${nextDisabled ? 'disabled' : ''}>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </li>`;
+
+                    html += `</ul></nav></div>`;
+                }
+                container.html(html);
+            }
+
+            function loadHistoryTable(page = 1) {
+                currentPageRiwayat = page;
                 const tableId = $('#history-table-body');
-                let url = "/api/get-history-table/" + nim;
+                let url = "/api/get-history-table/" + nim + "?page=" + page;
 
                 $.ajax({
                     url: url,
@@ -237,8 +217,9 @@
                     },
                     success: function(data) {
                         tableId.empty();
-                        if (data.data.length > 0) {
-                            $.each(data.data, function(index, item) {
+                        const paginationData = data.data;
+                        if (data.data.data.length > 0) {
+                            $.each(data.data.data, function(index, item) {
                                 let row = `
                                     <tr class="border-b border-[#E5E2E1]">
                                         <td class="px-4 py-4">${item.tahun_ajar}</td>
@@ -247,6 +228,7 @@
                                 `;
                                 tableId.append(row);
                             });
+                            renderPagination(paginationData, 'paginationRiwayat');
                         } else {
                             tableId.html(`
                                 <tr>
@@ -255,6 +237,7 @@
                                     </td>
                                 </tr>
                             `);
+                            $('#paginationRiwayat').empty();
                         }
                     },
                     error: function(error) {
@@ -289,7 +272,14 @@
 
                 // Jika tab Riwayat diklik, panggil loadHistoryTable
                 if ($(this).attr('id') === 'tabRiwayat') {
-                    loadHistoryTable();
+                    loadHistoryTable(currentPageRiwayat);
+                }
+            });
+
+            $(document).on('click', '#paginationRiwayat .pagination-btn', function() {
+                const page = $(this).data('page');
+                if (page) {
+                    loadHistoryTable(page);
                 }
             });
 

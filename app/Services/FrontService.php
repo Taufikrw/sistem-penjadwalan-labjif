@@ -36,8 +36,6 @@ class FrontService
             return null;
         }
 
-        $schedules = $this->scheduleRepository->getSchedulesByNim($nim);
-
-        return compact('assistant', 'schedules');
+        return compact('assistant');
     }
 }
