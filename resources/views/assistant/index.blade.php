@@ -39,7 +39,7 @@
         ['label' => 'NIM', 'field' => 'nim', 'sortable' => true],
         ['label' => 'Nama', 'field' => 'name', 'sortable' => true],
         ['label' => 'Prodi', 'field' => 'prodi_angkatan', 'sortable' => true],
-        ['label' => 'Tahun Masuk', 'field' => 'tahun_masuk', 'sortable' => true],
+        ['label' => 'Tahun Masuk', 'field' => 'tahun_masuk', 'sortable' => true, 'tooltip' => 'Tahun Masuk Aslab'],
         ['label' => 'Status', 'field' => 'status', 'sortable' => false],
         ['label' => 'Jadwal Kuliah', 'field' => 'jadwal_kuliah', 'sortable' => false],
         ['label' => 'Jadwal Praktikum', 'field' => 'jadwal_praktikum', 'sortable' => false],

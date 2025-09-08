@@ -47,7 +47,7 @@
         @endif
     </div>
 
-    <div class="">
+    <div class="-mb-2">
         <div class="flex space-x-2">
             @foreach (['Semua', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'] as $hari)
                 <a href="{{ request()->fullUrlWithQuery(['day' => $hari]) }}" class="mx-4">

@@ -1,5 +1,5 @@
 <div class="rounded-lg w-full bg-white px-4">
-    <div class="overflow-x-auto overflow-y-auto max-h-[75vh]">
+    <div class="overflow-x-auto overflow-y-auto max-h-[75vh] js-scroll-container">
         <table class="w-full text-sm text-left rtl:text-right text-[#1E1E1E] border-separate border-spacing-0">
             <thead class="text-key-primary">
                 <tr>
@@ -14,18 +14,34 @@
                     @endif
                     @foreach ($columns as $column)
                         <th scope="col"
-                            class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1] whitespace-nowrap">
-                            <span
-                                class="flex items-center gap-1 font-bold {{ $column['sortable'] ? 'sortable cursor-pointer' : '' }}"
-                                data-field="{{ $column['field'] }}" data-sort-direction="">
-                                {{ $column['label'] }}
-                                @if ($column['sortable'])
-                                    <span class="sort-indicator flex flex-col ml-2 gap-[3px]">
-                                        <x-icon-sort-up class="text-[#4B57AC] sort-asc-icon" />
-                                        <x-icon-sort-down class="text-[#4B57AC] sort-desc-icon" />
+                            class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1] whitespace-nowrap z-5">
+                            @if (isset($column['tooltip']) && $column['tooltip'])
+                                <x-tooltip :text="$column['tooltip']">
+                                    <span
+                                        class="flex items-center gap-1 font-bold {{ $column['sortable'] ? 'sortable cursor-pointer' : '' }}"
+                                        data-field="{{ $column['field'] }}" data-sort-direction="">
+                                        {{ $column['label'] }}
+                                        @if ($column['sortable'])
+                                            <span class="sort-indicator flex flex-col ml-2 gap-[3px]">
+                                                <x-icon-sort-up class="text-[#4B57AC] sort-asc-icon" />
+                                                <x-icon-sort-down class="text-[#4B57AC] sort-desc-icon" />
+                                            </span>
+                                        @endif
                                     </span>
-                                @endif
-                            </span>
+                                </x-tooltip>
+                            @else
+                                <span
+                                    class="flex items-center gap-1 font-bold {{ $column['sortable'] ? 'sortable cursor-pointer' : '' }}"
+                                    data-field="{{ $column['field'] }}" data-sort-direction="">
+                                    {{ $column['label'] }}
+                                    @if ($column['sortable'])
+                                        <span class="sort-indicator flex flex-col ml-2 gap-[3px]">
+                                            <x-icon-sort-up class="text-[#4B57AC] sort-asc-icon" />
+                                            <x-icon-sort-down class="text-[#4B57AC] sort-desc-icon" />
+                                        </span>
+                                    @endif
+                                </span>
+                            @endif
                         </th>
                     @endforeach
                     @if ($hasActions)
@@ -225,27 +241,36 @@
                                         rowsHtml += `</td>`;
                                     } else if (column.field === 'partner_name') {
                                         let partners = [];
-                                        if (item.assistant_schedules && item.assistant_schedules.length > 0 && filters['assistant_nim']) {
-                                            partners = item.assistant_schedules.filter(function(asst) {
-                                                return asst.assistant && asst.assistant.nim !== filters['assistant_nim'];
-                                            });
+                                        if (item.assistant_schedules && item
+                                            .assistant_schedules.length > 0 && filters[
+                                                'assistant_nim']) {
+                                            partners = item.assistant_schedules.filter(
+                                                function(asst) {
+                                                    return asst.assistant && asst
+                                                        .assistant.nim !== filters[
+                                                            'assistant_nim'];
+                                                });
                                         }
-                                        rowsHtml += `<td class="px-4 py-2 border-b border-[#E5E2E1] whitespace-nowrap">`;
+                                        rowsHtml +=
+                                            `<td class="px-4 py-2 border-b border-[#E5E2E1] whitespace-nowrap">`;
                                         if (partners.length === 0) {
                                             rowsHtml += `-`;
                                         } else {
                                             partners.forEach(function(partner) {
-                                                if (partner.assistant && partner.assistant.name && partner.assistant.nim) {
+                                                if (partner.assistant && partner
+                                                    .assistant.name && partner
+                                                    .assistant.nim) {
                                                     rowsHtml += `<div class="flex items-center gap-2">
                                                         ${partner.assistant.name}
                                                         ${hasDetailLink ? `
-                                                        <a href="${partner.assistant.nim}/detail-jadwal-praktikum" title="Lihat detail asisten">
-                                                            <x-heroicon-s-eye class="inline w-4 h-4 text-gray-400" />
-                                                        </a>
-                                                        ` : ''}
+                                                            <a href="${partner.assistant.nim}/detail-jadwal-praktikum" title="Lihat detail asisten">
+                                                                <x-heroicon-s-eye class="inline w-4 h-4 text-gray-400" />
+                                                            </a>
+                                                            ` : ''}
                                                     </div>`;
                                                 } else {
-                                                    rowsHtml += `<div class="flex items-center gap-2">-</div>`;
+                                                    rowsHtml +=
+                                                        `<div class="flex items-center gap-2">-</div>`;
                                                 }
                                             });
                                         }
@@ -276,7 +301,7 @@
                                         if (hasSetAssistant) {
                                             rowsHtml += `<td class="px-4 py-4 border-b border-[#E5E2E1] whitespace-nowrap">
                                                 <div class="flex items-center gap-2">
-                                                    <button data-id="${item.id}" class="btn-set-assistant"><x-heroicon-s-users class="w-5 h-5 text-key-tertiary hover:text-key-secondary cursor-pointer" /></button>
+                                                    <button data-id="${item.id}" class="btn-set-assistant" title="Pilih Aslab"><x-heroicon-s-users class="w-5 h-5 text-key-tertiary hover:text-key-secondary cursor-pointer" /></button>
                                                     <button data-id="${item.id}" class="btn-edit"><x-heroicon-s-pencil-square class="w-5 h-5 text-key-tertiary hover:text-key-secondary cursor-pointer" /></button>
                                                     <button data-id="${item.id}" class="btn-delete"><x-heroicon-s-trash class="w-5 h-5 text-key-tertiary hover:text-key-secondary cursor-pointer" /></button>
                                                 </div>

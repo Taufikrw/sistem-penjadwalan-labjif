@@ -73,14 +73,17 @@
                             </span>
                         </th>
                         <th scope="col" class="sticky top-0 px-4 py-3 border-b border-[#E5E2E1] bg-white">
-                            <span class="flex items-center gap-1 font-extrabold sortable-set-assistant cursor-pointer"
-                                data-field="preference_asisten" data-sort-direction="">
-                                Pref.
-                                <span class="sort-indicator flex flex-col ml-1 gap-[3px]">
-                                    <x-icon-sort-up class="text-[#4B57AC] sort-asc-icon" />
-                                    <x-icon-sort-down class="text-[#4B57AC] sort-desc-icon" />
+                            <x-tooltip text="Preferensi">
+                                <span
+                                    class="flex items-center gap-1 font-extrabold sortable-set-assistant cursor-pointer"
+                                    data-field="preference_asisten" data-sort-direction="">
+                                    Pref.
+                                    <span class="sort-indicator flex flex-col ml-1 gap-[3px]">
+                                        <x-icon-sort-up class="text-[#4B57AC] sort-asc-icon" />
+                                        <x-icon-sort-down class="text-[#4B57AC] sort-desc-icon" />
+                                    </span>
                                 </span>
-                            </span>
+                            </x-tooltip>
                         </th>
                     </tr>
                 </thead>
@@ -113,9 +116,10 @@
                             </td>
                             <td class="px-4 py-4 border-b border-[#E5E2E1]" data-field="preference_asisten">
                                 @if ($assistant->preference)
-                                    <x-heroicon-m-check-circle class="w-5 h-5 text-green-500" />
+                                    <x-heroicon-m-check-circle class="w-5 h-5 text-green-500"
+                                        title="Memilih Mata Kuliah Ini" />
                                 @else
-                                    <x-heroicon-m-x-circle class="w-5 h-5 text-red-500" />
+                                    <x-heroicon-m-x-circle class="w-5 h-5 text-red-500" title="Bukan Preferensi" />
                                 @endif
                             </td>
                         </tr>
