@@ -13,7 +13,7 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 {
     public function getAllSchedules($sortBy = ['start_time', 'practicum_name'], $order = 'asc', $search = '', array $filters = [], $perPage = null)
     {
-        $allowedSortColumns = ['day', 'practicum_name', 'start_time', 'name', 'course', 'jam'];
+        $allowedSortColumns = ['day', 'practicum_name', 'start_time', 'name', 'course', 'jam', 'laboratorium_name'];
         $sortBy = array_filter($sortBy, fn($column) => in_array($column, $allowedSortColumns));
         $sortBy = empty($sortBy) ? ['day', 'start_time', 'laboratorium_name'] : $sortBy;
         $order = in_array(strtolower($order), ['asc', 'desc']) ? strtolower($order) : 'asc';
