@@ -22,7 +22,7 @@
     }
 @endphp
 
-<div class="relative {{ $width }}" id="{{ $containerId }}">
+<div class="relative {{ $width }}" id="{{ $containerId }}" data-placeholder="{{ $placeholder }}">
 
     <button type="button" id="{{ $id }}"
         class="relative w-full cursor-pointer rounded-xl border border-[#C9C6C5] bg-white py-2 px-4 text-left hover:border-[#929090] focus:border-key-secondary focus:outline-none"

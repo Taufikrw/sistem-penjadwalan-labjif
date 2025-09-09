@@ -30,7 +30,7 @@ class Schedule extends Model
         'end_time' => 'datetime:H:i',
     ];
 
-    protected $appends = ['laboratorium_name', 'practicum_name', 'jam', 'assistant_names', 'partner_name'];
+    protected $appends = ['laboratorium_name', 'practicum_name', 'jam', 'assistant_names', 'partner_name', 'class_name'];
 
     public function practicum()
     {
@@ -82,5 +82,17 @@ class Schedule extends Model
         return $this->assistantSchedules->map(function ($assistantSchedule) {
             return $assistantSchedule->assistant->name ?? 'Partner tidak ditemukan';
         })->implode(', ');
+    }
+
+    public function getClassNameAttribute()
+    {
+        $practicum = $this->practicum ? $this->practicum->for_prodi : null;
+        if ($practicum === 'Sistem Informasi') {
+            return 'SI-' . $this->name;
+        } elseif ($practicum === 'Informatika') {
+            return 'IF-' . $this->name;
+        } else {
+            return $this->name;
+        }
     }
 }

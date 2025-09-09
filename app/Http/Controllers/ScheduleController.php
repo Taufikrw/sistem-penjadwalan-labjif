@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCourseBulkDeleteRequest;
 use App\Http\Requests\StoreCourseScheduleRequest;
 use App\Http\Requests\StoreScheduleBulkDeleteRequest;
+use App\Http\Requests\StoreScheduleListRequest;
 use App\Http\Requests\StoreScheduleRequest;
 use App\Services\AssistantService;
 use App\Services\GeneticAlgorithmService;
@@ -29,9 +30,8 @@ class ScheduleController extends Controller
     public function index()
     {
         $data = $this->scheduleService->getScheduleCreatePage();
-        $dayForm = 'Senin';
 
-        return view('schedule.index', $data, compact('dayForm'));
+        return view('schedule.index', $data);
     }
 
     public function create(Request $request)
@@ -51,6 +51,30 @@ class ScheduleController extends Controller
 
         try {
             $this->scheduleService->storeSchedule($validated);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data Jadwal Praktikum berhasil dibuat.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal membuat data Jadwal Praktikum: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function storeList(StoreScheduleListRequest $request)
+    {
+        $validated = $request->validated();
+
+        $tahunAjar = ($validated['jenis_semester'] === 'ganjil')
+            ? $validated['tahun_ajar1']
+            : $validated['tahun_ajar2'];
+
+        $validated['tahun_ajar'] = $tahunAjar;
+
+        try {
+            $this->scheduleService->storeScheduleList($validated);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Data Jadwal Praktikum berhasil dibuat.',

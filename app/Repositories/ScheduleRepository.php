@@ -339,4 +339,17 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 
         return $newest->first();
     }
+
+    public function isTahunAjaranExists($tahunAjar, $jenisSemester)
+    {
+        return Schedule::where('tahun_ajar', $tahunAjar)
+            ->where('jenis_semester', $jenisSemester)
+            ->exists();
+    }
+
+    public function deleteAllCourseSchedules()
+    {
+        CourseSchedule::truncate();
+        return true;
+    }
 }

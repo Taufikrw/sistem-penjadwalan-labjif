@@ -77,6 +77,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('schedule-detail', [ScheduleController::class, 'show'])->name('schedule.detail');
     Route::get('schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');
     Route::post('schedule/create', [ScheduleController::class, 'store'])->name('schedule.store');
+    Route::post('schedule/create-list', [ScheduleController::class, 'storeList'])->name('schedule-list.store');
 
     Route::get('schedule/{id}', [ScheduleController::class, 'edit'])->name('schedule.edit');
     Route::put('schedule/{id}', [ScheduleController::class, 'update'])->name('schedule.update');

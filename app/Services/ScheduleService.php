@@ -67,6 +67,15 @@ class ScheduleService
         return compact('practicums', 'labs');
     }
 
+    public function storeScheduleList(array $data)
+    {
+        if ($this->scheduleRepository->isTahunAjaranExists($data['tahun_ajar'], $data['jenis_semester'])) {
+            throw new \Exception('Jadwal untuk tahun ajaran dan jenis semester tersebut sudah ada.');
+        }
+        $this->scheduleRepository->deleteAllCourseSchedules();
+        $this->scheduleRepository->createSchedule($data);
+    }
+
     public function storeSchedule(array $data)
     {
         $this->scheduleRepository->createSchedule($data);

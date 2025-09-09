@@ -5,7 +5,7 @@
             @if ($assistant->is_final)
                 <x-heroicon-s-check-circle class="w-7 h-7 text-[#34C759]" />
             @else
-                <x-heroicon-s-x-circle class="w-7 h-7 text-[#FF8D28]" />
+                <x-heroicon-s-exclamation-circle class="w-7 h-7 text-[#FF8D28]" />
             @endif
         @else
             Jadwal Kuliah

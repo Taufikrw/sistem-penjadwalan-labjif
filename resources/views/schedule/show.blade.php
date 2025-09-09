@@ -67,7 +67,7 @@
     @if ($day === 'Semua')
         <x-data-table url="/api/get-schedule-table" :filters="['jenis_semester' => $semester, 'tahun_ajar' => $tahunAjar, 'day' => $day]" action-url="schedule/" :columns="[
             ['label' => 'Mata Kuliah', 'field' => 'practicum_name', 'sortable' => true],
-            ['label' => 'Kelas', 'field' => 'name', 'sortable' => true],
+            ['label' => 'Kelas', 'field' => 'class_name', 'sortable' => true],
             ['label' => 'Lab', 'field' => 'laboratorium_name', 'sortable' => false],
             ['label' => 'Dosen', 'field' => 'dosen', 'sortable' => false],
             ['label' => 'Hari', 'field' => 'day', 'sortable' => false],
@@ -79,7 +79,7 @@
     @else
         <x-data-table url="/api/get-schedule-table" :filters="['jenis_semester' => $semester, 'tahun_ajar' => $tahunAjar, 'day' => $day]" action-url="schedule/" :columns="[
             ['label' => 'Mata Kuliah', 'field' => 'practicum_name', 'sortable' => true],
-            ['label' => 'Kelas', 'field' => 'name', 'sortable' => true],
+            ['label' => 'Kelas', 'field' => 'class_name', 'sortable' => true],
             ['label' => 'Lab', 'field' => 'laboratorium_name', 'sortable' => false],
             ['label' => 'Dosen', 'field' => 'dosen', 'sortable' => false],
             ['label' => 'Jam', 'field' => 'jam', 'sortable' => true],

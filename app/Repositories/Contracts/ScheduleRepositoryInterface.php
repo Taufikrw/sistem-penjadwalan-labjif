@@ -39,4 +39,8 @@ interface ScheduleRepositoryInterface
     public function getYearScheduleList();
 
     public function getNewestTahunAjaran();
+
+    public function isTahunAjaranExists($tahunAjar, $jenisSemester);
+
+    public function deleteAllCourseSchedules();
 }

@@ -5,12 +5,12 @@
 
     <div class="flex items-center justify-between">
         <div class="relative w-full md:w-80 bg-white h-11">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <x-heroicon-s-magnifying-glass class="h-4 w-4 text-[#C9C6C5]" />
-                </span>
-                <input type="text" placeholder="Cari..." id="search-schedule-list"
-                    class="block w-full pl-9 h-full pr-3 border border-[#C9C6C5] rounded-xl leading-5 placeholder-[#C9C6C5] focus:outline-none focus:ring-1 focus:ring-key-secondary sm:text-md">
-            </div>
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <x-heroicon-s-magnifying-glass class="h-4 w-4 text-[#C9C6C5]" />
+            </span>
+            <input type="text" placeholder="Cari..." id="search-schedule-list"
+                class="block w-full pl-9 h-full pr-3 border border-[#C9C6C5] rounded-xl leading-5 placeholder-[#C9C6C5] focus:outline-none focus:ring-1 focus:ring-key-secondary sm:text-md">
+        </div>
         <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl" type="button"
             id="btn-create-schedule-list">
             <x-heroicon-s-plus class="w-5 h-5" />
@@ -46,8 +46,7 @@
                     <span id="stepper-1-text" class="text-xs mt-2 font-semibold">Tahun Ajar</span>
                 </div>
 
-                <div id="stepper-line"
-                    class="flex-auto border-t-2 transition-all duration-300 mx-4"></div>
+                <div id="stepper-line" class="flex-auto border-t-2 transition-all duration-300 mx-4"></div>
 
                 <div class="flex flex-col items-center">
                     <div id="stepper-2-circle"
@@ -59,27 +58,36 @@
             </div>
         </div>
 
-        <form id="schedule-wizard-form" action="{{ route('schedule.store') }}" method="POST"
+        <form id="schedule-wizard-form" action="{{ route('schedule-list.store') }}" method="POST"
             class="flex flex-col justify-between h-full flex-1">
             @csrf
 
             <div id="step-1" class="h-full">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <x-input-label for="tahun_ajar" class="mb-1 text-sm" value="Tahun Ajar" />
-                        <x-text-input name="tahun_ajar" id="tahun_ajar" class="w-full" :value="old('tahun_ajar')" type="number"
-                            min="2020" placeholder="Masukkan tahun ajaran" />
-                        <span id="error-tahun_ajar" class="text-red-500 text-xs mt-1"></span>
+                        <x-input-label for="semester" class="mb-1 text-sm" value="Semester" />
+                        <x-select-input id="jenis_semester" name="jenis_semester" :options="[
+                            'ganjil' => 'Gasal',
+                            'genap' => 'Genap',
+                        ]"
+                            placeholder="Pilih Semester" :selected="old('jenis_semester')" />
+                        <span id="error-jenis_semester" class="text-[#BA1A1A] text-sm mt-1 font-semibold"></span>
                     </div>
 
                     <div>
-                        <x-input-label for="semester" class="mb-1 text-sm" value="Semester" />
-                        <x-select-input id="jenis_semester" name="jenis_semester" :options="[
-                            'ganjil' => 'Ganjil',
-                            'genap' => 'Genap',
-                        ]"
-                            placeholder="Pilih jenis semester" :selected="old('jenis_semester')" />
-                        <span id="error-jenis_semester" class="text-red-500 text-xs mt-1"></span>
+                        <x-input-label for="tahun_ajar1" class="mb-1 text-sm" value="Tahun Ajar" />
+                        <div class="flex">
+                            <div>
+                                <x-text-input name="tahun_ajar1" id="tahun_ajar1" class="w-full" :value="old('tahun_ajar1')"
+                                    type="number" min="2023" placeholder="Masukkan tahun ajaran" />
+                            </div>
+                            <x-heroicon-s-slash class="w-6 h-6 my-auto" />
+                            <div>
+                                <x-text-input name="tahun_ajar2" id="tahun_ajar2" class="w-full" :value="old('tahun_ajar2')"
+                                    type="number" min="2023" placeholder="Masukkan tahun ajaran" />
+                            </div>
+                        </div>
+                        <span id="error-tahun_ajar" class="text-[#BA1A1A] text-sm mt-1 font-semibold"></span>
                     </div>
                 </div>
             </div>
@@ -121,7 +129,7 @@
                         <x-select-input id="day" name="day" :options="collect(App\Enums\Day::cases())
                             ->mapWithKeys(fn($day) => [$day->value => $day->value])
                             ->toArray()" placeholder="Pilih hari"
-                            :selected="old('day', isset($schedule) ? $schedule->day->value : $dayForm)" />
+                            :selected="old('day', isset($schedule) ? $schedule->day->value : null)" />
                     </div>
 
                     <div>
@@ -199,7 +207,7 @@
         const inactiveTextClass = 'text-gray-400';
         const activeLineClass = 'border-key-primary';
         const inactiveLineClass = 'border-gray-200';
-        
+
         let currentStep = 1;
 
         function openModal() {
@@ -243,18 +251,33 @@
         function resetWizard() {
             currentStep = 1;
             wizardForm[0].reset();
+
+            wizardForm.find('[id^="error-"]').text('');
             $('.error-message').remove();
-            $('input, textarea').removeClass('border-[#BA1A1A]');
+
+            $('input, textarea, select, button').removeClass('border-red-500 border-[#BA1A1A]');
 
             // Tampilkan step 1
+            wizardForm.find('div[data-placeholder]').each(function() {
+                const component = $(this);
+                const placeholderText = component.data('placeholder');
+                const selectedTextSpan = component.find('[id^="selected-text-"]');
+
+                // Kembalikan teks ke placeholder awal
+                selectedTextSpan.text(placeholderText);
+
+                // Kembalikan warna teks ke warna placeholder
+                selectedTextSpan.removeClass('text-gray-900').addClass('text-gray-500');
+            });
+
+            // 4. Atur ulang tampilan wizard ke langkah 1
             step1.removeClass('hidden');
             step2.addClass('hidden');
 
-            // Atur visibilitas tombol
             btnNext.removeClass('hidden');
             btnPrev.addClass('hidden');
             btnSubmit.addClass('hidden');
-            btnCancel.removeClass('hidden'); // Selalu tampilkan tombol batal
+            btnCancel.removeClass('hidden');
 
             updateStepperUI(1);
         }
@@ -281,38 +304,41 @@
 
         function validateStep1() {
             let isValid = true;
-            let tahunAjar = $('#tahun_ajar').val();
+            const tahun1 = $('#tahun_ajar1').val();
+            const tahun2 = $('#tahun_ajar2').val();
             let semester = $('#hidden-jenis_semester').val();
 
-            $('.error-message').remove();
-            $('input, textarea').removeClass('border-[#BA1A1A]');
+            $('#error-jenis_semester').text('');
+            $('#error-tahun_ajar').text('');
+            $('#jenis_semester, #tahun_ajar1, #tahun_ajar2').removeClass('border-red-500');
 
-            if (!tahunAjar) {
-                $('#tahun_ajar').addClass('border-[#BA1A1A]');
-                $('#tahun_ajar').closest('.relative').after(
-                    `<p class="error-message text-[#BA1A1A] text-sm mt-1 font-semibold">Tahun Ajar tidak boleh kosong</p>`
-                );
-                isValid = false;
-            } else if (isNaN(tahunAjar)) {
-                $('#tahun_ajar').addClass('border-[#BA1A1A]');
-                $('#tahun_ajar').closest('.relative').after(
-                    `<p class="error-message text-[#BA1A1A] text-sm mt-1 font-semibold">Tahun Ajar harus berupa angka</p>`
-                );
-                isValid = false;
-            } else if (tahunAjar.length !== 4) {
-                $('#tahun_ajar').addClass('border-[#BA1A1A]');
-                $('#tahun_ajar').closest('.relative').after(
-                    `<p class="error-message text-[#BA1A1A] text-sm mt-1 font-semibold">Tahun Ajar harus 4 digit</p>`
-                );
+            if (!tahun1) {
+                $('#error-tahun_ajar').text('Tahun ajar tidak boleh kosong.');
+                $('#tahun_ajar1').addClass('border-red-500');
                 isValid = false;
             }
+            if (!tahun2) {
+                $('#error-tahun_ajar').text('Tahun ajar tidak boleh kosong.');
+                $('#tahun_ajar2').addClass('border-red-500');
+                isValid = false;
+            }
+            if (tahun1 && tahun2) {
+                const numTahun1 = parseInt(tahun1);
+                const numTahun2 = parseInt(tahun2);
+
+                if (isNaN(numTahun1) || isNaN(numTahun2)) {
+                    $('#error-tahun_ajar').text('Tahun ajar harus berupa angka.');
+                    $('#tahun_ajar1, #tahun_ajar2').addClass('border-red-500');
+                    isValid = false;
+                } else if (numTahun2 !== numTahun1 + 1) {
+                    $('#error-tahun_ajar').text('Tahun ajar kedua harus satu tahun setelah tahun pertama.');
+                    $('#tahun_ajar1, #tahun_ajar2').addClass('border-red-500');
+                    isValid = false;
+                }
+            }
             if (!semester) {
-                $('#hidden-jenis_semester').addClass(
-                    'border-[#BA1A1A]'
-                );
-                $('#hidden-jenis_semester').closest('.relative').after(
-                    `<p class="error-message text-[#BA1A1A] text-sm mt-1 font-semibold">Semester tidak boleh kosong</p>`
-                );
+                $('#error-jenis_semester').text('Semester wajib dipilih.');
+                $('#jenis_semester').addClass('border-red-500'); // Asumsi select input bisa diberi border
                 isValid = false;
             }
             return isValid;
@@ -388,88 +414,140 @@
 
         wizardForm.on('submit', function(e) {
             e.preventDefault();
-            // Anda bisa menambahkan validasi step 2 di sini jika perlu
-            const formData = $(this).serialize();
 
-            $.ajax({
-                url: '{{ route('schedule.store') }}', // Gunakan named route Laravel
-                method: 'POST',
-                data: formData,
-                beforeSend: function() {
-                    btnSubmit.html(`
-                            <div class="flex justify-center items-center gap-2">
-                                <x-icon-spinner class="h-5 w-5 animate-spin" />
-                                Menyimpan...
+            Swal.fire({
+                showCancelButton: false,
+                showConfirmButton: false,
+                width: '420px',
+                customClass: {
+                    popup: 'my-swal-popup'
+                },
+                html: `
+                    <div class="flex flex-col items-center justify-between h-full">
+                        <div class="my-8">
+                            <div class="mb-4">
+                                <x-heroicon-s-exclamation-circle class="w-16 h-16 text-[#FF8D28] mx-auto" />
                             </div>
-                        `).prop('disabled', true);
-                },
-                success: function(response) {
-                    if (response.status === 'success') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 2000
-                        }).then(() => {
-                            const tahunAjar = $('#tahun_ajar').val();
-                            const semester = $('#hidden-jenis_semester').val();
-                            window.location.href =
-                                `/schedule-detail?semester=${encodeURIComponent(semester)}&tahun_ajar=${encodeURIComponent(tahunAjar)}`;
+                            <div class="font-bold text-key-primary text-lg mb-2">Konfirmasi</div>
+                            <div class="text-black font-semibold mb-4">Anda akan menyimpan jadwal praktikum untuk semester baru. Tindakan ini akan mereset semua jadwal Aslab yang ada.</div>
+                            <div class="text-black font-semibold mb-4">Aksi ini tidak dapat dibatalkan, Yakin ingin melanjutkan?</div>
+                        </div>
+                        <div class="flex gap-2 justify-between w-full">
+                            <x-button-secondary id="swal-cancel-btn" type="button" class="rounded-xl py-3 px-6 text-sm">Periksa kembali</x-button-secondary>
+                            <x-button-primary id="swal-confirm-btn" type="button" class="rounded-xl py-3 px-6 text-sm">Ya, Simpan</x-button-primary>
+                        </div>
+                    </div>
+                    <style>
+                        .my-swal-popup {
+                            min-height: 300px;
+                            border-radius: 1.5rem !important;
+                            overflow-y: auto;
+                        }
+                    </style>
+                `,
+                didOpen: () => {
+                    $('#swal-cancel-btn').on('click',
+                        function() {
+                            Swal.close();
                         });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Terjadi Kesalahan!',
-                            text: response.message ||
-                                'Maaf, terjadi kesalahan pada server. Silakan coba lagi.',
-                            showConfirmButton: true
+                    $('#swal-confirm-btn').on('click',
+                        function() {
+                            Swal.clickConfirm();
                         });
-                    }
-                },
-                error: function(xhr) {
-                    if (xhr.status === 422) { // Error validasi dari Laravel
-                        let errors = xhr.responseJSON
-                            .errors;
-                        wizardForm.find('.text-red-500').text('');
-                        $.each(errors, function(key,
-                            value) {
-                            let inputElement =
-                                $(
-                                    `[name="${key}"]`
-                                );
-                            inputElement
-                                .addClass(
-                                    'border-[#BA1A1A]'
-                                );
-                            inputElement.closest('.relative').after(
-                                `<p class="error-message text-[#BA1A1A] text-sm mt-1 font-semibold">${value[0]}</p>`
-                            );
-                        });
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal Validasi!',
-                            text: xhr
-                                .responseJSON
-                                .message ||
-                                'Mohon periksa kembali input Anda.',
-                            showConfirmButton: true
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Terjadi Kesalahan!',
-                            text: xhr
-                                .responseJSON
-                                .message ||
-                                'Maaf, terjadi kesalahan pada server. Silakan coba lagi.',
-                            showConfirmButton: true
-                        });
-                    }
-                },
-                complete: function() {
-                    // Kembalikan tombol ke keadaan normal
-                    btnSubmit.prop('disabled', false).html('Simpan');
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const formData = $(this).serialize();
+
+                    $.ajax({
+                        url: wizardForm.attr('action'),
+                        method: 'POST',
+                        data: formData,
+                        beforeSend: function() {
+                            btnSubmit.html(`
+                                    <div class="flex justify-center items-center gap-2">
+                                        <x-icon-spinner class="h-5 w-5 animate-spin" />
+                                        Menyimpan...
+                                    </div>
+                                `).prop('disabled', true);
+                        },
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: response.message,
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                }).then(() => {
+                                    const tahun1 = $('#tahun_ajar1').val();
+                                    const tahun2 = $('#tahun_ajar2').val();
+                                    const semester = $(
+                                        '#hidden-jenis_semester').val();
+
+                                    const tahunAjarRedirect = (semester ===
+                                            'ganjil') ?
+                                        tahun1 : tahun2;
+                                    console.log(semester,
+                                    tahunAjarRedirect);
+                                    window.location.href =
+                                        `/schedule-detail?semester=${encodeURIComponent(semester)}&tahun_ajar=${encodeURIComponent(tahunAjarRedirect)}`;
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Terjadi Kesalahan!',
+                                    text: response.message ||
+                                        'Maaf, terjadi kesalahan pada server. Silakan coba lagi.',
+                                    showConfirmButton: true
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            if (xhr.status === 422) { // Error validasi dari Laravel
+                                let errors = xhr.responseJSON
+                                    .errors;
+                                wizardForm.find('.text-red-500').text('');
+                                $.each(errors, function(key,
+                                    value) {
+                                    let inputElement =
+                                        $(
+                                            `[name="${key}"]`
+                                        );
+                                    inputElement
+                                        .addClass(
+                                            'border-[#BA1A1A]'
+                                        );
+                                    inputElement.closest('.relative').after(
+                                        `<p class="error-message text-[#BA1A1A] text-sm mt-1 font-semibold">${value[0]}</p>`
+                                    );
+                                });
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal Validasi!',
+                                    text: xhr
+                                        .responseJSON
+                                        .message ||
+                                        'Mohon periksa kembali input Anda.',
+                                    showConfirmButton: true
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Terjadi Kesalahan!',
+                                    text: xhr
+                                        .responseJSON
+                                        .message ||
+                                        'Maaf, terjadi kesalahan pada server. Silakan coba lagi.',
+                                    showConfirmButton: true
+                                });
+                            }
+                        },
+                        complete: function() {
+                            // Kembalikan tombol ke keadaan normal
+                            btnSubmit.prop('disabled', false).html('Simpan');
+                        }
+                    });
                 }
             });
         });
