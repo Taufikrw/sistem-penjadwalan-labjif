@@ -254,6 +254,8 @@
             currentStep = 1;
             wizardForm[0].reset();
 
+            $('#tahun_ajar1').val('');
+            $('#tahun_ajar2').val('');
             wizardForm.find('[id^="error-"]').text('');
             $('.error-message').remove();
 
@@ -402,6 +404,26 @@
                 }
             });
         }
+
+        function updateTahunAjar() {
+            const currentYear = new Date().getFullYear();
+            const selectedSemester = $('#hidden-jenis_semester').val();
+            const tahunAjar1Input = $('#tahun_ajar1');
+            const tahunAjar2Input = $('#tahun_ajar2');
+
+            if (selectedSemester === 'ganjil') {
+                tahunAjar1Input.val(currentYear);
+                tahunAjar2Input.val(currentYear + 1);
+            } else if (selectedSemester === 'genap') {
+                tahunAjar1Input.val(currentYear - 1);
+                tahunAjar2Input.val(currentYear);
+            } else {
+                tahunAjar1Input.val('');
+                tahunAjar2Input.val('');
+            }
+        }
+
+        $('#hidden-jenis_semester').on('change', updateTahunAjar);
 
         loadCard();
 
