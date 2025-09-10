@@ -168,4 +168,9 @@ class ScheduleService
 
         return compact('practicums', 'labs');
     }
+
+    public function deleteScheduleList(string $tahunAjaran, string $semester): void
+    {
+        $this->scheduleRepository->deleteSchedulesByYearAndSemester($tahunAjaran, $semester);
+    }
 }

@@ -82,6 +82,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('schedule/{id}', [ScheduleController::class, 'edit'])->name('schedule.edit');
     Route::put('schedule/{id}', [ScheduleController::class, 'update'])->name('schedule.update');
     Route::delete('schedule/{id}', [ScheduleController::class, 'destroy'])->name('schedule.delete');
+    Route::delete('schedule-list', [ScheduleController::class, 'destroyList'])->name('schedule-list.delete');
     Route::post('schedule/bulk-delete', [ScheduleController::class, 'bulkDelete'])->name('schedule.bulk-delete');
 
     Route::get('schedule/set-assistant/{id}', [AssistantController::class, 'setAssistant'])->name('schedule.set-assistant');

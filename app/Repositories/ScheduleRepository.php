@@ -352,4 +352,11 @@ class ScheduleRepository implements ScheduleRepositoryInterface
         CourseSchedule::truncate();
         return true;
     }
+
+    public function deleteSchedulesByYearAndSemester(string $tahunAjaran, string $semester)
+    {
+        Schedule::where('tahun_ajar', $tahunAjaran)
+            ->where('jenis_semester', $semester)
+            ->delete();
+    }
 }

@@ -3,6 +3,8 @@
         Jadwal Praktikum
     </x-slot>
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <div class="flex items-center justify-between">
         <div class="relative w-full md:w-80 bg-white h-11">
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -361,20 +363,39 @@
                     } else {
                         data.data.forEach(item => {
                             const card = `
-                                    <div class="rounded-xl bg-white p-4 h-40 flex flex-col justify-between border border-[#C9C6C5]">
-                                        <div class="year-list text-key-primary">
-                                            <h3 class="font-bold text-lg capitalize">Praktikum ${item.semester}</h3>
-                                            <p class="text-gray-600">${item.tahun_ajaran}</p>
+                                <div class="group relative rounded-xl bg-white p-4 h-40 flex flex-col justify-between border border-[#C9C6C5]">
+                                    <div class="absolute top-2 right-2">
+                                        <button type="button" class="btn-menu-schedule-list p-1 rounded-full hover:bg-gray-200 transition-opacity duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-gray-500">
+                                                <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" />
+                                            </svg>
+                                        </button>
+                                        <div class="menu-dropdown absolute left-0 mt-2 w-42 origin-top-right rounded-md bg-white shadow border border-[#C9C6C5] z-10 hidden">
+                                            <div class="py-1">
+                                                <button type="button" 
+                                                    class="btn-delete-schedule-list flex items-center w-full px-4 py-2 text-sm hover:bg-gray-100"
+                                                    data-tahun-ajaran="${item.tahun_ajar}" 
+                                                    data-semester="${item.semester}">
+                                                    <x-heroicon-o-trash class="w-5 h-5 mr-2" />
+                                                    Hapus
+                                                </button>
+                                            </div>
                                         </div>
-                                        <a href="/schedule-detail?semester=${encodeURIComponent(item.semester)}&tahun_ajar=${encodeURIComponent(item.tahun_ajar)}" class="w-full">
-                                            <x-button-secondary class="flex items-center px-5 py-3 text-md gap-2 rounded-xl w-full"
-                                                type="button" id="btn-create-course">
-                                                <x-heroicon-s-eye class="w-5 h-5" />
-                                                Detail
-                                            </x-button-secondary>
-                                        </a>
                                     </div>
-                                `;
+
+                                    <div class="year-list text-key-primary">
+                                        <h3 class="font-bold text-lg capitalize">Praktikum ${item.semester}</h3>
+                                        <p class="text-gray-600">${item.tahun_ajaran}</p>
+                                    </div>
+                                    <a href="/schedule-detail?semester=${encodeURIComponent(item.semester)}&tahun_ajar=${encodeURIComponent(item.tahun_ajar)}" class="w-full">
+                                        <x-button-secondary class="flex items-center justify-center px-5 py-3 text-md gap-2 rounded-xl w-full"
+                                            type="button">
+                                            <x-heroicon-s-eye class="w-5 h-5" />
+                                            Detail
+                                        </x-button-secondary>
+                                    </a>
+                                </div>
+                            `;
                             cardContainer.append(card);
                         });
                     }
@@ -410,6 +431,145 @@
 
         btnPrev.on('click', function() {
             goToStep(1);
+        });
+
+        // --- Tambahkan blok kode ini ---
+
+        // Event listener untuk tombol titik tiga (menu)
+        $('#card-container').on('click', '.btn-menu-schedule-list', function(e) {
+            e.stopPropagation(); // Mencegah event 'click' menyebar ke elemen lain
+            // Tutup semua dropdown lain sebelum membuka yang ini
+            $('.menu-dropdown').not($(this).next('.menu-dropdown')).addClass('hidden');
+            // Toggle dropdown yang diklik
+            $(this).next('.menu-dropdown').toggleClass('hidden');
+        });
+
+        // Event listener untuk tombol hapus
+        $('#card-container').on('click', '.btn-delete-schedule-list', function(e) {
+            e.stopPropagation();
+            const tahunAjaran = $(this).data('tahun-ajaran');
+            const semester = $(this).data('semester');
+
+            Swal.fire({
+                showCancelButton: false,
+                showConfirmButton: false,
+                width: '430px',
+                customClass: {
+                    popup: 'my-swal-popup'
+                },
+                html: `
+                        <div class="flex flex-col items-center justify-between h-full">
+                            <div class="mt-8">
+                                <div class="mb-4">
+                                    <x-heroicon-s-exclamation-circle class="w-16 h-16 text-[#BA1A1A] mx-auto" />
+                                </div>
+                                <div class="font-bold text-key-primary text-lg mb-2">Anda Ingin Menghapus?</div>
+                                <div class="text-black font-semibold mb-4">
+                                    Anda akan menghapus jadwal praktikum ini. Tindakan ini juga akan secara permanen menghapus semua riwayat mengajar Aslab yang terkait di semester ini. Data tidak dapat dipulihkan.
+                                </div>
+                            </div>
+                            <div class="flex gap-2 justify-between w-full mt-8">
+                                <x-button-secondary id="swal-cancel-btn" type="button" class="rounded-xl py-3 px-6 text-sm">
+                                    Batal
+                                </x-button-secondary>
+                                <x-button-danger id="swal-confirm-btn" type="button" class="rounded-xl py-3 px-6 text-sm">
+                                    Ya, Hapus
+                                </x-button-danger>
+                            </div>
+                        </div>
+                        <style>
+                            .my-swal-popup {
+                                min-height: 300px;
+                                max-height: 90vh;
+                                border-radius: 1.5rem !important;
+                                overflow-y: auto;
+                            }
+                        </style>
+                    `,
+                didOpen: () => {
+                    $('#swal-cancel-btn').on('click',
+                        function() {
+                            Swal.close();
+                        });
+                    $('#swal-confirm-btn').on('click',
+                        function() {
+                            Swal.clickConfirm();
+                        });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/schedule-list', // Route API yang akan kita buat
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: {
+                            tahun_ajaran: tahunAjaran,
+                            semester: semester
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                width: '430px',
+                                customClass: {
+                                    popup: 'my-swal-popup'
+                                },
+                                html: `
+                                    <div class="flex flex-col items-center justify-between h-full">
+                                        <div class="mt-8">
+                                            <div class="mb-4">
+                                                <x-heroicon-s-check-circle class="w-16 h-16 text-[#4CAF50] mx-auto" />
+                                            </div>
+                                            <div class="font-bold text-key-primary text-lg mb-2">Berhasil!</div>
+                                            <div class="text-black font-semibold mb-4">
+                                                ${response.message}
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-center w-full mt-6">
+                                            <x-button-primary id="swal-confirm-btn" type="button" class="rounded-xl py-3 px-6 text-sm">
+                                                Oke
+                                            </x-button-primary>
+                                        </div>
+                                    </div>
+                                    <style>
+                                        .my-swal-popup {
+                                            min-height: 200px;
+                                            max-height: 90vh;
+                                            border-radius: 1.5rem !important;
+                                            overflow-y: auto;
+                                        }
+                                    </style>
+                                `,
+                                didOpen: () => {
+                                    $('#swal-confirm-btn').on(
+                                        'click',
+                                        function() {
+                                            Swal.clickConfirm();
+                                        });
+                                }
+                            }).then(() => {
+                                loadCard();
+                            });
+                        },
+                        error: function(xhr) {
+                            Swal.fire(
+                                'Gagal!',
+                                'Terjadi kesalahan saat menghapus data.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
+        // Menutup dropdown jika mengklik di luar area menu
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.btn-menu-schedule-list').length) {
+                $('.menu-dropdown').addClass('hidden');
+            }
         });
 
         wizardForm.on('submit', function(e) {
@@ -488,8 +648,6 @@
                                     const tahunAjarRedirect = (semester ===
                                             'ganjil') ?
                                         tahun1 : tahun2;
-                                    console.log(semester,
-                                    tahunAjarRedirect);
                                     window.location.href =
                                         `/schedule-detail?semester=${encodeURIComponent(semester)}&tahun_ajar=${encodeURIComponent(tahunAjarRedirect)}`;
                                 });

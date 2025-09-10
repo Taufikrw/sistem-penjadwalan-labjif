@@ -155,6 +155,27 @@ class ScheduleController extends Controller
         }
     }
 
+    public function destroyList(Request $request)
+    {
+        $request->validate([
+            'tahun_ajaran' => 'required|string',
+            'semester' => 'required|string|in:ganjil,genap',
+        ]);
+
+        try {
+            $this->scheduleService->deleteScheduleList($request->input('tahun_ajaran'), $request->input('semester'));
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data Jadwal Praktikum berhasil dihapus.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus Data Jadwal Praktikum: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function bulkDelete(StoreScheduleBulkDeleteRequest $request)
     {
         $validated = $request->validated();

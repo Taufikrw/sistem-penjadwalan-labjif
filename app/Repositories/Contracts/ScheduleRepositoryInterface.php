@@ -43,4 +43,6 @@ interface ScheduleRepositoryInterface
     public function isTahunAjaranExists($tahunAjar, $jenisSemester);
 
     public function deleteAllCourseSchedules();
+
+    public function deleteSchedulesByYearAndSemester(string $tahunAjaran, string $semester);
 }
