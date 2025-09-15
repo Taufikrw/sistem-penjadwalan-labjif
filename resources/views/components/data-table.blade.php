@@ -15,11 +15,31 @@
                     @foreach ($columns as $column)
                         <th scope="col"
                             class="px-4 py-3 sticky top-0 bg-white border-b border-[#E5E2E1] whitespace-nowrap z-5">
-                            @if (isset($column['tooltip']) && $column['tooltip'])
+
+                            @if ($column['field'] === 'status')
+                                @php
+                                    $statusTooltipContent = '
+                                        <div class="text-left">
+                                            <strong>Keterangan Status:</strong>
+                                            <ul class="list-disc list-inside mt-1">
+                                                <li>Aktif: Tersedia untuk mengajar.</li>
+                                                <li>Non-Aktif: Sedang tidak tersedia (cuti/izin).</li>
+                                                <li>Selesai: Telah menyelesaikan masa tugas.</li>
+                                            </ul>
+                                        </div>
+                                    ';
+                                @endphp
+                                <x-tooltip :text="$statusTooltipContent">
+                                    <span class="flex items-center gap-1 font-bold">
+                                        {{ $column['label'] }}
+                                        <x-heroicon-s-information-circle class="w-4 h-4 text-blue-500" />
+                                    </span>
+                                </x-tooltip>
+                            @elseif (isset($column['tooltip']) && $column['tooltip'])
                                 <x-tooltip :text="$column['tooltip']">
                                     <span
                                         class="flex items-center gap-1 font-bold {{ $column['sortable'] ? 'sortable cursor-pointer' : '' }}"
-                                        data-field="{{ $column['field'] }}" data-sort-direction="">
+                                        data-field="{{ $column['field'] }}">
                                         {{ $column['label'] }}
                                         @if ($column['sortable'])
                                             <span class="sort-indicator flex flex-col ml-2 gap-[3px]">
@@ -32,7 +52,7 @@
                             @else
                                 <span
                                     class="flex items-center gap-1 font-bold {{ $column['sortable'] ? 'sortable cursor-pointer' : '' }}"
-                                    data-field="{{ $column['field'] }}" data-sort-direction="">
+                                    data-field="{{ $column['field'] }}">
                                     {{ $column['label'] }}
                                     @if ($column['sortable'])
                                         <span class="sort-indicator flex flex-col ml-2 gap-[3px]">
@@ -263,10 +283,10 @@
                                                     rowsHtml += `<div class="flex items-center gap-2">
                                                         ${partner.assistant.name}
                                                         ${hasDetailLink ? `
-                                                            <a href="${partner.assistant.nim}/detail-jadwal-praktikum" title="Lihat detail asisten">
-                                                                <x-heroicon-s-eye class="inline w-4 h-4 text-gray-400" />
-                                                            </a>
-                                                            ` : ''}
+                                                                <a href="${partner.assistant.nim}/detail-jadwal-praktikum" title="Lihat detail asisten">
+                                                                    <x-heroicon-s-eye class="inline w-4 h-4 text-gray-400" />
+                                                                </a>
+                                                                ` : ''}
                                                     </div>`;
                                                 } else {
                                                     rowsHtml +=

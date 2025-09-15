@@ -350,6 +350,7 @@ class ScheduleRepository implements ScheduleRepositoryInterface
     public function deleteAllCourseSchedules()
     {
         CourseSchedule::truncate();
+        Assistant::query()->update(['is_final' => false]);
         return true;
     }
 
