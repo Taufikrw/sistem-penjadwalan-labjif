@@ -20,7 +20,7 @@ interface AssistantRepositoryInterface
 
     public function deleteByNims(array $nims);
 
-    public function getAssistantAvailableSchedules($schedule_id);
+    public function getAssistantAvailableSchedules($schedule_id, bool $enforceMaxClassLimit = false);
     
     public function deletePreferencesByNim($nim);
 
@@ -33,4 +33,8 @@ interface AssistantRepositoryInterface
     public function getUniqueAngkatan();
 
     public function getUniqueTahunMasuk();
+
+    public function getInitialAssistantLoad(array $filters): array;
+
+    public function getAssistantWithScheduleCount();
 }

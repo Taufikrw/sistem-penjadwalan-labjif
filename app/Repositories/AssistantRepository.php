@@ -3,10 +3,12 @@
 namespace App\Repositories;
 
 use App\Models\Assistant;
+use App\Models\AssistantSchedule;
 use App\Models\Preference;
 use App\Models\Schedule;
 use App\Models\User;
 use App\Repositories\Contracts\AssistantRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class AssistantRepository implements AssistantRepositoryInterface
@@ -171,7 +173,7 @@ class AssistantRepository implements AssistantRepositoryInterface
         return true;
     }
 
-    public function getAssistantAvailableSchedules($schedule_id)
+    public function getAssistantAvailableSchedules($schedule_id, bool $enforceMaxClassLimit = false)
     {
         $schedule = Schedule::with('assistantSchedules', 'practicum')->where('id', $schedule_id)->first();
         $assistants = $this->getAllAssistants();
@@ -200,7 +202,19 @@ class AssistantRepository implements AssistantRepositoryInterface
             $minDiff = 4;
         }
 
-        return $assistants->filter(function ($assistant) use ($day, $start, $end, $forProdi, $tahunAjar, $minDiff, $semester, $kodePraktikum, $jenisSemester, $schedule_id) {
+        return $assistants->filter(function ($assistant) use ($day, $start, $end, $forProdi, $tahunAjar, $minDiff, $semester, $kodePraktikum, $jenisSemester, $schedule_id, $enforceMaxClassLimit) {
+            $jumlahKelas = $assistant->assistantSchedules
+                ->filter(function ($assistantSchedule) use ($tahunAjar, $jenisSemester) {
+                    return $assistantSchedule->schedule &&
+                        $assistantSchedule->schedule->tahun_ajar == $tahunAjar &&
+                        $assistantSchedule->schedule->jenis_semester == $jenisSemester;
+                })
+                ->count();
+
+            if ($enforceMaxClassLimit && $jumlahKelas >= 4) {
+                return false;
+            }
+
             // Hanya asisten yang is_final-nya true
             if (!$assistant->is_final) {
                 return false;
@@ -403,5 +417,36 @@ class AssistantRepository implements AssistantRepositoryInterface
     public function getUniqueTahunMasuk()
     {
         return Assistant::distinct()->orderBy('tahun_masuk', 'desc')->pluck('tahun_masuk')->toArray();
+    }
+
+    public function getInitialAssistantLoad(array $filters): array
+    {
+        if (empty($filters['tahun_ajar']) || empty($filters['jenis_semester'])) {
+            return [];
+        }
+
+        return AssistantSchedule::query()
+            ->join('schedules', 'assistant_schedules.schedule_id', '=', 'schedules.id')
+            ->where('schedules.tahun_ajar', $filters['tahun_ajar'])
+            ->where('schedules.jenis_semester', $filters['jenis_semester'])
+            ->select('nim', DB::raw('count(*) as class_count'))
+            ->groupBy('nim')
+            ->pluck('class_count', 'nim') // Menghasilkan [nim => class_count]
+            ->toArray();
+    }
+
+    public function getAssistantWithScheduleCount()
+    {
+        return Assistant::where('status', 'aktif')
+            ->withCount([
+                'assistantSchedules as assistant_schedules_count' => function ($query) {
+                    $query->whereHas('schedule', function ($q) {
+                        $q->whereNull('deleted_at');
+                    });
+                }
+            ])
+            ->orderBy('assistant_schedules_count', 'desc')
+            ->get();
+        // ->where('assistant_schedules_count', '=', 0);
     }
 }

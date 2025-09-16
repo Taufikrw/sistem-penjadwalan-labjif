@@ -10,21 +10,23 @@ use Illuminate\Support\Facades\Log;
 class GeneticAlgorithmService
 {
     protected const CLASH_PENALTY = 1000;
+    protected const OVERLOAD_PENALTY = 1000;
     protected const PREFERENCE_BONUS = 20;
     protected const DISTRIBUTION_PENALTY = 50;
+    protected const MAX_CLASSES_PER_ASSISTANT = 4;
 
     protected $assistantRepository;
     protected $scheduleRepository;
 
-    // Parameter Algoritma Genetika
     protected int $populationSize = 50;
-    protected int $maxGenerations = 1000;
-    protected float $mutationRate = 0.05;
+    protected int $maxGenerations = 100;
+    protected float $mutationRate = 0.02;
     protected int $tournamentSize = 5;
 
     protected $schedules;
     protected array $candidatePools = [];
     protected array $assistantPreferences = [];
+    protected array $initialAssistantLoad = [];
 
     public function __construct(
         AssistantRepositoryInterface $assistantRepository,
@@ -50,7 +52,7 @@ class GeneticAlgorithmService
 
         $population = $this->initializePopulation();
         $bestSolution = $population[0];
-        $bestFitnessScore = 0;
+        $bestFitnessScore = -1;
 
         for ($generation = 0; $generation < $this->maxGenerations; $generation++) {
             $fitnessScores = [];
@@ -63,6 +65,11 @@ class GeneticAlgorithmService
                     $bestSolution = $individual;
                 }
             }
+
+            Log::info("Generasi ke-" . ($generation + 1), [
+                'skor_terbaik_generasi_ini' => max($fitnessScores),
+                'skor_terbaik_sejauh_ini' => $bestFitnessScore
+            ]);
 
             $newPopulation = [];
             for ($i = 0; $i < $this->populationSize; $i++) {
@@ -83,11 +90,17 @@ class GeneticAlgorithmService
 
     private function prepareInitialData(array $filters): void
     {
+        $this->initialAssistantLoad = $this->assistantRepository->getInitialAssistantLoad($filters);
+
         $this->schedules = $this->scheduleRepository->getEmptyAssistantSchedules($filters);
 
         foreach ($this->schedules as $schedule) {
-            $availableAssistants = $this->assistantRepository->getAssistantAvailableSchedules($schedule->id);
+            $availableAssistants = $this->assistantRepository->getAssistantAvailableSchedules($schedule->id, true);
             $this->candidatePools[$schedule->id] = collect($availableAssistants)->pluck('nim')->toArray();
+
+            if (count($this->candidatePools[$schedule->id] ?? []) < 2) {
+                throw new \Exception("GAGAL: Jadwal '{$schedule->practicum->name}' ({$schedule->name}) tidak memiliki cukup kandidat asisten (minimal 2) setelah menerapkan filter batas 4 kelas. Coba longgarkan aturan atau periksa ketersediaan asisten.");
+            }
         }
 
         $preferences = Preference::all()->groupBy('nim');
@@ -113,10 +126,11 @@ class GeneticAlgorithmService
 
     private function calculateFitness(array $individual): int
     {
+        $baseScore = count($this->schedules) * 2 * self::CLASH_PENALTY;
         $clashCount = 0;
         $preferenceMatches = 0;
         $assistantTimeSlots = [];
-        $assistantClassCounts = []; // Untuk menghitung beban kerja setiap asisten
+        $assistantClassCounts = $this->initialAssistantLoad;
 
         foreach ($individual as $scheduleId => $assistantNims) {
             $schedule = $this->schedules->find($scheduleId);
@@ -124,19 +138,16 @@ class GeneticAlgorithmService
             $kodePraktikum = optional($schedule->practicum)->kode_praktikum;
 
             foreach ($assistantNims as $nim) {
-                // 1. Hitung Bentrok
                 if (isset($assistantTimeSlots[$nim][$timeSlotIdentifier])) {
                     $clashCount++;
                 } else {
                     $assistantTimeSlots[$nim][$timeSlotIdentifier] = $scheduleId;
                 }
 
-                // 2. Hitung Preferensi
                 if ($kodePraktikum && isset($this->assistantPreferences[$nim]) && in_array($kodePraktikum, $this->assistantPreferences[$nim])) {
                     $preferenceMatches++;
                 }
 
-                // 3. Catat jumlah kelas untuk setiap asisten
                 if (!isset($assistantClassCounts[$nim])) {
                     $assistantClassCounts[$nim] = 0;
                 }
@@ -144,7 +155,13 @@ class GeneticAlgorithmService
             }
         }
 
-        // 4. Hitung Penalti Distribusi (Standar Deviasi)
+        $overloadCount = 0;
+        foreach ($assistantClassCounts as $nim => $count) {
+            if ($count > self::MAX_CLASSES_PER_ASSISTANT) {
+                $overloadCount += ($count - self::MAX_CLASSES_PER_ASSISTANT);
+            }
+        }
+
         $distributionPenalty = 0;
         if (!empty($assistantClassCounts)) {
             $classCounts = array_values($assistantClassCounts);
@@ -154,16 +171,15 @@ class GeneticAlgorithmService
             $distributionPenalty = sqrt($variance);
         }
 
-        // Hitung total skor penalti terlebih dahulu
-        $totalPenaltyScore = ($clashCount * self::CLASH_PENALTY)
-            - ($preferenceMatches * self::PREFERENCE_BONUS)
+        $totalPenalty = ($clashCount * self::CLASH_PENALTY)
+            + ($overloadCount * self::OVERLOAD_PENALTY)
             + ($distributionPenalty * self::DISTRIBUTION_PENALTY);
 
-        // Pastikan skor penalti tidak negatif
-        $nonNegativePenalty = max(0, $totalPenaltyScore);
+        $totalBonus = $preferenceMatches * self::PREFERENCE_BONUS;
 
-        // Terapkan rumus maksimasi
-        return 1 / (1 + $nonNegativePenalty);
+        $fitnessScore = $baseScore - $totalPenalty + $totalBonus;
+
+        return max(0, (int)$fitnessScore);
     }
 
     private function selection(array $population, array $fitnessScores): array
@@ -172,7 +188,6 @@ class GeneticAlgorithmService
         $bestFitness = -1;
         for ($i = 0; $i < $this->tournamentSize; $i++) {
             $randomIndex = array_rand($population);
-            // Bandingkan skor fitness, bukan 'count'
             if ($fitnessScores[$randomIndex] > $bestFitness) {
                 $bestFitness = $fitnessScores[$randomIndex];
                 $bestIndividual = $population[$randomIndex];
@@ -184,11 +199,38 @@ class GeneticAlgorithmService
     private function crossover(array $parent1, array $parent2): array
     {
         $child = [];
-        $keys = array_keys($parent1);
-        $crossoverPoint = rand(1, count($keys) - 1);
-        $child = array_slice($parent1, 0, $crossoverPoint, true);
-        $child += array_slice($parent2, $crossoverPoint, null, true);
+        foreach (array_keys($parent1) as $scheduleId) {
+            $geneParent1 = $parent1[$scheduleId];
+            $geneParent2 = $parent2[$scheduleId];
+
+            $schedule = $this->schedules->find($scheduleId);
+            $kodePraktikum = optional($schedule->practicum)->kode_praktikum;
+
+            $score1 = $this->calculateGeneQuality($geneParent1, $kodePraktikum);
+            $score2 = $this->calculateGeneQuality($geneParent2, $kodePraktikum);
+
+            if ($score1 >= $score2) {
+                $child[$scheduleId] = $geneParent1;
+            } else {
+                $child[$scheduleId] = $geneParent2;
+            }
+        }
         return $child;
+    }
+
+    private function calculateGeneQuality(array $assistantNims, ?string $kodePraktikum): int
+    {
+        if (!$kodePraktikum) {
+            return 0;
+        }
+
+        $qualityScore = 0;
+        foreach ($assistantNims as $nim) {
+            if (isset($this->assistantPreferences[$nim]) && in_array($kodePraktikum, $this->assistantPreferences[$nim])) {
+                $qualityScore++;
+            }
+        }
+        return $qualityScore;
     }
 
     private function mutate(array &$individual): void
@@ -236,6 +278,9 @@ class GeneticAlgorithmService
         $clashingScheduleIds = [];
         $assistantTimeSlots = [];
 
+        $assistantClassCounts = $this->initialAssistantLoad;
+        $assistantSchedules = [];
+
         foreach ($individual as $scheduleId => $assistantNims) {
             $schedule = $this->schedules->find($scheduleId);
             $timeSlotIdentifier = $schedule->day->value . '_' . $schedule->start_time . '_' . $schedule->end_time;
@@ -247,11 +292,25 @@ class GeneticAlgorithmService
                 } else {
                     $assistantTimeSlots[$nim][$timeSlotIdentifier] = $scheduleId;
                 }
+
+                if (!isset($assistantClassCounts[$nim])) {
+                    $assistantClassCounts[$nim] = 0;
+                    $assistantSchedules[$nim] = [];
+                }
+
+                $assistantClassCounts[$nim]++;
+                $assistantSchedules[$nim][] = $scheduleId;
+
+                if ($assistantClassCounts[$nim] > self::MAX_CLASSES_PER_ASSISTANT) {
+                    foreach ($assistantSchedules[$nim] as $asstScheduleId) {
+                        $clashingScheduleIds[] = $asstScheduleId;
+                    }
+                }
             }
         }
 
         return [
-            'count' => count(array_unique($clashingScheduleIds)), // Jumlah jadwal yang bentrok
+            'count' => count(array_unique($clashingScheduleIds)),
             'clashing_ids' => array_unique($clashingScheduleIds)
         ];
     }
