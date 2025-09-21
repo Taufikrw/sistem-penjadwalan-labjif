@@ -434,4 +434,17 @@ class AssistantController extends Controller
 
         return response()->json($overview);
     }
+
+    public function getAssistantLoadApi(Request $request)
+    {
+        $filters = [
+            'tahun_ajar' => $request->input('tahun_ajar', '2023/2024'),
+            'jenis_semester' => $request->input('jenis_semester', 'Gasal')
+        ];
+
+        $data = $this->assistantService->getJumlahKelasCount();
+        
+
+        return response()->json($data);
+    }
 }

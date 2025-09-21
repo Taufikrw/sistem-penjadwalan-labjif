@@ -16,13 +16,14 @@ return new class extends Migration
             $table->string('name', 20);
             $table->string('kode_praktikum', 20);
             $table->uuid('laboratorium_id');
-            $table->string('dosen', 50);
+            $table->uuid('lecturer_id');
             $table->string('jenis_semester', 7);
             $table->string('tahun_ajar', 4);
             $table->string('day', 10);
             $table->time('start_time');
             $table->time('end_time');
 
+            $table->foreign('lecturer_id')->references('id')->on('lecturers')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('kode_praktikum')->references('kode_praktikum')->on('practicums')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('laboratorium_id')->references('id')->on('laboratoriums')->onDelete('cascade');
             $table->softDeletes();

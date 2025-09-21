@@ -6,10 +6,12 @@ use App\Repositories\AssistantRepository;
 use App\Repositories\Contracts\AssistantRepositoryInterface;
 use App\Repositories\Contracts\CourseScheduleRepositoryInterface;
 use App\Repositories\Contracts\LaboratoriumRepositoryInterface;
+use App\Repositories\Contracts\LecturerRepositoryInterface;
 use App\Repositories\Contracts\PracticumRepositoryInterface;
 use App\Repositories\Contracts\ScheduleRepositoryInterface;
 use App\Repositories\CourseScheduleRepository;
 use App\Repositories\LaboratoriumRepository;
+use App\Repositories\LecturerRepository;
 use App\Repositories\PracticumRepository;
 use App\Repositories\ScheduleRepository;
 use App\View\Components\DataTable;
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(ScheduleRepositoryInterface::class, ScheduleRepository::class);
         $this->app->singleton(CourseScheduleRepositoryInterface::class, CourseScheduleRepository::class);
         $this->app->singleton(LaboratoriumRepositoryInterface::class, LaboratoriumRepository::class);
+        $this->app->singleton(LecturerRepositoryInterface::class, LecturerRepository::class);
     }
 
     /**

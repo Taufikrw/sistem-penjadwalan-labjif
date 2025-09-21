@@ -267,4 +267,9 @@ class AssistantService
             }
         }
     }
+
+    public function getJumlahKelasCount()
+    {
+        return $this->assistantRepository->getAssistantWithScheduleCount();
+    }
 }

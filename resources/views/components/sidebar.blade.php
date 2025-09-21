@@ -27,7 +27,7 @@
             </x-nav-link>
             @if (Auth::user()->role === 'admin')
                 <x-nav-link route="{{ route('assistant.index') }}" routeIs="assistant.*">
-                    <x-heroicon-s-user class="w-5 h-5" />
+                    <x-heroicon-s-user-group class="w-5 h-5" />
                     <span class="menu-text transition-opacity duration-150">Aslab</span>
                 </x-nav-link>
                 <x-nav-link route="{{ route('practicum.index') }}" routeIs="practicum.*">
@@ -37,6 +37,10 @@
                 <x-nav-link route="{{ route('lab.index') }}" routeIs="lab.*">
                     <x-heroicon-s-beaker class="w-5 h-5" />
                     <span class="menu-text transition-opacity duration-150">Laboratorium</span>
+                </x-nav-link>
+                <x-nav-link route="{{ route('lecturer.index') }}" routeIs="lecturer.*">
+                    <x-heroicon-s-academic-cap class="w-5 h-5" />
+                    <span class="menu-text transition-opacity duration-150">Dosen</span>
                 </x-nav-link>
                 <x-nav-link route="{{ route('schedule.index') }}" routeIs="schedule.*">
                     <x-heroicon-s-calendar-date-range class="w-5 h-5" />

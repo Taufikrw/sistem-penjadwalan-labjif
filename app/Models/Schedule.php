@@ -16,7 +16,7 @@ class Schedule extends Model
         'name',
         'kode_praktikum',
         'laboratorium_id',
-        'dosen',
+        'lecturer_id',
         'tahun_ajar',
         'jenis_semester',
         'day',
@@ -40,6 +40,11 @@ class Schedule extends Model
     public function laboratorium()
     {
         return $this->belongsTo(Laboratorium::class, 'laboratorium_id', 'id');
+    }
+
+    public function lecturer()
+    {
+        return $this->belongsTo(Lecturer::class, 'lecturer_id', 'id');
     }
 
     public function assistantSchedules()
