@@ -1,5 +1,5 @@
-<form id="schedule-form" action="{{ isset($schedule) ? route('schedule.update', $schedule->id) : route('schedule.store') }}"
-    method="POST">
+<form id="schedule-form"
+    action="{{ isset($schedule) ? route('schedule.update', $schedule->id) : route('schedule.store') }}" method="POST">
     @csrf
     @if (isset($schedule))
         @method('PUT')
@@ -20,14 +20,8 @@
     <div class="grid grid-cols-2 gap-4">
         <div class="col-span-2">
             <x-input-label for="kode_praktikum" class="mb-1 text-sm" value="Nama Praktikum" />
-            <x-select-input
-                id="kode_praktikum"
-                name="kode_praktikum"
-                :options="$practicums->pluck('name', 'kode_praktikum')->toArray()"
-                placeholder="Pilih Nama Praktikum"
-                :selected="old('kode_praktikum', isset($schedule) ? $schedule->kode_praktikum : null)"
-                required
-            />
+            <x-select-input id="kode_praktikum" name="kode_praktikum" :options="$practicums->pluck('name', 'kode_praktikum')->toArray()"
+                placeholder="Pilih Nama Praktikum" :selected="old('kode_praktikum', isset($schedule) ? $schedule->kode_praktikum : null)" required />
             @error('kode_praktikum')
                 <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
             @enderror
@@ -35,29 +29,26 @@
 
         <div class="col-span-2">
             <x-input-label for="laboratorium_id" class="mb-1 text-sm" value="Nama Laboratorium" />
-            <x-select-input
-                id="laboratorium_id"
-                name="laboratorium_id"
-                :options="$labs->pluck('name', 'id')->toArray()"
-                placeholder="Pilih Nama Laboratorium"
-                :selected="old('laboratorium_id', isset($schedule) ? $schedule->laboratorium_id : null)"
-                required
-            />
+            <x-select-input id="laboratorium_id" name="laboratorium_id" :options="$labs->pluck('name', 'id')->toArray()"
+                placeholder="Pilih Nama Laboratorium" :selected="old('laboratorium_id', isset($schedule) ? $schedule->laboratorium_id : null)" required />
             @error('kode_praktikum')
                 <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
             @enderror
         </div>
 
         <div class="col-span-2">
-            <x-input-label for="dosen" class="mb-1 text-sm" value="Nama Dosen" />
-            <x-text-input name="dosen" id="dosen" class="w-full" :value="old('dosen', isset($schedule) ? $schedule->dosen : '')"
-                placeholder="Masukkan nama dosen" required />
+            <x-input-label for="lecturer_id" class="mb-1 text-sm" value="Nama Dosen" />
+            <x-select-input id="lecturer_id" name="lecturer_id" :options="$lecturers->pluck('name', 'id')->toArray()" placeholder="Pilih Nama Dosen"
+                :selected="old('lecturer_id', isset($schedule) ? $schedule->lecturer_id : null)" required />
+            @error('lecturer_id')
+                <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+            @enderror
         </div>
 
         <div>
             <x-input-label for="name" class="mb-1 text-sm" value="Nama Kelas" />
-            <x-text-input name="name" id="name" class="w-full" :value="old('name', isset($schedule) ? $schedule->name : '')"
-                type="text" placeholder="Masukkan nama kelas (IF/SI-X)" required />
+            <x-text-input name="name" id="name" class="w-full" :value="old('name', isset($schedule) ? $schedule->name : '')" type="text"
+                placeholder="Masukkan nama kelas (IF/SI-X)" required />
         </div>
 
         <div>
@@ -78,13 +69,14 @@
             <x-text-input type="time" name="end_time" id="end_time" class="w-full" :value="old('end_time', isset($schedule) ? $schedule->end_time->format('H:i') : '')" required />
         </div>
 
-        <input type="hidden" name="tahun_ajar" id="tahun_ajar" value="{{ old('tahun_ajar', isset($schedule) ? $schedule->tahun_ajar : $tahunAjar) }}">
-        <input type="hidden" name="jenis_semester" id="jenis_semester" value="{{ old('jenis_semester', isset($schedule) ? $schedule->jenis_semester : $semester) }}">
+        <input type="hidden" name="tahun_ajar" id="tahun_ajar"
+            value="{{ old('tahun_ajar', isset($schedule) ? $schedule->tahun_ajar : $tahunAjar) }}">
+        <input type="hidden" name="jenis_semester" id="jenis_semester"
+            value="{{ old('jenis_semester', isset($schedule) ? $schedule->jenis_semester : $semester) }}">
     </div>
 
     <div class="mt-8 flex justify-between items-center w-full">
-        <x-button-secondary class="rounded-xl py-3 px-6" type="button" id="btn-cancel-schedule"
-            onclick="closeModal()">
+        <x-button-secondary class="rounded-xl py-3 px-6" type="button" id="btn-cancel-schedule" onclick="closeModal()">
             Batal
         </x-button-secondary>
         <x-button-primary class="rounded-xl py-3 px-6" type="submit" id="btn-submit-schedule">

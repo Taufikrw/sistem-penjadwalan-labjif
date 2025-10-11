@@ -29,7 +29,7 @@ class StoreScheduleRequest extends FormRequest
             'name' => 'required|string|size:1',
             'kode_praktikum' => 'required|string|max:255|exists:practicums,kode_praktikum',
             'laboratorium_id' => 'required|uuid|exists:laboratoriums,id',
-            'dosen' => 'required|string|max:255',
+            'lecturer_id' => 'required|uuid|exists:lecturers,id',
             'tahun_ajar' => 'required|integer|digits:4',
             'jenis_semester' => 'required|string|in:ganjil,genap',
             'day' => ['required', 'string', Rule::enum(Day::class)],
@@ -43,7 +43,7 @@ class StoreScheduleRequest extends FormRequest
         return [
             'kode_praktikum' => 'Nama Praktikum',
             'laboratorium_id' => 'Laboratorium',
-            'dosen' => 'Dosen',
+            'lecturer_id' => 'Dosen',
             'tahun_ajar' => 'Tahun Ajar',
             'jenis_semester' => 'Jenis Semester',
             'day' => 'Hari',

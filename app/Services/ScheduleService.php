@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\Contracts\LaboratoriumRepositoryInterface;
+use App\Repositories\Contracts\LecturerRepositoryInterface;
 use App\Repositories\Contracts\PracticumRepositoryInterface;
 use App\Repositories\Contracts\ScheduleRepositoryInterface;
 
@@ -11,15 +12,18 @@ class ScheduleService
     protected $practicumRepository;
     protected $laboratoriumRepository;
     protected $scheduleRepository;
+    protected $lecturerRepository;
 
     public function __construct(
         PracticumRepositoryInterface $practicumRepository,
         LaboratoriumRepositoryInterface $laboratoriumRepository,
-        ScheduleRepositoryInterface $scheduleRepository
+        ScheduleRepositoryInterface $scheduleRepository,
+        LecturerRepositoryInterface $lecturerRepository
     ) {
         $this->practicumRepository = $practicumRepository;
         $this->laboratoriumRepository = $laboratoriumRepository;
         $this->scheduleRepository = $scheduleRepository;
+        $this->lecturerRepository = $lecturerRepository;
     }
 
     public function getScheduleList()
@@ -63,8 +67,9 @@ class ScheduleService
             $filters = ['semester' => $semesterFilters]
         );
         $labs = $this->laboratoriumRepository->getAllLaboratoriums();
+        $lecturers = $this->lecturerRepository->getAllLecturers();
 
-        return compact('practicums', 'labs');
+        return compact('practicums', 'labs', 'lecturers');
     }
 
     public function storeScheduleList(array $data)

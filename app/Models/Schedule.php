@@ -30,7 +30,7 @@ class Schedule extends Model
         'end_time' => 'datetime:H:i',
     ];
 
-    protected $appends = ['laboratorium_name', 'practicum_name', 'jam', 'assistant_names', 'partner_name', 'class_name'];
+    protected $appends = ['laboratorium_name', 'practicum_name', 'jam', 'assistant_names', 'partner_name', 'class_name', 'lecturer_name'];
 
     public function practicum()
     {
@@ -99,5 +99,10 @@ class Schedule extends Model
         } else {
             return $this->name;
         }
+    }
+
+    public function getLecturerNameAttribute()
+    {
+        return $this->lecturer ? $this->lecturer->name : 'Dosen tidak ditemukan';
     }
 }

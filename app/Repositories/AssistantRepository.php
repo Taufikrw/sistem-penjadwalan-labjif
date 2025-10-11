@@ -439,14 +439,20 @@ class AssistantRepository implements AssistantRepositoryInterface
     {
         return Assistant::where('status', 'aktif')
             ->withCount([
-                'assistantSchedules as assistant_schedules_count' => function ($query) {
-                    $query->whereHas('schedule', function ($q) {
-                        $q->whereNull('deleted_at');
-                    });
-                }
+            'assistantSchedules as jumlah_kelas' => function ($query) {
+                $query->whereHas('schedule', function ($q) {
+                $q->whereNull('deleted_at');
+                });
+            }
             ])
-            ->orderBy('assistant_schedules_count', 'desc')
-            ->get();
-        // ->where('assistant_schedules_count', '=', 0);
+            ->orderBy('jumlah_kelas', 'desc')
+            ->get()
+            ->map(function ($assistant) {
+            return [
+                'nim' => $assistant->nim,
+                'name' => $assistant->name,
+                'jumlah_kelas' => $assistant->jumlah_kelas,
+            ];
+            });
     }
 }

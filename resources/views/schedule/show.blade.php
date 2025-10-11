@@ -37,11 +37,11 @@
                     <div id="selected-info" class="text-key-primary font-bold">
                         0 Dipilih
                     </div>
-                    <x-button-primary class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl"
+                    <x-button-danger class="flex justify-between items-center px-5 py-3 text-md gap-2 rounded-xl"
                         type="button" id="btn-bulk-delete">
                         <x-heroicon-s-trash class="w-5 h-5" />
                         Hapus
-                    </x-button-primary>
+                    </x-button-danger>
                 </div>
             </div>
         @endif
@@ -69,7 +69,7 @@
             ['label' => 'Mata Kuliah', 'field' => 'practicum_name', 'sortable' => true],
             ['label' => 'Kelas', 'field' => 'class_name', 'sortable' => true],
             ['label' => 'Lab', 'field' => 'laboratorium_name', 'sortable' => false],
-            ['label' => 'Dosen', 'field' => 'dosen', 'sortable' => false],
+            ['label' => 'Dosen', 'field' => 'lecturer_name', 'sortable' => false],
             ['label' => 'Hari', 'field' => 'day', 'sortable' => false],
             ['label' => 'Jam', 'field' => 'jam', 'sortable' => true],
             ['label' => 'Aslab', 'field' => 'assistant_names', 'sortable' => false],
@@ -81,7 +81,7 @@
             ['label' => 'Mata Kuliah', 'field' => 'practicum_name', 'sortable' => true],
             ['label' => 'Kelas', 'field' => 'class_name', 'sortable' => true],
             ['label' => 'Lab', 'field' => 'laboratorium_name', 'sortable' => false],
-            ['label' => 'Dosen', 'field' => 'dosen', 'sortable' => false],
+            ['label' => 'Dosen', 'field' => 'lecturer_name', 'sortable' => false],
             ['label' => 'Jam', 'field' => 'jam', 'sortable' => true],
             ['label' => 'Aslab', 'field' => 'assistant_names', 'sortable' => false],
         ]"

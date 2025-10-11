@@ -106,9 +106,12 @@
                     </div>
 
                     <div class="col-span-2">
-                        <x-input-label for="dosen" class="mb-1 text-sm" value="Nama Dosen" />
-                        <x-text-input name="dosen" id="dosen" class="w-full" :value="old('dosen', isset($schedule) ? $schedule->dosen : '')"
-                            placeholder="Masukkan nama dosen" />
+                        <x-input-label for="lecturer_id" class="mb-1 text-sm" value="Nama Dosen" />
+                        <x-select-input id="lecturer_id" name="lecturer_id" :options="$lecturers->pluck('name', 'id')->toArray()"
+                            placeholder="Pilih Nama Dosen" :selected="old('lecturer_id', isset($schedule) ? $schedule->lecturer_id : null)" />
+                        @error('lecturer_id')
+                            <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div class="col-span-2">
